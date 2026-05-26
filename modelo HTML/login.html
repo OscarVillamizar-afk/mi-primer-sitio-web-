@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión - TechStore</title>
+</head>
+<body>
+
+    <!-- ============================================================
+         HEADER
+         ============================================================ -->
+    <header>
+        <div class="header-container">
+            <a href="index.html" class="logo">TechStore</a>
+
+            <nav>
+                <a href="index.html">Inicio</a>
+                <a href="catalogo.html">Catálogo</a>
+                <a href="foro.html">Foro</a>
+            </nav>
+
+            <div class="header-actions">
+                <div class="cart-icon">
+                    <a href="carrito.html">
+                        🛒
+                        <span class="cart-badge">0</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+
+    <!-- ============================================================
+         MAIN
+         ============================================================ -->
+    <main>
+
+        <div class="auth-container">
+
+            <!-- Mensaje de éxito -->
+            <div class="success-message" id="successMessage"></div>
+
+            <!-- ------------------------------------------------
+                 TABS
+                 ------------------------------------------------ -->
+            <div class="tabs">
+                <button class="tab active"   id="tab-login"    onclick="switchTab('login')">Iniciar Sesión</button>
+                <button class="tab"          id="tab-usuario"  onclick="switchTab('usuario')">Registro Usuario</button>
+                <button class="tab"          id="tab-vendedor" onclick="switchTab('vendedor')">Registro Vendedor</button>
+            </div>
+
+
+            <!-- ------------------------------------------------
+                 TAB 1: INICIAR SESIÓN
+                 ------------------------------------------------ -->
+            <div id="content-login" class="tab-content active">
+                <form id="form-login">
+
+                    <div class="form-group">
+                        <label for="loginEmail">Correo electrónico</label>
+                        <input type="email" id="loginEmail" placeholder="tu@correo.com" required>
+                        <span class="error-msg" id="error-loginEmail"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="loginPassword">Contraseña</label>
+                        <input type="password" id="loginPassword" placeholder="Tu contraseña" required>
+                        <span class="error-msg" id="error-loginPassword"></span>
+                    </div>
+
+                    <div class="form-extras">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="rememberMe">
+                            <span>Recordarme</span>
+                        </label>
+                        <a href="recuperar-contrasena.html" class="link-forgot">¿Olvidaste tu contraseña?</a>
+                    </div>
+
+                    <button type="submit" class="btn-submit">Iniciar Sesión</button>
+
+                    <p class="auth-switch">
+                        ¿No tienes cuenta?
+                        <a href="#" onclick="switchTab('usuario')">Regístrate aquí</a>
+                    </p>
+
+                </form>
+            </div>
+
+
+            <!-- ------------------------------------------------
+                 TAB 2: REGISTRO USUARIO
+                 ------------------------------------------------ -->
+            <div id="content-usuario" class="tab-content">
+                <form id="form-usuario">
+
+                    <div class="form-group">
+                        <label for="usuarioNombre">Nombre completo</label>
+                        <input type="text" id="usuarioNombre" placeholder="Tu nombre completo" required>
+                        <span class="error-msg" id="error-usuarioNombre"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="usuarioEmail">Correo electrónico</label>
+                        <input type="email" id="usuarioEmail" placeholder="tu@correo.com" required>
+                        <span class="error-msg" id="error-usuarioEmail"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="usuarioPassword">Contraseña</label>
+                        <input type="password" id="usuarioPassword" placeholder="Mínimo 8 caracteres" required>
+                        <span class="error-msg" id="error-usuarioPassword"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="usuarioPasswordConfirm">Confirmar contraseña</label>
+                        <input type="password" id="usuarioPasswordConfirm" placeholder="Repite tu contraseña" required>
+                        <span class="error-msg" id="error-usuarioPasswordConfirm"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="usuarioTerminos" required>
+                            <span>Acepto los <a href="#" class="link-inline">Términos y Condiciones</a></span>
+                        </label>
+                        <span class="error-msg" id="error-usuarioTerminos"></span>
+                    </div>
+
+                    <button type="submit" class="btn-submit">Crear Cuenta</button>
+
+                    <p class="auth-switch">
+                        ¿Ya tienes cuenta?
+                        <a href="#" onclick="switchTab('login')">Inicia sesión</a>
+                    </p>
+
+                </form>
+            </div>
+
+
+            <!-- ------------------------------------------------
+                 TAB 3: REGISTRO VENDEDOR
+                 ------------------------------------------------ -->
+            <div id="content-vendedor" class="tab-content">
+                <form id="form-vendedor">
+
+                    <p class="tab-description">
+                        Crea tu cuenta como vendedor o colaborador para publicar productos y participar en la comunidad.
+                    </p>
+
+                    <!-- Datos personales -->
+                    <div class="form-section-title">Datos personales</div>
+
+                    <div class="form-group">
+                        <label for="vendedorNombre">Nombre completo</label>
+                        <input type="text" id="vendedorNombre" placeholder="Tu nombre completo" required>
+                        <span class="error-msg" id="error-vendedorNombre"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="vendedorEmail">Correo electrónico</label>
+                        <input type="email" id="vendedorEmail" placeholder="tu@correo.com" required>
+                        <span class="error-msg" id="error-vendedorEmail"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="vendedorPassword">Contraseña</label>
+                        <input type="password" id="vendedorPassword" placeholder="Mínimo 8 caracteres" required>
+                        <span class="error-msg" id="error-vendedorPassword"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="vendedorPasswordConfirm">Confirmar contraseña</label>
+                        <input type="password" id="vendedorPasswordConfirm" placeholder="Repite tu contraseña" required>
+                        <span class="error-msg" id="error-vendedorPasswordConfirm"></span>
+                    </div>
+
+                    <!-- Datos del negocio -->
+                    <div class="form-section-title">Datos del negocio</div>
+
+                    <div class="form-group">
+                        <label for="vendedorNegocio">Nombre del negocio</label>
+                        <input type="text" id="vendedorNegocio" placeholder="Nombre de tu tienda o marca" required>
+                        <span class="error-msg" id="error-vendedorNegocio"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="vendedorTelefono">Teléfono de contacto</label>
+                        <input type="tel" id="vendedorTelefono" placeholder="+57 300 000 0000" required>
+                        <span class="error-msg" id="error-vendedorTelefono"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="vendedorCategoria">Categoría principal de productos</label>
+                        <select id="vendedorCategoria" required>
+                            <option value="">Selecciona una categoría</option>
+                            <option value="electronica">Electrónica</option>
+                            <option value="robotica">Robótica</option>
+                            <option value="accesorios">Accesorios</option>
+                            <option value="software">Software</option>
+                            <option value="otro">Otro</option>
+                        </select>
+                        <span class="error-msg" id="error-vendedorCategoria"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="vendedorDescripcion">Descripción del negocio</label>
+                        <textarea id="vendedorDescripcion" placeholder="Cuéntanos brevemente sobre tu negocio y los productos que ofreces..." rows="3"></textarea>
+                        <span class="error-msg" id="error-vendedorDescripcion"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="vendedorTerminos" required>
+                            <span>Acepto los <a href="#" class="link-inline">Términos para Vendedores</a></span>
+                        </label>
+                        <span class="error-msg" id="error-vendedorTerminos"></span>
+                    </div>
+
+                    <button type="submit" class="btn-submit">Crear Cuenta de Vendedor</button>
+
+                    <p class="auth-switch">
+                        ¿Solo quieres comprar?
+                        <a href="#" onclick="switchTab('usuario')">Regístrate como usuario</a>
+                    </p>
+
+                </form>
+            </div>
+
+        </div><!-- /auth-container -->
+
+    </main>
+
+
+    <!-- ============================================================
+         FOOTER
+         ============================================================ -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-column">
+                <h3>Sobre Nosotros</h3>
+                <ul>
+                    <li><a href="#">Quiénes somos</a></li>
+                    <li><a href="#">Nuestra misión</a></li>
+                    <li><a href="#">Equipo</a></li>
+                    <li><a href="#">Trabaja con nosotros</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Enlaces Rápidos</h3>
+                <ul>
+                    <li><a href="catalogo.html">Catálogo</a></li>
+                    <li><a href="foro.html">Foro</a></li>
+                    <li><a href="vendedor.html">Vende con nosotros</a></li>
+                    <li><a href="#">Blog tecnológico</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Soporte</h3>
+                <ul>
+                    <li><a href="#">Centro de ayuda</a></li>
+                    <li><a href="#">Política de devoluciones</a></li>
+                    <li><a href="#">Envíos y entregas</a></li>
+                    <li><a href="#">Términos y condiciones</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Redes Sociales</h3>
+                <ul>
+                    <li><a href="#">Facebook</a></li>
+                    <li><a href="#">Twitter</a></li>
+                    <li><a href="#">Instagram</a></li>
+                    <li><a href="#">YouTube</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 TechStore. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+
+    <!-- ============================================================
+         SCRIPT - Lógica de tabs
+         ============================================================ -->
+    <script>
+        function switchTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+            document.getElementById('tab-' + tab).classList.add('active');
+            document.getElementById('content-' + tab).classList.add('active');
+        }
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Foro - TechStore</title>
+</head>
+<body>
+
+    <!-- ============================================================
+         HEADER
+         ============================================================ -->
+    <header>
+        <div class="header-container">
+            <a href="index.html" class="logo">TechStore</a>
+            <nav>
+                <a href="index.html">Inicio</a>
+                <a href="catalogo.html">Catálogo</a>
+                <a href="foro.html" class="active">Foro</a>
+            </nav>
+            <div class="header-actions">
+                <a href="login.html">
+                    <button class="btn-login">Iniciar Sesión</button>
+                </a>
+                <div class="cart-icon">
+                    <a href="carrito.html">
+                        🛒
+                        <span class="cart-badge">0</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ============================================================
+         MAIN
+         ============================================================ -->
+    <main>
+
+        <div class="foro-header">
+            <h1>Foro de Divulgación Tecnológica</h1>
+            <p>Comparte conocimiento, resuelve dudas y conecta con la comunidad tech</p>
+            <a href="foro-nueva-pregunta.html">
+                <button class="btn-nueva-pregunta">+ Publicar pregunta</button>
+            </a>
+        </div>
+
+        <!-- CONTROLES -->
+        <section class="foro-controles">
+            <div class="foro-busqueda">
+                <input type="text" placeholder="Buscar temas o palabras clave...">
+                <button class="btn-buscar">🔍</button>
+            </div>
+
+            <div class="foro-filtros">
+                <select id="filtro-categoria">
+                    <option value="">Todas las categorías</option>
+                    <option value="robotica">Robótica</option>
+                    <option value="software">Software</option>
+                    <option value="hardware">Hardware</option>
+                    <option value="general">General</option>
+                </select>
+
+                <select id="filtro-orden">
+                    <option value="recientes">Más recientes</option>
+                    <option value="populares">Más populares</option>
+                    <option value="sin-respuesta">Sin respuesta</option>
+                </select>
+            </div>
+        </section>
+
+        <!-- CATEGORÍAS RÁPIDAS -->
+        <section class="foro-categorias-rapidas">
+            <button class="categoria-pill active">Todos</button>
+            <button class="categoria-pill robotica">🤖 Robótica</button>
+            <button class="categoria-pill software">💻 Software</button>
+            <button class="categoria-pill hardware">🔧 Hardware</button>
+            <button class="categoria-pill general">💬 General</button>
+        </section>
+
+        <!-- LISTA DE TEMAS -->
+        <section class="foro-temas">
+
+            <!-- Tema 1 -->
+            <div class="tema-card">
+                <div class="tema-icono">🤖</div>
+                <div class="tema-body">
+                    <div class="tema-header">
+                        <span class="tema-categoria robotica">Robótica</span>
+                        <span class="tema-badge badge-nuevo">Nuevo</span>
+                    </div>
+                    <h3 class="tema-titulo">
+                        <a href="foro-hilo.html">¿Cómo empezar con Arduino para proyectos de robótica educativa?</a>
+                    </h3>
+                    <p class="tema-extracto">
+                        Estoy iniciando en el mundo de la robótica educativa y me gustaría saber cuáles son los kits de Arduino más recomendados para principiantes...
+                    </p>
+                    <div class="tema-meta">
+                        <div class="tema-autor">
+                            <div class="autor-avatar">CM</div>
+                            <span>Carlos Méndez</span>
+                            <span>•</span>
+                            <span>Hace 2 horas</span>
+                        </div>
+                        <div class="tema-stats">
+                            <span>💬 8 respuestas</span>
+                            <span>👍 12 votos</span>
+                            <span>👁 145 vistas</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tema 2 -->
+            <div class="tema-card">
+                <div class="tema-icono">💻</div>
+                <div class="tema-body">
+                    <div class="tema-header">
+                        <span class="tema-categoria software">Software</span>
+                        <span class="tema-badge badge-respondido">✓ Respondido</span>
+                    </div>
+                    <h3 class="tema-titulo">
+                        <a href="foro-hilo.html">Mejores prácticas para optimizar código en Python</a>
+                    </h3>
+                    <p class="tema-extracto">
+                        Tengo un script en Python que procesa grandes volúmenes de datos y está tardando demasiado. ¿Cuáles son las técnicas más efectivas para optimizar el rendimiento?
+                    </p>
+                    <div class="tema-meta">
+                        <div class="tema-autor">
+                            <div class="autor-avatar">LR</div>
+                            <span>Laura Rodríguez</span>
+                            <span>•</span>
+                            <span>Hace 5 horas</span>
+                        </div>
+                        <div class="tema-stats">
+                            <span>💬 15 respuestas</span>
+                            <span>👍 23 votos</span>
+                            <span>👁 312 vistas</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tema 3 -->
+            <div class="tema-card">
+                <div class="tema-icono">🔧</div>
+                <div class="tema-body">
+                    <div class="tema-header">
+                        <span class="tema-categoria hardware">Hardware</span>
+                    </div>
+                    <h3 class="tema-titulo">
+                        <a href="foro-hilo.html">¿Vale la pena actualizar a DDR5 en 2024?</a>
+                    </h3>
+                    <p class="tema-extracto">
+                        Estoy armando un nuevo PC para gaming y desarrollo. La diferencia de precio entre DDR4 y DDR5 es considerable. ¿Realmente se nota la mejora en rendimiento?
+                    </p>
+                    <div class="tema-meta">
+                        <div class="tema-autor">
+                            <div class="autor-avatar">MG</div>
+                            <span>Miguel García</span>
+                            <span>•</span>
+                            <span>Hace 1 día</span>
+                        </div>
+                        <div class="tema-stats">
+                            <span>💬 24 respuestas</span>
+                            <span>👍 31 votos</span>
+                            <span>👁 528 vistas</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tema 4 - Reportado (solo visible para moderador) -->
+            <div class="tema-card tema-reportado">
+                <div class="tema-icono">💬</div>
+                <div class="tema-body">
+                    <div class="tema-header">
+                        <span class="tema-categoria general">General</span>
+                        <span class="tema-badge badge-reportado">⚠️ Reportado</span>
+                    </div>
+                    <h3 class="tema-titulo">
+                        <a href="foro-hilo.html">Problema con instalación de drivers NVIDIA</a>
+                    </h3>
+                    <p class="tema-extracto">
+                        No puedo instalar los drivers más recientes en mi GTX 3070. El instalador se queda congelado en el 50%. Ya probé desinstalar con DDU y sigue igual.
+                    </p>
+                    <div class="tema-meta">
+                        <div class="tema-autor">
+                            <div class="autor-avatar">AP</div>
+                            <span>Ana Pérez</span>
+                            <span>•</span>
+                            <span>Hace 2 días</span>
+                        </div>
+                        <div class="tema-stats">
+                            <span>💬 6 respuestas</span>
+                            <span>👍 4 votos</span>
+                            <span>👁 89 vistas</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tema 5 -->
+            <div class="tema-card">
+                <div class="tema-icono">🔧</div>
+                <div class="tema-body">
+                    <div class="tema-header">
+                        <span class="tema-categoria hardware">Hardware</span>
+                        <span class="tema-badge badge-popular">🔥 Popular</span>
+                    </div>
+                    <h3 class="tema-titulo">
+                        <a href="foro-hilo.html">Raspberry Pi 5 vs PC de bajo consumo para servidor casero</a>
+                    </h3>
+                    <p class="tema-extracto">
+                        Quiero montar un servidor casero para NAS, Home Assistant y Pi-hole. ¿Es mejor una Raspberry Pi 5 o un mini PC usado? Busco equilibrio entre consumo y rendimiento.
+                    </p>
+                    <div class="tema-meta">
+                        <div class="tema-autor">
+                            <div class="autor-avatar">JS</div>
+                            <span>Juan Silva</span>
+                            <span>•</span>
+                            <span>Hace 3 días</span>
+                        </div>
+                        <div class="tema-stats">
+                            <span>💬 19 respuestas</span>
+                            <span>👍 27 votos</span>
+                            <span>👁 641 vistas</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- PAGINACIÓN -->
+        <nav class="paginacion">
+            <button class="btn-pag btn-pag-prev" disabled>← Anterior</button>
+            <button class="btn-pag btn-pag-num active">1</button>
+            <button class="btn-pag btn-pag-num">2</button>
+            <button class="btn-pag btn-pag-num">3</button>
+            <button class="btn-pag btn-pag-next">Siguiente →</button>
+        </nav>
+
+    </main>
+
+    <!-- ============================================================
+         FOOTER
+         ============================================================ -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-column">
+                <h3>Sobre Nosotros</h3>
+                <ul>
+                    <li><a href="#">Quiénes somos</a></li>
+                    <li><a href="#">Nuestra misión</a></li>
+                    <li><a href="#">Equipo</a></li>
+                    <li><a href="#">Trabaja con nosotros</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Enlaces Rápidos</h3>
+                <ul>
+                    <li><a href="catalogo.html">Catálogo</a></li>
+                    <li><a href="foro.html">Foro</a></li>
+                    <li><a href="vendedor.html">Vende con nosotros</a></li>
+                    <li><a href="#">Blog tecnológico</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Soporte</h3>
+                <ul>
+                    <li><a href="#">Centro de ayuda</a></li>
+                    <li><a href="#">Política de devoluciones</a></li>
+                    <li><a href="#">Envíos y entregas</a></li>
+                    <li><a href="#">Términos y condiciones</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Redes Sociales</h3>
+                <ul>
+                    <li><a href="#">Facebook</a></li>
+                    <li><a href="#">Twitter</a></li>
+                    <li><a href="#">Instagram</a></li>
+                    <li><a href="#">YouTube</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 TechStore. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+</body>
+</html>

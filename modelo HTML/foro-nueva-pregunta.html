@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nueva Pregunta - TechStore</title>
+</head>
+<body>
+
+    <!-- ============================================================
+         HEADER
+         ============================================================ -->
+    <header>
+        <div class="header-container">
+            <a href="index.html" class="logo">TechStore</a>
+            <nav>
+                <a href="index.html">Inicio</a>
+                <a href="catalogo.html">Catálogo</a>
+                <a href="foro.html" class="active">Foro</a>
+            </nav>
+            <div class="header-actions">
+                <a href="login.html">
+                    <button class="btn-login">Iniciar Sesión</button>
+                </a>
+                <div class="cart-icon">
+                    <a href="carrito.html">
+                        🛒
+                        <span class="cart-badge">0</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ============================================================
+         MAIN
+         ============================================================ -->
+    <main>
+
+        <!-- BREADCRUMB -->
+        <nav class="breadcrumb">
+            <a href="index.html">Inicio</a>
+            <span>›</span>
+            <a href="foro.html">Foro</a>
+            <span>›</span>
+            <span>Nueva Pregunta</span>
+        </nav>
+
+        <div class="nueva-pregunta-layout">
+
+            <!-- FORMULARIO PRINCIPAL -->
+            <div class="nueva-pregunta-form">
+
+                <h1>Publicar una pregunta</h1>
+                <p class="form-subtitulo">Antes de publicar, asegúrate de que tu pregunta no ha sido respondida antes en el foro.</p>
+
+                <!-- PASO 1: Título -->
+                <div class="form-seccion">
+                    <div class="form-seccion-header">
+                        <span class="paso-numero">1</span>
+                        <h2>Título de la pregunta</h2>
+                    </div>
+                    <p class="form-hint">Sé específico. Imagina que le estás preguntando a un experto.</p>
+                    <div class="form-group">
+                        <input
+                            type="text"
+                            id="titulo"
+                            placeholder="Ej: ¿Cómo configurar un sensor ultrasónico con Arduino UNO?"
+                            maxlength="150"
+                        >
+                        <span class="contador-caracteres"><span id="titulo-count">0</span>/150</span>
+                        <span class="error-msg" id="error-titulo"></span>
+                    </div>
+                </div>
+
+                <!-- PASO 2: Categoría y etiquetas -->
+                <div class="form-seccion">
+                    <div class="form-seccion-header">
+                        <span class="paso-numero">2</span>
+                        <h2>Categoría y etiquetas</h2>
+                    </div>
+                    <div class="form-grupo-horizontal">
+                        <div class="form-group">
+                            <label for="categoria">Categoría *</label>
+                            <select id="categoria" required>
+                                <option value="">Selecciona una categoría</option>
+                                <option value="robotica">🤖 Robótica</option>
+                                <option value="software">💻 Software</option>
+                                <option value="hardware">🔧 Hardware</option>
+                                <option value="general">💬 General</option>
+                            </select>
+                            <span class="error-msg" id="error-categoria"></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="etiquetas">Etiquetas</label>
+                            <input type="text" id="etiquetas" placeholder="Ej: arduino, sensores, principiante (separadas por comas)">
+                            <span class="form-hint-small">Máximo 5 etiquetas</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PASO 3: Descripción -->
+                <div class="form-seccion">
+                    <div class="form-seccion-header">
+                        <span class="paso-numero">3</span>
+                        <h2>Descripción detallada</h2>
+                    </div>
+                    <p class="form-hint">Incluye todo el contexto necesario. ¿Qué has intentado ya? ¿Qué resultado obtienes?</p>
+
+                    <!-- Barra de herramientas del editor -->
+                    <div class="editor-toolbar">
+                        <button class="toolbar-btn" title="Negrita"><strong>B</strong></button>
+                        <button class="toolbar-btn" title="Cursiva"><em>I</em></button>
+                        <button class="toolbar-btn" title="Lista">≡</button>
+                        <button class="toolbar-btn" title="Código">{ }</button>
+                        <button class="toolbar-btn" title="Enlace">🔗</button>
+                        <button class="toolbar-btn" title="Imagen">🖼</button>
+                    </div>
+
+                    <div class="form-group">
+                        <textarea
+                            id="descripcion"
+                            placeholder="Describe tu pregunta con detalle. Incluye lo que ya intentaste, el contexto del problema y qué resultado esperas..."
+                            rows="10"
+                        ></textarea>
+                        <span class="contador-caracteres"><span id="desc-count">0</span> caracteres (mínimo 50)</span>
+                        <span class="error-msg" id="error-descripcion"></span>
+                    </div>
+                </div>
+
+                <!-- PASO 4: Adjuntos -->
+                <div class="form-seccion">
+                    <div class="form-seccion-header">
+                        <span class="paso-numero">4</span>
+                        <h2>Adjuntos (opcional)</h2>
+                    </div>
+                    <p class="form-hint">Puedes adjuntar imágenes o capturas de pantalla para ilustrar tu pregunta.</p>
+                    <div class="upload-area">
+                        <div class="upload-icono">📎</div>
+                        <p>Arrastra archivos aquí o <label for="archivo-adjunto" class="link-upload">haz clic para seleccionar</label></p>
+                        <input type="file" id="archivo-adjunto" accept="image/*" multiple style="display:none;">
+                        <p class="upload-restricciones">PNG, JPG o GIF. Máximo 5 MB por archivo. Hasta 3 archivos.</p>
+                    </div>
+                    <div id="archivos-preview" class="archivos-preview"></div>
+                </div>
+
+                <!-- TÉRMINOS Y ENVÍO -->
+                <div class="form-seccion form-seccion-final">
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="terminos-foro" required>
+                            <span>He leído y acepto las <a href="#">normas del foro</a> y el <a href="#">código de conducta</a></span>
+                        </label>
+                        <span class="error-msg" id="error-terminos-foro"></span>
+                    </div>
+
+                    <div class="form-botones">
+                        <a href="foro.html">
+                            <button type="button" class="btn-cancelar">Cancelar</button>
+                        </a>
+                        <button type="button" class="btn-preview">Vista previa</button>
+                        <button type="submit" class="btn-publicar">Publicar pregunta</button>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- SIDEBAR CON CONSEJOS -->
+            <aside class="nueva-pregunta-sidebar">
+
+                <div class="sidebar-card sidebar-consejos">
+                    <h3>💡 Consejos para una buena pregunta</h3>
+                    <ul>
+                        <li>✅ Usa un título claro y específico</li>
+                        <li>✅ Describe el problema con detalle</li>
+                        <li>✅ Menciona lo que ya intentaste</li>
+                        <li>✅ Incluye código o capturas si aplica</li>
+                        <li>✅ Revisa la ortografía antes de publicar</li>
+                        <li>❌ No hagas múltiples preguntas en un mismo post</li>
+                        <li>❌ Evita títulos como "ayuda" o "no funciona"</li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-card">
+                    <h3>🔍 Preguntas similares</h3>
+                    <p class="sidebar-hint">Aparecerán aquí mientras escribes tu título...</p>
+                    <ul class="sidebar-links" id="preguntas-similares">
+                        <li><a href="foro-hilo.html">¿Cómo empezar con Arduino para robótica educativa?</a></li>
+                        <li><a href="foro-hilo.html">Diferencias entre Arduino UNO y MEGA</a></li>
+                        <li><a href="foro-hilo.html">Mejores kits de iniciación para robótica</a></li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-card">
+                    <h3>📋 Normas del foro</h3>
+                    <ul class="sidebar-normas">
+                        <li>Sé respetuoso con todos</li>
+                        <li>No compartas información personal</li>
+                        <li>No hagas spam ni publicidad</li>
+                        <li>Marca la mejor respuesta cuando la encuentres</li>
+                    </ul>
+                    <a href="#" class="link-ver-mas">Ver normas completas →</a>
+                </div>
+
+            </aside>
+
+        </div>
+
+    </main>
+
+    <!-- ============================================================
+         FOOTER
+         ============================================================ -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-column">
+                <h3>Sobre Nosotros</h3>
+                <ul>
+                    <li><a href="#">Quiénes somos</a></li>
+                    <li><a href="#">Nuestra misión</a></li>
+                    <li><a href="#">Equipo</a></li>
+                    <li><a href="#">Trabaja con nosotros</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Enlaces Rápidos</h3>
+                <ul>
+                    <li><a href="catalogo.html">Catálogo</a></li>
+                    <li><a href="foro.html">Foro</a></li>
+                    <li><a href="vendedor.html">Vende con nosotros</a></li>
+                    <li><a href="#">Blog tecnológico</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Soporte</h3>
+                <ul>
+                    <li><a href="#">Centro de ayuda</a></li>
+                    <li><a href="#">Política de devoluciones</a></li>
+                    <li><a href="#">Envíos y entregas</a></li>
+                    <li><a href="#">Términos y condiciones</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Redes Sociales</h3>
+                <ul>
+                    <li><a href="#">Facebook</a></li>
+                    <li><a href="#">Twitter</a></li>
+                    <li><a href="#">Instagram</a></li>
+                    <li><a href="#">YouTube</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 TechStore. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+</body>
+</html>
