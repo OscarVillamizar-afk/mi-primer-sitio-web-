@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Informes - TT&DT</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+
+    <!-- ============================================================
+         HEADER
+         ============================================================ -->
+    <header>
+        <div class="header-container">
+            <a href="index.html" class="logo">TT&DT</a>
+            <nav>
+                <a href="dashboard-dueno.html">Dashboard</a>
+                <a href="gestion-usuarios.html">Usuarios</a>
+                <a href="gestion-inventario.html">Inventario</a>
+                <a href="gestion-tareas.html">Tareas</a>
+                <a href="informes.html" class="active">Informes</a>
+            </nav>
+            <div class="header-actions">
+                <span class="dueno-saludo">Bienvenido, <strong>Admin</strong></span>
+                <a href="index.html"><button class="btn-login">Cerrar Sesión</button></a>
+            </div>
+        </div>
+    </header>
+
+    <!-- ============================================================
+         MAIN
+         ============================================================ -->
+    <main>
+        <div class="inf-wrapper">
+
+            <!-- TÍTULO -->
+            <div class="inf-titulo">
+                <div>
+                    <h1>Informes y Analítica</h1>
+                    <p class="inf-subtitulo">Visualiza métricas de ventas, usuarios y rendimiento del equipo</p>
+                </div>
+                <div class="inf-header-actions">
+                    <div class="inf-rango-grupo">
+                        <label>Período</label>
+                        <select id="inf-periodo">
+                            <option value="semana">Esta semana</option>
+                            <option value="mes" selected>Este mes</option>
+                            <option value="trimestre">Este trimestre</option>
+                            <option value="año">Este año</option>
+                        </select>
+                    </div>
+                    <button class="btn-generar-inf" id="btn-generar">⬇ Exportar PDF</button>
+                </div>
+            </div>
+
+            <!-- KPIs PRINCIPALES -->
+            <div class="inf-kpis">
+                <div class="inf-kpi-card kpi-ventas">
+                    <div class="inf-kpi-top">
+                        <span class="inf-kpi-label">Ingresos totales</span>
+                        <span class="inf-kpi-icono">$</span>
+                    </div>
+                    <p class="inf-kpi-valor" id="kpi-ingresos">$0</p>
+                    <p class="inf-kpi-cambio positivo">▲ 12% vs período anterior</p>
+                </div>
+                <div class="inf-kpi-card kpi-pedidos">
+                    <div class="inf-kpi-top">
+                        <span class="inf-kpi-label">Pedidos completados</span>
+                        <span class="inf-kpi-icono">P</span>
+                    </div>
+                    <p class="inf-kpi-valor" id="kpi-pedidos">0</p>
+                    <p class="inf-kpi-cambio positivo">▲ 8% vs período anterior</p>
+                </div>
+                <div class="inf-kpi-card kpi-usuarios">
+                    <div class="inf-kpi-top">
+                        <span class="inf-kpi-label">Nuevos usuarios</span>
+                        <span class="inf-kpi-icono">U</span>
+                    </div>
+                    <p class="inf-kpi-valor" id="kpi-usuarios">0</p>
+                    <p class="inf-kpi-cambio positivo">▲ 5% vs período anterior</p>
+                </div>
+                <div class="inf-kpi-card kpi-ticket">
+                    <div class="inf-kpi-top">
+                        <span class="inf-kpi-label">Ticket promedio</span>
+                        <span class="inf-kpi-icono">≈</span>
+                    </div>
+                    <p class="inf-kpi-valor" id="kpi-ticket">$0</p>
+                    <p class="inf-kpi-cambio negativo">▼ 3% vs período anterior</p>
+                </div>
+            </div>
+
+            <!-- CONTENIDO CENTRAL -->
+            <div class="inf-contenido">
+
+                <!-- GRÁFICO DE VENTAS (SVG simulado) -->
+                <section class="inf-seccion inf-grafico-ventas">
+                    <div class="inf-seccion-header">
+                        <h2>Ventas por día</h2>
+                        <div class="inf-leyenda">
+                            <span class="leyenda-dot purple"></span>
+                            <span>Ingresos</span>
+                        </div>
+                    </div>
+                    <div class="inf-chart-area" id="chart-ventas">
+                        <!-- barras generadas por JS -->
+                    </div>
+                    <div class="inf-chart-labels" id="chart-labels"></div>
+                </section>
+
+                <!-- PANEL DERECHO -->
+                <aside class="inf-aside">
+
+                    <!-- TOP PRODUCTOS -->
+                    <div class="inf-card">
+                        <div class="inf-seccion-header">
+                            <h2>Top productos vendidos</h2>
+                        </div>
+                        <ul class="inf-top-lista" id="inf-top-productos"></ul>
+                    </div>
+
+                    <!-- MÉTODOS DE PAGO -->
+                    <div class="inf-card">
+                        <h2>Métodos de pago</h2>
+                        <div class="inf-metodos-lista" id="inf-metodos"></div>
+                    </div>
+
+                </aside>
+            </div>
+
+            <!-- FILA INFERIOR: Rendimiento técnicos + Ventas por categoría -->
+            <div class="inf-fila-inferior">
+
+                <!-- RENDIMIENTO DE TÉCNICOS (espeja Informe_rendimiento) -->
+                <section class="inf-seccion">
+                    <div class="inf-seccion-header">
+                        <h2>Rendimiento del equipo</h2>
+                        <span class="inf-meta">Técnicos Moderadores</span>
+                    </div>
+                    <table class="inf-tabla">
+                        <thead>
+                            <tr>
+                                <th>Técnico</th>
+                                <th>Tareas completadas</th>
+                                <th>Incidencias resueltas</th>
+                                <th>Tiempo promedio</th>
+                                <th>Evaluación</th>
+                            </tr>
+                        </thead>
+                        <tbody id="inf-tabla-tecnicos"></tbody>
+                    </table>
+                </section>
+
+                <!-- VENTAS POR CATEGORÍA -->
+                <section class="inf-seccion">
+                    <div class="inf-seccion-header">
+                        <h2>Ventas por categoría</h2>
+                    </div>
+                    <div class="inf-categorias" id="inf-categorias"></div>
+                </section>
+
+            </div>
+
+            <!-- HISTORIAL DE INFORMES GENERADOS (espeja Informe_dueno) -->
+            <section class="inf-seccion inf-historial">
+                <div class="inf-seccion-header">
+                    <h2>Informes generados</h2>
+                    <button class="btn-nuevo-inf" id="btn-nuevo-informe">+ Generar informe</button>
+                </div>
+                <table class="inf-tabla">
+                    <thead>
+                        <tr>
+                            <th>#ID</th>
+                            <th>Período</th>
+                            <th>Fecha generación</th>
+                            <th>Formato</th>
+                            <th>Notas</th>
+                            <th>Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody id="inf-tabla-informes"></tbody>
+                </table>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- ============================================================
+         MODAL: NUEVO INFORME
+         ============================================================ -->
+    <div class="modal-overlay hidden" id="modal-informe">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h2>Generar Nuevo Informe</h2>
+                <button class="modal-cerrar" id="btn-cerrar-inf">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-fila">
+                    <div class="modal-grupo">
+                        <label>Rango de fechas *</label>
+                        <select id="ni-rango">
+                            <option value="Mayo 2026">Mayo 2026</option>
+                            <option value="Abril 2026">Abril 2026</option>
+                            <option value="Q1 2026">Q1 2026 (Ene–Mar)</option>
+                            <option value="Año 2025">Año 2025</option>
+                        </select>
+                    </div>
+                    <div class="modal-grupo">
+                        <label>Formato</label>
+                        <select id="ni-formato">
+                            <option value="PDF">PDF</option>
+                            <option value="Excel">Excel</option>
+                            <option value="CSV">CSV</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-grupo">
+                    <label>Métricas a incluir</label>
+                    <div class="inf-checks">
+                        <label class="inf-check-label"><input type="checkbox" checked> Ventas totales</label>
+                        <label class="inf-check-label"><input type="checkbox" checked> Usuarios nuevos</label>
+                        <label class="inf-check-label"><input type="checkbox" checked> Rendimiento equipo</label>
+                        <label class="inf-check-label"><input type="checkbox"> Inventario</label>
+                        <label class="inf-check-label"><input type="checkbox"> Incidencias</label>
+                    </div>
+                </div>
+                <div class="modal-grupo">
+                    <label>Notas analíticas</label>
+                    <textarea id="ni-notas" rows="3" placeholder="Observaciones o comentarios del período..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancelar-modal" id="btn-cancelar-inf">Cancelar</button>
+                <button class="btn-guardar-modal" id="btn-guardar-inf">Generar Informe</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         FOOTER
+         ============================================================ -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-column">
+                <h3>Sobre Nosotros</h3>
+                <ul>
+                    <li><a href="#">Quiénes somos</a></li>
+                    <li><a href="#">Nuestra misión</a></li>
+                    <li><a href="#">Equipo</a></li>
+                    <li><a href="#">Trabaja con nosotros</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Enlaces Rápidos</h3>
+                <ul>
+                    <li><a href="catalogo.html">Catálogo</a></li>
+                    <li><a href="foro.html">Foro</a></li>
+                    <li><a href="#">Blog tecnológico</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Soporte</h3>
+                <ul>
+                    <li><a href="#">Centro de ayuda</a></li>
+                    <li><a href="#">Política de devoluciones</a></li>
+                    <li><a href="#">Términos y condiciones</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Redes Sociales</h3>
+                <ul>
+                    <li><a href="#">Facebook</a></li>
+                    <li><a href="#">Twitter</a></li>
+                    <li><a href="#">Instagram</a></li>
+                    <li><a href="#">YouTube</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 TT&DT. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- ============================================================
+         SCRIPT
+         ============================================================ -->
+    <script src="./informes.js"></script>
+
+</body>
+</html>
+
+</body>
+</html>

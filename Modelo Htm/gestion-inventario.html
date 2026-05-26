@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Inventario - TT&DT</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+
+    <!-- ============================================================
+         HEADER
+         ============================================================ -->
+    <header>
+        <div class="header-container">
+            <a href="index.html" class="logo">TT&DT</a>
+            <nav>
+                <a href="dashboard-dueno.html">Dashboard</a>
+                <a href="gestion-usuarios.html">Usuarios</a>
+                <a href="gestion-inventario.html" class="active">Inventario</a>
+                <a href="gestion-tareas.html">Tareas</a>
+                <a href="informes.html">Informes</a>
+            </nav>
+            <div class="header-actions">
+                <span class="dueno-saludo">Bienvenido, <strong>Admin</strong></span>
+                <a href="index.html"><button class="btn-login">Cerrar Sesión</button></a>
+            </div>
+        </div>
+    </header>
+
+    <!-- ============================================================
+         MAIN
+         ============================================================ -->
+    <main>
+        <div class="gi-wrapper">
+
+            <!-- TÍTULO -->
+            <div class="gi-titulo">
+                <div>
+                    <h1>Gestión de Inventario</h1>
+                    <p class="gi-subtitulo">Control de stock y actualización de productos</p>
+                </div>
+                <div class="gi-acciones">
+                    <button class="btn-actualizar-gi" id="btn-actualizar-todo">↻ Actualizar todo</button>
+                    <button class="btn-nuevo-producto" id="btn-abrir-modal-prod">+ Nuevo Producto</button>
+                </div>
+            </div>
+
+            <!-- ALERTAS DE STOCK BAJO -->
+            <div class="gi-alertas" id="gi-alertas">
+                <!-- JS inserta alertas aquí -->
+            </div>
+
+            <!-- STATS -->
+            <div class="gi-stats">
+                <div class="gi-stat-card">
+                    <p class="gi-stat-num" id="si-total-prod">0</p>
+                    <p class="gi-stat-label">Productos totales</p>
+                </div>
+                <div class="gi-stat-card">
+                    <p class="gi-stat-num color-green" id="si-en-stock">0</p>
+                    <p class="gi-stat-label">En stock</p>
+                </div>
+                <div class="gi-stat-card">
+                    <p class="gi-stat-num color-yellow" id="si-stock-bajo">0</p>
+                    <p class="gi-stat-label">Stock bajo (≤5)</p>
+                </div>
+                <div class="gi-stat-card">
+                    <p class="gi-stat-num color-red" id="si-agotados">0</p>
+                    <p class="gi-stat-label">Agotados</p>
+                </div>
+            </div>
+
+            <!-- FILTROS -->
+            <div class="gi-filtros">
+                <div class="gi-busqueda">
+                    <span class="gi-busqueda-icono">S</span>
+                    <input type="text" id="gi-input-busqueda" placeholder="Buscar producto...">
+                </div>
+                <div class="gi-filtro-grupo">
+                    <label>Categoría</label>
+                    <select id="gi-filtro-cat">
+                        <option value="">Todas</option>
+                        <option value="smartphones">Smartphones</option>
+                        <option value="laptops">Laptops</option>
+                        <option value="audio">Audio</option>
+                        <option value="accesorios">Accesorios</option>
+                        <option value="tablets">Tablets</option>
+                        <option value="robotica">Robótica</option>
+                    </select>
+                </div>
+                <div class="gi-filtro-grupo">
+                    <label>Estado stock</label>
+                    <select id="gi-filtro-stock">
+                        <option value="">Todos</option>
+                        <option value="ok">En stock</option>
+                        <option value="bajo">Stock bajo</option>
+                        <option value="agotado">Agotado</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- TABLA DE INVENTARIO -->
+            <div class="gi-tabla-contenedor">
+                <table class="gi-tabla">
+                    <thead>
+                        <tr>
+                            <th>#ID</th>
+                            <th>Producto</th>
+                            <th>Categoría</th>
+                            <th>Precio</th>
+                            <th>Stock actual</th>
+                            <th>Estado</th>
+                            <th>Última actualización</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="gi-tabla-body">
+                        <!-- JS inserta filas aquí -->
+                    </tbody>
+                </table>
+                <p id="gi-sin-resultados" class="gi-sin-resultados">
+                    No se encontraron productos con esos filtros.
+                </p>
+            </div>
+
+            <!-- HISTORIAL DE MOVIMIENTOS -->
+            <section class="gi-historial">
+                <div class="gi-historial-header">
+                    <h2>Historial de movimientos recientes</h2>
+                    <span class="gi-historial-badge" id="gi-total-movs">0 registros</span>
+                </div>
+                <ul class="gi-historial-lista" id="gi-historial-lista">
+                    <!-- JS inserta aquí -->
+                </ul>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- ============================================================
+         MODAL: EDITAR STOCK
+         ============================================================ -->
+    <div class="modal-overlay hidden" id="modal-stock">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h2 id="modal-stock-titulo">Actualizar Stock</h2>
+                <button class="modal-cerrar" id="btn-cerrar-stock">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="gi-prod-preview" id="gi-prod-preview">
+                    <!-- Info del producto seleccionado -->
+                </div>
+                <div class="modal-grupo modal-separator">
+                    <label>Tipo de movimiento *</label>
+                    <select id="ms-tipo">
+                        <option value="entrada">Entrada (agregar stock)</option>
+                        <option value="salida">Salida (reducir stock)</option>
+                        <option value="ajuste">Ajuste (establecer cantidad exacta)</option>
+                    </select>
+                </div>
+                <div class="modal-grupo">
+                    <label>Cantidad *</label>
+                    <input type="number" id="ms-cantidad" min="1" placeholder="0">
+                    <span class="error-msg" id="err-ms-cantidad"></span>
+                </div>
+                <div class="modal-grupo">
+                    <label>Observaciones</label>
+                    <input type="text" id="ms-obs" placeholder="Motivo del ajuste...">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancelar-modal" id="btn-cancelar-stock">Cancelar</button>
+                <button class="btn-guardar-modal" id="btn-guardar-stock">Aplicar cambio</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         MODAL: NUEVO PRODUCTO
+         ============================================================ -->
+    <div class="modal-overlay hidden" id="modal-producto">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h2>Nuevo Producto</h2>
+                <button class="modal-cerrar" id="btn-cerrar-prod">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-fila">
+                    <div class="modal-grupo">
+                        <label>Nombre del producto *</label>
+                        <input type="text" id="np-nombre" placeholder="Ej: Samsung Galaxy S25">
+                        <span class="error-msg" id="err-np-nombre"></span>
+                    </div>
+                    <div class="modal-grupo">
+                        <label>Categoría *</label>
+                        <select id="np-cat">
+                            <option value="">Seleccionar...</option>
+                            <option value="smartphones">Smartphones</option>
+                            <option value="laptops">Laptops</option>
+                            <option value="audio">Audio</option>
+                            <option value="accesorios">Accesorios</option>
+                            <option value="tablets">Tablets</option>
+                            <option value="robotica">Robótica</option>
+                        </select>
+                        <span class="error-msg" id="err-np-cat"></span>
+                    </div>
+                </div>
+                <div class="modal-fila">
+                    <div class="modal-grupo">
+                        <label>Precio (USD) *</label>
+                        <input type="number" id="np-precio" min="0" step="0.01" placeholder="0.00">
+                        <span class="error-msg" id="err-np-precio"></span>
+                    </div>
+                    <div class="modal-grupo">
+                        <label>Stock inicial *</label>
+                        <input type="number" id="np-stock" min="0" placeholder="0">
+                        <span class="error-msg" id="err-np-stock"></span>
+                    </div>
+                </div>
+                <div class="modal-grupo">
+                    <label>Descripción</label>
+                    <input type="text" id="np-desc" placeholder="Descripción breve del producto">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancelar-modal" id="btn-cancelar-prod">Cancelar</button>
+                <button class="btn-guardar-modal" id="btn-guardar-prod">Crear Producto</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         FOOTER
+         ============================================================ -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-column">
+                <h3>Sobre Nosotros</h3>
+                <ul>
+                    <li><a href="#">Quiénes somos</a></li>
+                    <li><a href="#">Nuestra misión</a></li>
+                    <li><a href="#">Equipo</a></li>
+                    <li><a href="#">Trabaja con nosotros</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Enlaces Rápidos</h3>
+                <ul>
+                    <li><a href="catalogo.html">Catálogo</a></li>
+                    <li><a href="foro.html">Foro</a></li>
+                    <li><a href="#">Blog tecnológico</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Soporte</h3>
+                <ul>
+                    <li><a href="#">Centro de ayuda</a></li>
+                    <li><a href="#">Política de devoluciones</a></li>
+                    <li><a href="#">Términos y condiciones</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Redes Sociales</h3>
+                <ul>
+                    <li><a href="#">Facebook</a></li>
+                    <li><a href="#">Twitter</a></li>
+                    <li><a href="#">Instagram</a></li>
+                    <li><a href="#">YouTube</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 TT&DT. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- ============================================================
+         SCRIPT
+         ============================================================ -->
+    <script src="./gestion-inventario.js"></script>
+
+</body>
+</html>
+
+</body>
+</html>

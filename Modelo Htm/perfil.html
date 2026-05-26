@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Perfil - TT&DT</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+
+    <!-- ============================================================
+         HEADER
+         ============================================================ -->
+    <header>
+        <div class="header-container">
+            <a href="index.html" class="logo">TT&DT</a>
+            <nav>
+                <a href="index.html">Inicio</a>
+                <a href="catalogo.html">Catálogo</a>
+                <a href="foro.html">Foro</a>
+            </nav>
+            <div class="header-actions">
+                <div class="cart-icon">
+                    <a href="carrito.html">
+                        <span class="cart-badge">2</span>
+                    </a>
+                </div>
+                <div class="usuario-menu">
+                    <div class="autor-avatar">CM</div>
+                    <span>Carlos Méndez</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ============================================================
+         MAIN
+         ============================================================ -->
+    <main>
+
+        <div class="perfil-layout">
+
+            <!-- SIDEBAR DE PERFIL -->
+            <aside class="perfil-sidebar">
+
+                <div class="perfil-card">
+                    <div class="perfil-avatar-grande">CM</div>
+                    <h2 class="perfil-nombre">Carlos Méndez</h2>
+                    <p class="perfil-rol">Miembro</p>
+                    <p class="perfil-miembro-desde">Miembro desde enero 2024</p>
+
+                    <div class="perfil-stats">
+                        <div class="stat">
+                            <span class="stat-numero">5</span>
+                            <span class="stat-label">Compras</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-numero">12</span>
+                            <span class="stat-label">Posts</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-numero">34</span>
+                            <span class="stat-label">Votos</span>
+                        </div>
+                    </div>
+
+                    <button class="btn-editar-foto">Cambiar foto</button>
+                </div>
+
+                <!-- Navegación del perfil -->
+                <nav class="perfil-nav">
+                    <button class="perfil-nav-item active" onclick="switchTab('mis-pedidos')">Mis Pedidos</button>
+                    <button class="perfil-nav-item" onclick="switchTab('mis-datos')">Mis Datos</button>
+                    <button class="perfil-nav-item" onclick="switchTab('mis-direcciones')">Mis Direcciones</button>
+                    <button class="perfil-nav-item" onclick="switchTab('mis-favoritos')">Favoritos</button>
+                    <button class="perfil-nav-item" onclick="switchTab('mis-posts')">Mis Posts en el Foro</button>
+                    <button class="perfil-nav-item" onclick="switchTab('seguridad')">Seguridad</button>
+                    <button class="perfil-nav-item btn-cerrar-sesion">Cerrar Sesión</button>
+                </nav>
+
+            </aside>
+
+            <!-- CONTENIDO PRINCIPAL -->
+            <div class="perfil-contenido">
+
+                <!-- TAB: MIS PEDIDOS -->
+                <div id="tab-mis-pedidos" class="perfil-tab active">
+                    <h2>Mis Pedidos</h2>
+
+                    <!-- Pedido 1 -->
+                    <div class="pedido-card">
+                        <div class="pedido-header">
+                            <div>
+                                <span class="pedido-numero">Pedido #TS-2024-001</span>
+                                <span class="pedido-fecha">15 enero 2024</span>
+                            </div>
+                            <span class="pedido-estado estado-entregado">✓ Entregado</span>
+                        </div>
+                        <div class="pedido-items">
+                            <div class="pedido-item">
+                                <div class="item-imagen-mini"></div>
+                                <div class="item-info-mini">
+                                    <p><strong>Samsung Galaxy S24 Ultra</strong></p>
+                                    <p>Color: Negro | 256 GB | x1</p>
+                                </div>
+                                <p class="item-precio-mini">$1,299.99</p>
+                            </div>
+                        </div>
+                        <div class="pedido-footer">
+                            <span class="pedido-total">Total: <strong>$1,299.99</strong></span>
+                            <div class="pedido-acciones">
+                                <button class="btn-accion-pedido">Ver detalle</button>
+                                <button class="btn-accion-pedido">Dejar reseña</button>
+                                <button class="btn-accion-pedido">Volver a comprar</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pedido 2 -->
+                    <div class="pedido-card">
+                        <div class="pedido-header">
+                            <div>
+                                <span class="pedido-numero">Pedido #TS-2024-002</span>
+                                <span class="pedido-fecha">3 febrero 2024</span>
+                            </div>
+                            <span class="pedido-estado estado-en-camino">En camino</span>
+                        </div>
+                        <div class="pedido-items">
+                            <div class="pedido-item">
+                                <div class="item-imagen-mini"></div>
+                                <div class="item-info-mini">
+                                    <p><strong>AirPods Pro 2nd Gen</strong></p>
+                                    <p>Color: Blanco | x2</p>
+                                </div>
+                                <p class="item-precio-mini">$499.98</p>
+                            </div>
+                            <div class="pedido-item">
+                                <div class="item-imagen-mini"></div>
+                                <div class="item-info-mini">
+                                    <p><strong>Logitech MX Master 3S</strong></p>
+                                    <p>Color: Grafito | x1</p>
+                                </div>
+                                <p class="item-precio-mini">$99.99</p>
+                            </div>
+                        </div>
+                        <div class="pedido-footer">
+                            <span class="pedido-total">Total: <strong>$599.97</strong></span>
+                            <div class="pedido-acciones">
+                                <button class="btn-accion-pedido">Ver detalle</button>
+                                <button class="btn-accion-pedido">Rastrear envío</button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- TAB: MIS DATOS -->
+                <div id="tab-mis-datos" class="perfil-tab">
+                    <h2>Mis Datos</h2>
+
+                    <div class="form-seccion">
+                        <h3>Información personal</h3>
+                        <div class="form-grupo-horizontal">
+                            <div class="form-group">
+                                <label for="p-nombre">Nombre</label>
+                                <input type="text" id="p-nombre" value="Carlos">
+                            </div>
+                            <div class="form-group">
+                                <label for="p-apellido">Apellido</label>
+                                <input type="text" id="p-apellido" value="Méndez">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="p-email">Correo electrónico</label>
+                            <input type="email" id="p-email" value="carlos@correo.com">
+                        </div>
+                        <div class="form-group">
+                            <label for="p-telefono">Teléfono</label>
+                            <input type="tel" id="p-telefono" placeholder="+57 300 000 0000">
+                        </div>
+                        <div class="form-group">
+                            <label for="p-bio">Bio (opcional)</label>
+                            <textarea id="p-bio" rows="3" placeholder="Cuéntanos algo sobre ti..."></textarea>
+                        </div>
+                        <button class="btn-guardar-datos">Guardar cambios</button>
+                    </div>
+
+                </div>
+
+                <!-- TAB: MIS DIRECCIONES -->
+                <div id="tab-mis-direcciones" class="perfil-tab">
+                    <h2>Mis Direcciones</h2>
+
+                    <div class="direcciones-grid">
+
+                        <div class="direccion-card direccion-principal">
+                            <div class="direccion-header">
+                                <span class="badge-principal">Principal</span>
+                                <div class="direccion-acciones">
+                                    <button class="btn-accion-dir">Editar</button>
+                                    <button class="btn-accion-dir">Eliminar</button>
+                                </div>
+                            </div>
+                            <p><strong>Carlos Méndez</strong></p>
+                            <p>Calle 123 # 45-67, Apto 201</p>
+                            <p>Bogotá, Cundinamarca</p>
+                            <p>Colombia, 110111</p>
+                            <p>+57 300 000 0000</p>
+                        </div>
+
+                        <div class="direccion-card direccion-agregar">
+                            <div class="direccion-agregar-contenido">
+                                <span>+</span>
+                                <p>Agregar nueva dirección</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- TAB: FAVORITOS -->
+                <div id="tab-mis-favoritos" class="perfil-tab">
+                    <h2>Mis Favoritos</h2>
+
+                    <div class="favoritos-grid">
+
+                        <div class="producto-card">
+                            <div class="producto-imagen"></div>
+                            <div class="producto-info">
+                                <span class="producto-categoria">Laptops</span>
+                                <h3 class="producto-nombre">MacBook Pro 14" M3</h3>
+                                <p class="producto-precio">$1,999.00</p>
+                                <div class="producto-acciones">
+                                    <a href="producto-detalle.html"><button class="btn-ver">Ver detalle</button></a>
+                                    <button class="btn-carrito">Agregar</button>
+                                    <button class="btn-quitar-fav">♡ Quitar</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="producto-card">
+                            <div class="producto-imagen"></div>
+                            <div class="producto-info">
+                                <span class="producto-categoria">Accesorios</span>
+                                <h3 class="producto-nombre">Logitech MX Master 3S</h3>
+                                <p class="producto-precio">$99.99</p>
+                                <div class="producto-acciones">
+                                    <a href="producto-detalle.html"><button class="btn-ver">Ver detalle</button></a>
+                                    <button class="btn-carrito">Agregar</button>
+                                    <button class="btn-quitar-fav">♡ Quitar</button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- TAB: MIS POSTS -->
+                <div id="tab-mis-posts" class="perfil-tab">
+                    <h2>Mis Posts en el Foro</h2>
+
+                    <div class="mis-posts-lista">
+
+                        <div class="tema-card">
+                            <div class="tema-icono"></div>
+                            <div class="tema-body">
+                                <div class="tema-header">
+                                    <span class="tema-categoria robotica">Robótica</span>
+                                    <span class="tema-badge badge-nuevo">Nuevo</span>
+                                </div>
+                                <h3 class="tema-titulo">
+                                    <a href="foro-hilo.html">¿Cómo empezar con Arduino para proyectos de robótica educativa?</a>
+                                </h3>
+                                <div class="tema-meta">
+                                    <span>Publicado hace 2 horas</span>
+                                    <span>•</span>
+                                    <span>8 respuestas</span>
+                                    <span>•</span>
+                                    <span>12 votos</span>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- TAB: SEGURIDAD -->
+                <div id="tab-seguridad" class="perfil-tab">
+                    <h2>Seguridad</h2>
+
+                    <div class="form-seccion">
+                        <h3>Cambiar contraseña</h3>
+                        <div class="form-group">
+                            <label for="p-pass-actual">Contraseña actual</label>
+                            <input type="password" id="p-pass-actual" placeholder="Tu contraseña actual">
+                        </div>
+                        <div class="form-group">
+                            <label for="p-pass-nueva">Nueva contraseña</label>
+                            <input type="password" id="p-pass-nueva" placeholder="Mínimo 8 caracteres">
+                        </div>
+                        <div class="form-group">
+                            <label for="p-pass-confirmar">Confirmar nueva contraseña</label>
+                            <input type="password" id="p-pass-confirmar" placeholder="Repite la nueva contraseña">
+                        </div>
+                        <button class="btn-guardar-datos">Cambiar contraseña</button>
+                    </div>
+
+                    <div class="form-seccion">
+                        <h3>Zona de peligro</h3>
+                        <p>Estas acciones son permanentes y no se pueden deshacer.</p>
+                        <button class="btn-peligro">Eliminar mi cuenta</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </main>
+
+    <!-- ============================================================
+         FOOTER
+         ============================================================ -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-column">
+                <h3>Sobre Nosotros</h3>
+                <ul>
+                    <li><a href="#">Quiénes somos</a></li>
+                    <li><a href="#">Nuestra misión</a></li>
+                    <li><a href="#">Equipo</a></li>
+                    <li><a href="#">Trabaja con nosotros</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Enlaces Rápidos</h3>
+                <ul>
+                    <li><a href="catalogo.html">Catálogo</a></li>
+                    <li><a href="foro.html">Foro</a></li>
+                    <li><a href="vendedor.html">Vende con nosotros</a></li>
+                    <li><a href="#">Blog tecnológico</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Soporte</h3>
+                <ul>
+                    <li><a href="#">Centro de ayuda</a></li>
+                    <li><a href="#">Política de devoluciones</a></li>
+                    <li><a href="#">Envíos y entregas</a></li>
+                    <li><a href="#">Términos y condiciones</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Redes Sociales</h3>
+                <ul>
+                    <li><a href="#">Facebook</a></li>
+                    <li><a href="#">Twitter</a></li>
+                    <li><a href="#">Instagram</a></li>
+                    <li><a href="#">YouTube</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 TT&DT. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <script src="./perfil.js"></script>
+
+</body>
+</html>
+
+</body>
+</html>

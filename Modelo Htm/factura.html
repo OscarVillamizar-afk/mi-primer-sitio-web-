@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Factura - TT&DT</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+
+    <!-- ============================================================
+         HEADER
+         ============================================================ -->
+    <header>
+        <div class="header-container">
+            <a href="index.html" class="logo">TT&DT</a>
+            <nav>
+                <a href="index.html">Inicio</a>
+                <a href="catalogo.html">Catálogo</a>
+                <a href="foro.html">Foro</a>
+            </nav>
+            <div class="header-actions">
+                <span class="dueno-saludo">Hola, <strong>Carlos Méndez</strong></span>
+                <div class="cart-icon">
+                    <a href="carrito.html">
+                        <span class="cart-badge">0</span>
+                    </a>
+                </div>
+                <a href="index.html"><button class="btn-login">Cerrar Sesión</button></a>
+            </div>
+        </div>
+    </header>
+
+    <!-- ============================================================
+         BREADCRUMB
+         ============================================================ -->
+    <nav class="breadcrumb">
+        <a href="index.html">Inicio</a>
+        <span>›</span>
+        <a href="mis-pedidos.html">Mis Pedidos</a>
+        <span>›</span>
+        <span id="breadcrumb-id">Factura</span>
+    </nav>
+
+    <!-- ============================================================
+         MAIN
+         ============================================================ -->
+    <main>
+        <div class="checkout-container">
+
+            <!-- ACCIONES SUPERIORES -->
+            <div class="factura-acciones-superiores">
+                <a href="mis-pedidos.html">
+                    <button class="btn-cancelar">← Volver a Mis Pedidos</button>
+                </a>
+                <div>
+                    <button class="btn-descargar" id="btn-imprimir">Imprimir</button>
+                    <button class="btn-descargar" id="btn-descargar">Descargar PDF</button>
+                </div>
+            </div>
+
+            <!-- FACTURA -->
+            <div id="factura-contenido" class="form-seccion">
+
+                <!-- ENCABEZADO DE LA FACTURA -->
+                <div class="factura-encabezado">
+
+                    <div class="factura-logo">
+                        <h1>TT&DT</h1>
+                        <p>Tecnología y Divulgación Tecnológica</p>
+                        <p>Bogotá, Colombia</p>
+                        <p>soporte@ttdt.com</p>
+                    </div>
+
+                    <div class="factura-info">
+                        <p class="factura-titulo">FACTURA</p>
+                        <p class="factura-id" id="fac-id">#FAC-1024</p>
+                        <p class="factura-fecha">Fecha de emisión: <span id="fac-fecha-emision"></span></p>
+                        <p class="factura-pedido">Pedido: <span id="fac-pedido-id"></span></p>
+                    </div>
+
+                </div>
+
+                <!-- DATOS DEL COMPRADOR Y VENDEDOR -->
+                <div class="factura-datos">
+
+                    <div class="factura-datos-seccion">
+                        <p>Facturado a</p>
+                        <p id="fac-comprador-nombre">Carlos Méndez</p>
+                        <p id="fac-comprador-correo">carlos.mendez@email.com</p>
+                        <p id="fac-comprador-dir">Calle 80 #45-12, Bogotá</p>
+                        <p id="fac-comprador-postal">CP: 110111</p>
+                    </div>
+
+                    <div class="factura-datos-seccion">
+                        <p>Vendido por</p>
+                        <p id="fac-vendedor-nombre">TechStore Pro</p>
+                        <p>Colaborador verificado TT&DT</p>
+                        <p id="fac-metodo-pago">Método de pago: Tarjeta de crédito</p>
+                        <span class="pedido-estado estado-entregado" id="fac-estado">Completada</span>
+                    </div>
+
+                </div>
+
+                <!-- TABLA DE PRODUCTOS -->
+                <table class="factura-tabla">
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th>Variante</th>
+                            <th>Cant.</th>
+                            <th>Precio unit.</th>
+                            <th>Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody id="fac-tabla-items">
+                        <!-- JS inserta aquí -->
+                    </tbody>
+                </table>
+
+                <!-- TOTALES -->
+                <div class="factura-totales">
+                    <div class="factura-totales-resumen">
+
+                        <div class="resumen-linea">
+                            <span>Subtotal</span>
+                            <span id="fac-subtotal">$0.00</span>
+                        </div>
+                        <div class="resumen-linea">
+                            <span>Envío</span>
+                            <span class="envio-gratis">Gratis</span>
+                        </div>
+                        <div class="resumen-linea">
+                            <span>Impuestos (19% IVA)</span>
+                            <span id="fac-impuestos">$0.00</span>
+                        </div>
+                        <div class="resumen-linea">
+                            <span>Descuento</span>
+                            <span class="descuento" id="fac-descuento">-$0.00</span>
+                        </div>
+
+                        <hr>
+
+                        <div class="resumen-linea resumen-total">
+                            <strong>Total pagado</strong>
+                            <strong id="fac-total">$0.00</strong>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- PIE DE FACTURA -->
+                <div class="factura-pie">
+                    <div class="factura-pie-izq">
+                        <p>Gracias por tu compra en TT&DT.</p>
+                        <p>Devoluciones gratis dentro de los 30 días posteriores a la compra.</p>
+                        <p>¿Tienes preguntas? Escríbenos a soporte@ttdt.com</p>
+                    </div>
+                    <div class="factura-pie-der">
+                        <p>Documento generado el <span id="fac-generado"></span></p>
+                        <p>© 2024 TT&DT. Todos los derechos reservados.</p>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- OTRAS FACTURAS DEL USUARIO -->
+            <div class="form-seccion factura-otros">
+                <h3>Otros pedidos recientes</h3>
+                <div id="otros-pedidos">
+                    <!-- JS inserta aquí -->
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- ============================================================
+         FOOTER
+         ============================================================ -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-column">
+                <h3>Sobre Nosotros</h3>
+                <ul>
+                    <li><a href="#">Quiénes somos</a></li>
+                    <li><a href="#">Nuestra misión</a></li>
+                    <li><a href="#">Equipo</a></li>
+                    <li><a href="#">Trabaja con nosotros</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Enlaces Rápidos</h3>
+                <ul>
+                    <li><a href="catalogo.html">Catálogo</a></li>
+                    <li><a href="foro.html">Foro</a></li>
+                    <li><a href="#">Blog tecnológico</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Soporte</h3>
+                <ul>
+                    <li><a href="#">Centro de ayuda</a></li>
+                    <li><a href="#">Política de devoluciones</a></li>
+                    <li><a href="#">Términos y condiciones</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Redes Sociales</h3>
+                <ul>
+                    <li><a href="#">Facebook</a></li>
+                    <li><a href="#">Twitter</a></li>
+                    <li><a href="#">Instagram</a></li>
+                    <li><a href="#">YouTube</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 TT&DT. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- ============================================================
+         SCRIPT
+         ============================================================ -->
+    <script src="./factura.js"></script>
+
+</body>
+</html>
+
+</body>
+</html>

@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo - TT&DT</title>
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+ 
+    <!-- ============================================================
+         HEADER
+         ============================================================ -->
+    <header>
+        <div class="header-container">
+            <a href="index.html" class="logo">TT&DT</a>
+            <nav>
+                <a href="index.html">Inicio</a>
+                <a href="catalogo.html" class="active">Catálogo</a>
+                <a href="foro.html">Foro</a>
+            </nav>
+            <div class="header-actions">
+                <a href="login.html">
+                    <button class="btn-login">Iniciar Sesión</button>
+                </a>
+                <div class="cart-icon">
+                    <a href="carrito.html">
+                        <span class="cart-badge">0</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+ 
+    <!-- ============================================================
+         MAIN
+         ============================================================ -->
+    <main>
+ 
+        <h1>Catálogo de Productos</h1>
+        <p>Encuentra los mejores productos tecnológicos</p>
+ 
+        <!-- FILTROS -->
+        <section class="filtros">
+            <div class="filtros-container">
+ 
+                <div class="filtro-grupo">
+                    <label for="busqueda">Buscar</label>
+                    <input type="text" id="busqueda" placeholder="Nombre del producto...">
+                </div>
+ 
+                <div class="filtro-grupo">
+                    <label for="categoria">Categoría</label>
+                    <select id="categoria">
+                        <option value="">Todas las categorías</option>
+                        <option value="smartphones">Smartphones</option>
+                        <option value="laptops">Laptops</option>
+                        <option value="audio">Audio</option>
+                        <option value="accesorios">Accesorios</option>
+                        <option value="tablets">Tablets</option>
+                        <option value="robotica">Robótica</option>
+                    </select>
+                </div>
+ 
+                <div class="filtro-grupo">
+                    <label for="precio-min">Precio mínimo</label>
+                    <input type="number" id="precio-min" placeholder="$ 0">
+                </div>
+ 
+                <div class="filtro-grupo">
+                    <label for="precio-max">Precio máximo</label>
+                    <input type="number" id="precio-max" placeholder="$ 9999">
+                </div>
+ 
+                <div class="filtro-grupo">
+                    <label for="ordenar">Ordenar por</label>
+                    <select id="ordenar">
+                        <option value="relevancia">Relevancia</option>
+                        <option value="precio-asc">Menor precio</option>
+                        <option value="precio-desc">Mayor precio</option>
+                        <option value="nombre">Nombre A-Z</option>
+                        <option value="nuevo">Más nuevos</option>
+                    </select>
+                </div>
+ 
+                <button class="btn-filtrar">Filtrar</button>
+ 
+            </div>
+        </section>
+ 
+        <!-- GRID DE PRODUCTOS -->
+        <!-- id="productos-grid" para que JS pueda acceder a todos los productos -->
+        <section class="productos-grid" id="productos-grid">
+ 
+            <!-- data-categoria, data-precio y data-nombre: JS los usa para filtrar y ordenar -->
+ 
+            <!-- Producto 1 -->
+            <div class="producto-card" data-categoria="smartphones" data-precio="1299.99" data-nombre="Samsung Galaxy S24 Ultra">
+                <div class="producto-imagen">
+                    <span class="producto-badge">Nuevo</span>
+                </div>
+                <div class="producto-info">
+                    <span class="producto-categoria">Smartphones</span>
+                    <h3 class="producto-nombre">Samsung Galaxy S24 Ultra</h3>
+                    <div class="producto-estrellas">5 estrellas <span>(128 reseñas)</span></div>
+                    <p class="producto-precio">$1,299.99</p>
+                    <div class="producto-acciones">
+                        <a href="producto-detalle.html">
+                            <button class="btn-ver">Ver detalle</button>
+                        </a>
+                        <button class="btn-carrito">Agregar</button>
+                    </div>
+                </div>
+            </div>
+ 
+            <!-- Producto 2 -->
+            <div class="producto-card" data-categoria="audio" data-precio="249.99" data-nombre="AirPods Pro 2nd Gen">
+                <div class="producto-imagen">
+                    <span class="producto-badge badge-oferta">Oferta</span>
+                </div>
+                <div class="producto-info">
+                    <span class="producto-categoria">Audio</span>
+                    <h3 class="producto-nombre">AirPods Pro 2nd Gen</h3>
+                    <div class="producto-estrellas">4 de 5 <span>(312 reseñas)</span></div>
+                    <p class="producto-precio-old">$279.99</p>
+                    <p class="producto-precio">$249.99</p>
+                    <div class="producto-acciones">
+                        <a href="producto-detalle.html">
+                            <button class="btn-ver">Ver detalle</button>
+                        </a>
+                        <button class="btn-carrito">Agregar</button>
+                    </div>
+                </div>
+            </div>
+ 
+            <!-- Producto 3 -->
+            <div class="producto-card" data-categoria="accesorios" data-precio="99.99" data-nombre="Logitech MX Master 3S">
+                <div class="producto-imagen"></div>
+                <div class="producto-info">
+                    <span class="producto-categoria">Accesorios</span>
+                    <h3 class="producto-nombre">Logitech MX Master 3S</h3>
+                    <div class="producto-estrellas">5 estrellas <span>(205 reseñas)</span></div>
+                    <p class="producto-precio">$99.99</p>
+                    <div class="producto-acciones">
+                        <a href="producto-detalle.html">
+                            <button class="btn-ver">Ver detalle</button>
+                        </a>
+                        <button class="btn-carrito">Agregar</button>
+                    </div>
+                </div>
+            </div>
+ 
+            <!-- Producto 4 -->
+            <div class="producto-card producto-agotado" data-categoria="tablets" data-precio="1099.00" data-nombre="iPad Pro 12.9 M2">
+                <div class="producto-imagen">
+                    <span class="producto-badge badge-agotado">Agotado</span>
+                </div>
+                <div class="producto-info">
+                    <span class="producto-categoria">Tablets</span>
+                    <h3 class="producto-nombre">iPad Pro 12.9" M2</h3>
+                    <div class="producto-estrellas">5 estrellas <span>(76 reseñas)</span></div>
+                    <p class="producto-precio">$1,099.00</p>
+                    <div class="producto-acciones">
+                        <a href="producto-detalle.html">
+                            <button class="btn-ver">Ver detalle</button>
+                        </a>
+                        <button class="btn-carrito" disabled>Agotado</button>
+                    </div>
+                </div>
+            </div>
+ 
+            <!-- Producto 5 -->
+            <div class="producto-card" data-categoria="robotica" data-precio="59.99" data-nombre="Kit Arduino Starter Pro">
+                <div class="producto-imagen">
+                    <span class="producto-badge">Nuevo</span>
+                </div>
+                <div class="producto-info">
+                    <span class="producto-categoria">Robótica</span>
+                    <h3 class="producto-nombre">Kit Arduino Starter Pro</h3>
+                    <div class="producto-estrellas">4 de 5 <span>(48 reseñas)</span></div>
+                    <p class="producto-precio">$59.99</p>
+                    <div class="producto-acciones">
+                        <a href="producto-detalle.html">
+                            <button class="btn-ver">Ver detalle</button>
+                        </a>
+                        <button class="btn-carrito">Agregar</button>
+                    </div>
+                </div>
+            </div>
+ 
+            <!-- Mensaje cuando no hay resultados -->
+            <p id="sin-resultados" style="display:none; grid-column: 1/-1; text-align:center; padding: 2rem; color: #666;">
+                No se encontraron productos con esos filtros.
+            </p>
+ 
+        </section>
+ 
+        <!-- PAGINACIÓN -->
+        <nav class="paginacion">
+            <button class="btn-pag btn-pag-prev" disabled>← Anterior</button>
+            <button class="btn-pag btn-pag-num active">1</button>
+            <button class="btn-pag btn-pag-num">2</button>
+            <button class="btn-pag btn-pag-num">3</button>
+            <button class="btn-pag btn-pag-next">Siguiente →</button>
+        </nav>
+ 
+    </main>
+ 
+    <!-- ============================================================
+         FOOTER
+         ============================================================ -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-column">
+                <h3>Sobre Nosotros</h3>
+                <ul>
+                    <li><a href="#">Quiénes somos</a></li>
+                    <li><a href="#">Nuestra misión</a></li>
+                    <li><a href="#">Equipo</a></li>
+                    <li><a href="#">Trabaja con nosotros</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Enlaces Rápidos</h3>
+                <ul>
+                    <li><a href="catalogo.html">Catálogo</a></li>
+                    <li><a href="foro.html">Foro</a></li>
+                    <li><a href="vendedor.html">Vende con nosotros</a></li>
+                    <li><a href="#">Blog tecnológico</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Soporte</h3>
+                <ul>
+                    <li><a href="#">Centro de ayuda</a></li>
+                    <li><a href="#">Política de devoluciones</a></li>
+                    <li><a href="#">Envíos y entregas</a></li>
+                    <li><a href="#">Términos y condiciones</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Redes Sociales</h3>
+                <ul>
+                    <li><a href="#">Facebook</a></li>
+                    <li><a href="#">Twitter</a></li>
+                    <li><a href="#">Instagram</a></li>
+                    <li><a href="#">YouTube</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 TT&DT. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+ 
+    <!-- ============================================================
+         SCRIPT - Lógica de filtros del catálogo
+         ============================================================ -->
+    <script src="./catalogo.js"></script>
+ 
+</body>
+</html>
