@@ -64,6 +64,7 @@
                         <input
                             type="text"
                             id="titulo"
+                            name="titulo"
                             placeholder="Ej: ¿Cómo configurar un sensor ultrasónico con Arduino UNO?"
                             maxlength="150"
                         >
@@ -119,6 +120,7 @@
                     <div class="form-group">
                         <textarea
                             id="descripcion"
+                            name="descripcion"
                             placeholder="Describe tu pregunta con detalle. Incluye lo que ya intentaste, el contexto del problema y qué resultado esperas..."
                             rows="10"
                         ></textarea>
@@ -137,30 +139,32 @@
                     <div class="upload-area">
                         <div class="upload-icono">Adjuntar</div>
                         <p>Arrastra archivos aquí o <label for="archivo-adjunto" class="link-upload">haz clic para seleccionar</label></p>
-                        <input type="file" id="archivo-adjunto" accept="image/*" multiple style="display:none;">
+                        <input type="file" id="archivo-adjunto" name="archivo-adjunto" accept="image/*" multiple style="display:none;">
                         <p class="upload-restricciones">PNG, JPG o GIF. Máximo 5 MB por archivo. Hasta 3 archivos.</p>
                     </div>
                     <div id="archivos-preview" class="archivos-preview"></div>
                 </div>
  
                 <!-- TÉRMINOS Y ENVÍO -->
-                <div class="form-seccion form-seccion-final">
-                    <div class="form-group">
-                        <label class="checkbox-label">
-                            <input type="checkbox" id="terminos-foro" required>
-                            <span>He leído y acepto las <a href="#">normas del foro</a> y el <a href="#">código de conducta</a></span>
-                        </label>
-                        <span class="error-msg" id="error-terminos-foro"></span>
+                <form id="form-foro" action="/FotoServlet" method="post" enctype="multipart/form-data">
+                    <div class="form-seccion form-seccion-final">
+                        <div class="form-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="terminos-foro" required>
+                                <span>He leído y acepto las <a href="#">normas del foro</a> y el <a href="#">código de conducta</a></span>
+                            </label>
+                            <span class="error-msg" id="error-terminos-foro"></span>
+                        </div>
+
+                        <div class="form-botones">
+                            <a href="foro.html">
+                                <button type="button" class="btn-cancelar">Cancelar</button>
+                            </a>
+                            <button type="button" class="btn-preview">Vista previa</button>
+                            <button type="submit" class="btn-publicar">Publicar pregunta</button>
+                        </div>
                     </div>
- 
-                    <div class="form-botones">
-                        <a href="foro.html">
-                            <button type="button" class="btn-cancelar">Cancelar</button>
-                        </a>
-                        <button type="button" class="btn-preview">Vista previa</button>
-                        <button type="submit" class="btn-publicar">Publicar pregunta</button>
-                    </div>
-                </div>
+                </form>
  
             </div>
  

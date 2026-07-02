@@ -44,7 +44,6 @@ document.querySelector('.btn-publicar').addEventListener('click', function() {
 
     let hayErrores = false;
 
-    // Validar título (obligatorio, mínimo 10 caracteres)
     const titulo = document.getElementById('titulo').value.trim();
     const errorTitulo = document.getElementById('error-titulo');
     if (titulo.length < 10) {
@@ -54,7 +53,6 @@ document.querySelector('.btn-publicar').addEventListener('click', function() {
         errorTitulo.textContent = '';
     }
 
-    // Validar categoría (obligatoria)
     const categoria = document.getElementById('categoria').value;
     const errorCategoria = document.getElementById('error-categoria');
     if (!categoria) {
@@ -64,7 +62,6 @@ document.querySelector('.btn-publicar').addEventListener('click', function() {
         errorCategoria.textContent = '';
     }
 
-    // Validar descripción (mínimo 50 caracteres)
     const descripcion = document.getElementById('descripcion').value.trim();
     const errorDesc = document.getElementById('error-descripcion');
     if (descripcion.length < 50) {
@@ -74,7 +71,6 @@ document.querySelector('.btn-publicar').addEventListener('click', function() {
         errorDesc.textContent = '';
     }
 
-    // Validar que aceptó las normas del foro
     const terminos = document.getElementById('terminos-foro').checked;
     const errorTerminos = document.getElementById('error-terminos-foro');
     if (!terminos) {
@@ -84,10 +80,8 @@ document.querySelector('.btn-publicar').addEventListener('click', function() {
         errorTerminos.textContent = '';
     }
 
-    // Si todo está bien, simula el envío (en un proyecto real iría al servidor)
     if (!hayErrores) {
-        alert('¡Pregunta publicada con éxito! Redirigiendo al foro...');
-        window.location.href = 'foro.html';
+        document.getElementById('form-foro').submit();
     }
 });
 
