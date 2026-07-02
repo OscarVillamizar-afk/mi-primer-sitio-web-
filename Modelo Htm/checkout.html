@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - TechStore</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+
+    <!-- ============================================================
+         HEADER
+         ============================================================ -->
+    <header>
+        <div class="header-container">
+            <a href="index.html" class="logo">TechStore</a>
+            <nav>
+                <a href="index.html">Inicio</a>
+                <a href="catalogo.html">Catálogo</a>
+                <a href="foro.html">Foro</a>
+            </nav>
+            <div class="header-actions">
+                <div class="cart-icon">
+                    <a href="carrito.html">
+                        <span class="cart-badge">2</span>
+                    </a>
+                </div>
+                <div class="usuario-menu">
+                    <div class="autor-avatar">ML</div>
+                    <span>María López</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ============================================================
+         MAIN
+         ============================================================ -->
+    <main>
+        <div class="checkout-container">
+
+            <!-- PASOS -->
+            <div class="checkout-steps">
+                <div class="checkout-step active" id="step-indicator-1">
+                    <div class="step-numero">1</div>
+                    <span class="step-label">Envío</span>
+                </div>
+                <div class="checkout-step" id="step-indicator-2">
+                    <div class="step-numero">2</div>
+                    <span class="step-label">Pago</span>
+                </div>
+                <div class="checkout-step" id="step-indicator-3">
+                    <div class="step-numero">3</div>
+                    <span class="step-label">Confirmar</span>
+                </div>
+            </div>
+
+            <!-- CONTENIDO -->
+            <div class="checkout-content">
+
+                <!-- FORMULARIOS -->
+                <div class="checkout-form">
+
+                    <!-- ── PASO 1: ENVÍO ─────────────────────────── -->
+                    <div class="CheckoutStep active" id="step-1">
+                        <h2 style="margin-bottom:20px; font-size:1.2rem;">Información de envío</h2>
+
+                        <div class="form-grupo-horizontal">
+                            <div class="form-group">
+                                <label for="nombre">Nombre</label>
+                                <input type="text" id="nombre" placeholder="Tu nombre" value="María">
+                                <span class="error-msg" id="err-nombre"></span>
+                            </div>
+                            <div class="form-group">
+                                <label for="apellido">Apellido</label>
+                                <input type="text" id="apellido" placeholder="Tu apellido" value="López">
+                                <span class="error-msg" id="err-apellido"></span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email">Correo electrónico</label>
+                            <input type="email" id="email" placeholder="tu@correo.com" value="maria@email.com">
+                            <span class="error-msg" id="err-email"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="telefono">Teléfono</label>
+                            <input type="tel" id="telefono" placeholder="+57 300 000 0000">
+                            <span class="error-msg" id="err-telefono"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="direccion">Dirección</label>
+                            <input type="text" id="direccion" placeholder="Calle, número, apartamento...">
+                            <span class="error-msg" id="err-direccion"></span>
+                        </div>
+
+                        <div class="form-grupo-horizontal">
+                            <div class="form-group">
+                                <label for="ciudad">Ciudad</label>
+                                <input type="text" id="ciudad" placeholder="Ciudad">
+                                <span class="error-msg" id="err-ciudad"></span>
+                            </div>
+                            <div class="form-group">
+                                <label for="codigo-postal">Código postal</label>
+                                <input type="text" id="codigo-postal" placeholder="110111">
+                                <span class="error-msg" id="err-codigo-postal"></span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="metodo-envio">Método de envío</label>
+                            <select id="metodo-envio">
+                                <option value="gratis">Envío estándar — Gratis (5-7 días)</option>
+                                <option value="express">Envío express — $9.99 (2-3 días)</option>
+                                <option value="mismo-dia">Mismo día — $19.99 (hoy)</option>
+                            </select>
+                        </div>
+
+                        <div style="display:flex; justify-content:flex-end; margin-top:8px;">
+                            <button class="btn-checkout" onclick="irPaso(2)">
+                                Continuar al pago →
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- ── PASO 2: PAGO ──────────────────────────── -->
+                    <div class="CheckoutStep" id="step-2">
+                        <h2 style="margin-bottom:20px; font-size:1.2rem;">Método de pago</h2>
+
+                        <!-- Selección de método -->
+                        <div style="display:flex; gap:10px; margin-bottom:24px; flex-wrap:wrap;">
+                            <button class="metodo-btn activo" id="btn-tarjeta" onclick="seleccionarMetodo('tarjeta')">
+                                Tarjeta
+                            </button>
+                            <button class="metodo-btn" id="btn-pse" onclick="seleccionarMetodo('pse')">
+                                PSE
+                            </button>
+                            <button class="metodo-btn" id="btn-efectivo" onclick="seleccionarMetodo('efectivo')">
+                                Efectivo
+                            </button>
+                        </div>
+
+                        <!-- Formulario tarjeta -->
+                        <div id="form-tarjeta">
+                            <div class="form-group">
+                                <label for="numero-tarjeta">Número de tarjeta</label>
+                                <input type="text" id="numero-tarjeta" placeholder="1234 5678 9012 3456" maxlength="19">
+                                <span class="error-msg" id="err-tarjeta"></span>
+                            </div>
+                            <div class="form-group">
+                                <label for="nombre-tarjeta">Nombre en la tarjeta</label>
+                                <input type="text" id="nombre-tarjeta" placeholder="Como aparece en la tarjeta">
+                            </div>
+                            <div class="form-grupo-horizontal">
+                                <div class="form-group">
+                                    <label for="vencimiento">Vencimiento</label>
+                                    <input type="text" id="vencimiento" placeholder="MM/AA" maxlength="5">
+                                    <span class="error-msg" id="err-vencimiento"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label for="cvv">CVV</label>
+                                    <input type="text" id="cvv" placeholder="123" maxlength="4">
+                                    <span class="error-msg" id="err-cvv"></span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="guardar-tarjeta">
+                                    <span>Guardar tarjeta para futuras compras</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Formulario PSE -->
+                        <div id="form-pse" style="display:none;">
+                            <div class="form-group">
+                                <label for="banco">Banco</label>
+                                <select id="banco">
+                                    <option value="">Selecciona tu banco</option>
+                                    <option>Bancolombia</option>
+                                    <option>Davivienda</option>
+                                    <option>Banco de Bogotá</option>
+                                    <option>BBVA</option>
+                                    <option>Nequi</option>
+                                    <option>Daviplata</option>
+                                </select>
+                                <span class="error-msg" id="err-banco"></span>
+                            </div>
+                            <div class="form-group">
+                                <label for="tipo-persona">Tipo de persona</label>
+                                <select id="tipo-persona">
+                                    <option value="natural">Natural</option>
+                                    <option value="juridica">Jurídica</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="cedula">Número de documento</label>
+                                <input type="text" id="cedula" placeholder="Tu número de cédula">
+                                <span class="error-msg" id="err-cedula"></span>
+                            </div>
+                        </div>
+
+                        <!-- Efectivo -->
+                        <div id="form-efectivo" style="display:none;">
+                            <div class="alerta alerta-info">
+                                <strong>Pago en efectivo:</strong> Recibirás un código de pago.
+                                Puedes pagar en cualquier punto Efecty, Baloto o Bancolombia.
+                                Tu pedido se procesará al confirmar el pago.
+                            </div>
+                        </div>
+
+                        <div style="display:flex; justify-content:space-between; margin-top:20px; gap:10px; flex-wrap:wrap;">
+                            <button class="btn-cancelar" onclick="irPaso(1)">← Volver</button>
+                            <button class="btn-checkout" onclick="irPaso(3)">Revisar pedido →</button>
+                        </div>
+                    </div>
+
+                    <!-- ── PASO 3: CONFIRMAR ─────────────────────── -->
+                    <div class="CheckoutStep" id="step-3">
+                        <h2 style="margin-bottom:20px; font-size:1.2rem;">Revisa tu pedido</h2>
+
+                        <!-- Resumen de envío -->
+                        <div class="form-seccion" style="margin-bottom:16px;">
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                                <h3 style="margin:0; border:none; padding:0;">Envío</h3>
+                                <button class="btn-cancelar" style="padding:4px 12px; font-size:0.8rem;" onclick="irPaso(1)">Editar</button>
+                            </div>
+                            <p id="resumen-envio-texto" style="font-size:0.9rem; color:var(--text-secondary);"></p>
+                        </div>
+
+                        <!-- Resumen de pago -->
+                        <div class="form-seccion" style="margin-bottom:16px;">
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                                <h3 style="margin:0; border:none; padding:0;">Pago</h3>
+                                <button class="btn-cancelar" style="padding:4px 12px; font-size:0.8rem;" onclick="irPaso(2)">Editar</button>
+                            </div>
+                            <p id="resumen-pago-texto" style="font-size:0.9rem; color:var(--text-secondary);"></p>
+                        </div>
+
+                        <!-- Productos -->
+                        <div class="form-seccion">
+                            <h3 style="margin-bottom:16px;">Productos</h3>
+                            <div style="display:flex; flex-direction:column; gap:12px;">
+                                <div style="display:flex; gap:12px; align-items:center;">
+                                    <div class="item-imagen-mini"></div>
+                                    <div style="flex:1; font-size:0.9rem;">
+                                        <strong style="color:var(--text-primary);">Samsung Galaxy S24 Ultra</strong>
+                                        <p style="color:var(--text-muted); font-size:0.8rem;">x1 · Negro Titanio · 256 GB</p>
+                                    </div>
+                                    <span style="font-weight:700; color:var(--accent-light);">$1,299.99</span>
+                                </div>
+                                <div style="display:flex; gap:12px; align-items:center;">
+                                    <div class="item-imagen-mini"></div>
+                                    <div style="flex:1; font-size:0.9rem;">
+                                        <strong style="color:var(--text-primary);">AirPods Pro 2nd Gen</strong>
+                                        <p style="color:var(--text-muted); font-size:0.8rem;">x2 · Blanco</p>
+                                    </div>
+                                    <span style="font-weight:700; color:var(--accent-light);">$499.98</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="display:flex; justify-content:space-between; margin-top:20px; gap:10px; flex-wrap:wrap;">
+                            <button class="btn-cancelar" onclick="irPaso(2)">← Volver</button>
+                            <button class="btn-checkout" onclick="confirmarPedido()">
+                                ✓ Confirmar y pagar
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- ── PASO 4: ÉXITO ─────────────────────────── -->
+                    <div class="CheckoutStep" id="step-exito" style="text-align:center; padding:40px 24px;">
+                        <div style="font-size:4rem; margin-bottom:16px;">✅</div>
+                        <h2 style="font-size:1.6rem; margin-bottom:12px;">¡Pedido confirmado!</h2>
+                        <p style="color:var(--text-secondary); margin-bottom:8px;">
+                            Tu número de pedido es <strong id="numero-pedido" style="color:var(--accent-light);"></strong>
+                        </p>
+                        <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:32px;">
+                            Recibirás un correo de confirmación en breve con los detalles de tu compra.
+                        </p>
+                        <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
+                            <a href="perfil.html">
+                                <button class="btn-cancelar">Ver mis pedidos</button>
+                            </a>
+                            <a href="catalogo.html">
+                                <button class="btn-checkout" style="width:auto; padding:12px 28px;">
+                                    Seguir comprando
+                                </button>
+                            </a>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- RESUMEN LATERAL -->
+                <aside class="resumen-compra" id="resumen-lateral">
+                    <h3>Resumen del pedido</h3>
+
+                    <div class="resumen-item">
+                        <span class="resumen-item-nombre">Samsung Galaxy S24 Ultra x1</span>
+                        <span class="resumen-item-precio">$1,299.99</span>
+                    </div>
+                    <div class="resumen-item">
+                        <span class="resumen-item-nombre">AirPods Pro 2nd Gen x2</span>
+                        <span class="resumen-item-precio">$499.98</span>
+                    </div>
+
+                    <div class="resumen-subtotal">
+                        <span>Subtotal</span>
+                        <span>$1,799.97</span>
+                    </div>
+                    <div class="resumen-envio">
+                        <span>Envío</span>
+                        <span id="costo-envio" class="envio-gratis">Gratis</span>
+                    </div>
+
+                    <div class="resumen-total">
+                        <span>Total</span>
+                        <span id="total-final">$1,799.97</span>
+                    </div>
+
+                    <p style="font-size:0.78rem; color:var(--text-muted); margin-top:8px; text-align:center;">
+                        Impuestos incluidos
+                    </p>
+
+                    <div style="margin-top:16px; display:flex; flex-direction:column; gap:6px;">
+                        <p style="font-size:0.82rem; color:var(--text-muted);">Compra 100% segura</p>
+                        <p style="font-size:0.82rem; color:var(--text-muted);">Devoluciones gratis en 30 días</p>
+                        <p style="font-size:0.82rem; color:var(--text-muted);">Envío gratis en compras +$100</p>
+                    </div>
+                </aside>
+
+            </div>
+        </div>
+    </main>
+
+
+    <!-- ============================================================
+         FOOTER
+         ============================================================ -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-column">
+                <h3>Sobre Nosotros</h3>
+                <ul>
+                    <li><a href="#">Quiénes somos</a></li>
+                    <li><a href="#">Nuestra misión</a></li>
+                    <li><a href="#">Equipo</a></li>
+                    <li><a href="#">Trabaja con nosotros</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Enlaces Rápidos</h3>
+                <ul>
+                    <li><a href="catalogo.html">Catálogo</a></li>
+                    <li><a href="foro.html">Foro</a></li>
+                    <li><a href="#">Blog tecnológico</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Soporte</h3>
+                <ul>
+                    <li><a href="#">Centro de ayuda</a></li>
+                    <li><a href="#">Política de devoluciones</a></li>
+                    <li><a href="#">Envíos y entregas</a></li>
+                    <li><a href="#">Términos y condiciones</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Redes Sociales</h3>
+                <ul>
+                    <li><a href="#">Facebook</a></li>
+                    <li><a href="#">Twitter</a></li>
+                    <li><a href="#">Instagram</a></li>
+                    <li><a href="#">YouTube</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 TechStore. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+
+    <!-- ============================================================
+         ESTILOS MÍNIMOS PARA LOS BOTONES DE MÉTODO DE PAGO
+         (solo lo que no existe en style.css)
+         ============================================================ -->
+    <!-- ============================================================
+         SCRIPT - Lógica del checkout
+         ============================================================ -->
+    <script src="./checkout.js"></script>
+</body>
+</html>

@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Dueño - TT&DT</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+
+    <!-- ============================================================
+         HEADER
+         ============================================================ -->
+    <header>
+        <div class="header-container">
+            <a href="index.html" class="logo">TT&DT</a>
+            <nav>
+                <a href="dashboard-dueno.html" class="active">Dashboard</a>
+                <a href="gestion-usuarios.html">Usuarios</a>
+                <a href="gestion-inventario.html">Inventario</a>
+                <a href="gestion-tareas.html">Tareas</a>
+                <a href="informes.html">Informes</a>
+            </nav>
+            <div class="header-actions">
+                <span class="dueno-saludo">Bienvenido, <strong>Admin</strong></span>
+                <a href="index.html"><button class="btn-login">Cerrar Sesión</button></a>
+            </div>
+        </div>
+    </header>
+
+    <!-- ============================================================
+         MAIN
+         ============================================================ -->
+    <main>
+        <div class="dashboard-wrapper">
+
+            <!-- TÍTULO -->
+            <div class="dashboard-titulo">
+                <div>
+                    <h1>Panel de Control</h1>
+                    <p class="dashboard-fecha">Hoy: <span id="fecha-hoy"></span></p>
+                </div>
+                <div class="dashboard-acciones-rapidas">
+                    <a href="gestion-usuarios.html"><button class="btn-dash-accion">+ Usuario</button></a>
+                    <a href="gestion-tareas.html"><button class="btn-dash-accion">+ Tarea</button></a>
+                    <a href="informes.html"><button class="btn-dash-accion btn-dash-accion-primary">Ver Informes</button></a>
+                </div>
+            </div>
+
+            <!-- MÉTRICAS PRINCIPALES -->
+            <section class="dash-metricas">
+
+                <div class="dash-metrica-card">
+                    <div class="dash-metrica-icono icono-ventas">S</div>
+                    <div class="dash-metrica-info">
+                        <p class="dash-metrica-label">Ventas del mes</p>
+                        <p class="dash-metrica-valor" id="val-ventas">$0</p>
+                        <p class="dash-metrica-cambio positivo">▲ 12% vs mes anterior</p>
+                    </div>
+                </div>
+
+                <div class="dash-metrica-card">
+                    <div class="dash-metrica-icono icono-usuarios">U</div>
+                    <div class="dash-metrica-info">
+                        <p class="dash-metrica-label">Usuarios registrados</p>
+                        <p class="dash-metrica-valor" id="val-usuarios">0</p>
+                        <p class="dash-metrica-cambio positivo">▲ 8 nuevos esta semana</p>
+                    </div>
+                </div>
+
+                <div class="dash-metrica-card">
+                    <div class="dash-metrica-icono icono-productos">P</div>
+                    <div class="dash-metrica-info">
+                        <p class="dash-metrica-label">Productos en catálogo</p>
+                        <p class="dash-metrica-valor" id="val-productos">0</p>
+                        <p class="dash-metrica-cambio negativo">▼ 3 con stock bajo</p>
+                    </div>
+                </div>
+
+                <div class="dash-metrica-card">
+                    <div class="dash-metrica-icono icono-pedidos">P</div>
+                    <div class="dash-metrica-info">
+                        <p class="dash-metrica-label">Pedidos pendientes</p>
+                        <p class="dash-metrica-valor" id="val-pedidos">0</p>
+                        <p class="dash-metrica-cambio neutro">● Sin cambios hoy</p>
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- CONTENIDO CENTRAL -->
+            <div class="dash-contenido">
+
+                <!-- VENTAS RECIENTES -->
+                <section class="dash-seccion dash-ventas">
+                    <div class="dash-seccion-header">
+                        <h2>Ventas recientes</h2>
+                        <a href="informes.html" class="dash-ver-mas">Ver todas →</a>
+                    </div>
+                    <table class="dash-tabla">
+                        <thead>
+                            <tr>
+                                <th>#Venta</th>
+                                <th>Cliente</th>
+                                <th>Producto</th>
+                                <th>Total</th>
+                                <th>Estado</th>
+                                <th>Fecha</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabla-ventas"></tbody>
+                    </table>
+                </section>
+
+                <!-- PANEL DERECHO -->
+                <aside class="dash-aside">
+
+                    <div class="dash-card">
+                        <div class="dash-seccion-header">
+                            <h2>Tareas pendientes</h2>
+                            <a href="gestion-tareas.html" class="dash-ver-mas">Ver todas →</a>
+                        </div>
+                        <ul class="dash-tareas-lista" id="lista-tareas"></ul>
+                    </div>
+
+                    <div class="dash-card">
+                        <h2>Tipos de usuarios</h2>
+                        <div class="dash-usuarios-resumen" id="usuarios-resumen"></div>
+                    </div>
+
+                    <div class="dash-card">
+                        <div class="dash-seccion-header">
+                            <h2>Incidencias abiertas</h2>
+                            <span class="dash-badge-alerta" id="badge-incidencias">0</span>
+                        </div>
+                        <ul class="dash-incidencias-lista" id="lista-incidencias"></ul>
+                    </div>
+
+                </aside>
+
+            </div>
+
+            <!-- ACTIVIDAD RECIENTE -->
+            <section class="dash-seccion dash-actividad">
+                <div class="dash-seccion-header">
+                    <h2>Actividad reciente</h2>
+                </div>
+                <ul class="dash-actividad-lista" id="lista-actividad"></ul>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- ============================================================
+         FOOTER
+         ============================================================ -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-column">
+                <h3>Sobre Nosotros</h3>
+                <ul>
+                    <li><a href="#">Quiénes somos</a></li>
+                    <li><a href="#">Nuestra misión</a></li>
+                    <li><a href="#">Equipo</a></li>
+                    <li><a href="#">Trabaja con nosotros</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Enlaces Rápidos</h3>
+                <ul>
+                    <li><a href="catalogo.html">Catálogo</a></li>
+                    <li><a href="foro.html">Foro</a></li>
+                    <li><a href="#">Blog tecnológico</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Soporte</h3>
+                <ul>
+                    <li><a href="#">Centro de ayuda</a></li>
+                    <li><a href="#">Política de devoluciones</a></li>
+                    <li><a href="#">Términos y condiciones</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Redes Sociales</h3>
+                <ul>
+                    <li><a href="#">Facebook</a></li>
+                    <li><a href="#">Twitter</a></li>
+                    <li><a href="#">Instagram</a></li>
+                    <li><a href="#">YouTube</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 TT&DT. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- ============================================================
+         SCRIPT
+          CORRECCIONES:
+         1. Se agregó la etiqueta <script> que faltaba
+         2. Se cambiaron las comillas dobles del style a simples
+            para evitar el error css-propertyvalueexpected
+         ============================================================ -->
+    <script src="./dashboard-dueno.js"></script>
+
+</body>
+</html>
+
+</body>
+</html>

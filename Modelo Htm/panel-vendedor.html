@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Vendedor - TT&DT</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+
+    <!-- ============================================================
+         HEADER
+         ============================================================ -->
+    <header>
+        <div class="header-container">
+            <a href="index.html" class="logo">TT&DT</a>
+            <nav>
+                <a href="index.html">Inicio</a>
+                <a href="catalogo.html">Catálogo</a>
+                <a href="foro.html">Foro</a>
+            </nav>
+            <div class="header-actions">
+                <div class="cart-icon">
+                    <a href="carrito.html">
+                        <span class="cart-badge">0</span>
+                    </a>
+                </div>
+                <div class="usuario-menu">
+                    <div class="autor-avatar">TS</div>
+                    <span>TT&DT Oficial</span>
+                </div>
+                <a href="index.html"><button class="btn-login">Cerrar Sesión</button></a>
+            </div>
+        </div>
+    </header>
+
+    <!-- ============================================================
+         MAIN
+         ============================================================ -->
+    <main>
+
+        <div class="vendedor-layout">
+
+            <!-- SIDEBAR VENDEDOR -->
+            <aside class="vendedor-sidebar">
+
+                <div class="vendedor-perfil-mini">
+                    <div class="autor-avatar grande">TS</div>
+                    <h3>TT&DT Oficial</h3>
+                    <p class="vendedor-estado">● Activo</p>
+                </div>
+
+                <nav class="vendedor-nav">
+                    <button class="vendedor-nav-item active" onclick="switchTab('resumen')">Resumen</button>
+                    <button class="vendedor-nav-item" onclick="switchTab('productos')">Mis Productos</button>
+                    <button class="vendedor-nav-item" onclick="switchTab('pedidos')">Pedidos</button>
+                    <button class="vendedor-nav-item" onclick="switchTab('ganancias')">Ganancias</button>
+                    <button class="vendedor-nav-item" onclick="switchTab('resenas')">Reseñas</button>
+                    <button class="vendedor-nav-item" onclick="switchTab('mi-tienda')">Mi Tienda</button>
+                    <button class="vendedor-nav-item btn-cerrar-sesion">Cerrar Sesión</button>
+                </nav>
+
+            </aside>
+
+            <!-- CONTENIDO PRINCIPAL -->
+            <div class="vendedor-contenido">
+
+                <!-- TAB: RESUMEN -->
+                <div id="tab-resumen" class="vendedor-tab active">
+
+                    <div class="tab-header">
+                        <h2>Resumen del negocio</h2>
+                        <select id="periodo-resumen">
+                            <option value="7">Últimos 7 días</option>
+                            <option value="30" selected>Últimos 30 días</option>
+                            <option value="90">Últimos 90 días</option>
+                        </select>
+                    </div>
+
+                    <!-- Métricas principales -->
+                    <div class="metricas-grid">
+                        <div class="metrica-card">
+                            <div class="metrica-icono"></div>
+                            <div class="metrica-info">
+                                <span class="metrica-valor">$12,450.00</span>
+                                <span class="metrica-label">Ganancias del mes</span>
+                                <span class="metrica-cambio positivo">↑ 12% vs mes anterior</span>
+                            </div>
+                        </div>
+                        <div class="metrica-card">
+                            <div class="metrica-icono"></div>
+                            <div class="metrica-info">
+                                <span class="metrica-valor">38</span>
+                                <span class="metrica-label">Pedidos recibidos</span>
+                                <span class="metrica-cambio positivo">↑ 5% vs mes anterior</span>
+                            </div>
+                        </div>
+                        <div class="metrica-card">
+                            <div class="metrica-icono"></div>
+                            <div class="metrica-info">
+                                <span class="metrica-valor">24</span>
+                                <span class="metrica-label">Productos activos</span>
+                                <span class="metrica-cambio neutro">→ Sin cambios</span>
+                            </div>
+                        </div>
+                        <div class="metrica-card">
+                            <div class="metrica-icono"></div>
+                            <div class="metrica-info">
+                                <span class="metrica-valor">4.8</span>
+                                <span class="metrica-label">Calificación promedio</span>
+                                <span class="metrica-cambio positivo">↑ 0.1 vs mes anterior</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Alertas -->
+                    <div class="alertas-seccion">
+                        <h3>Alertas</h3>
+                        <div class="alerta alerta-warning">
+                            <strong>Stock bajo:</strong> AirPods Pro 2nd Gen — quedan 8 unidades
+                        </div>
+                        <div class="alerta alerta-danger">
+                            <strong>Agotado:</strong> iPad Pro 12.9" M2 — sin stock disponible
+                        </div>
+                        <div class="alerta alerta-info">
+                            <strong>Nuevo pedido:</strong> Pedido #TS-2024-045 pendiente de confirmación
+                        </div>
+                    </div>
+
+                    <!-- Pedidos recientes -->
+                    <div class="recientes-seccion">
+                        <div class="seccion-header">
+                            <h3>Pedidos recientes</h3>
+                            <button class="btn-ver-todos" onclick="switchTab('pedidos')">Ver todos →</button>
+                        </div>
+                        <table class="tabla-vendedor">
+                            <thead>
+                                <tr>
+                                    <th>Pedido</th>
+                                    <th>Cliente</th>
+                                    <th>Producto</th>
+                                    <th>Total</th>
+                                    <th>Estado</th>
+                                    <th>Acción</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>#TS-2024-045</td>
+                                    <td>María López</td>
+                                    <td>MacBook Pro 14" M3</td>
+                                    <td>$1,999.00</td>
+                                    <td><span class="estado-badge estado-pendiente">Pendiente</span></td>
+                                    <td><button class="btn-tabla">Gestionar</button></td>
+                                </tr>
+                                <tr>
+                                    <td>#TS-2024-044</td>
+                                    <td>Roberto Díaz</td>
+                                    <td>Samsung Galaxy S24 Ultra</td>
+                                    <td>$1,299.99</td>
+                                    <td><span class="estado-badge estado-enviado">Enviado</span></td>
+                                    <td><button class="btn-tabla">Gestionar</button></td>
+                                </tr>
+                                <tr>
+                                    <td>#TS-2024-043</td>
+                                    <td>Ana Gómez</td>
+                                    <td>AirPods Pro 2nd Gen x2</td>
+                                    <td>$499.98</td>
+                                    <td><span class="estado-badge estado-entregado">Entregado</span></td>
+                                    <td><button class="btn-tabla">Ver</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+
+                <!-- TAB: PRODUCTOS -->
+                <div id="tab-productos" class="vendedor-tab">
+
+                    <div class="tab-header">
+                        <h2>Mis Productos</h2>
+                        <button class="btn-agregar-producto">+ Agregar producto</button>
+                    </div>
+
+                    <!-- Filtros -->
+                    <div class="productos-filtros">
+                        <input type="text" placeholder="Buscar producto...">
+                        <select>
+                            <option>Todas las categorías</option>
+                            <option>Smartphones</option>
+                            <option>Laptops</option>
+                            <option>Audio</option>
+                            <option>Accesorios</option>
+                            <option>Tablets</option>
+                        </select>
+                        <select>
+                            <option>Todos los estados</option>
+                            <option>Activo</option>
+                            <option>Agotado</option>
+                            <option>Pausado</option>
+                        </select>
+                    </div>
+
+                    <table class="tabla-vendedor">
+                        <thead>
+                            <tr>
+                                <th>Producto</th>
+                                <th>Categoría</th>
+                                <th>Precio</th>
+                                <th>Stock</th>
+                                <th>Ventas</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Samsung Galaxy S24 Ultra</td>
+                                <td>Smartphones</td>
+                                <td>$1,299.99</td>
+                                <td><span class="badge stock-ok">45</span></td>
+                                <td>23</td>
+                                <td><span class="estado-badge estado-activo">Activo</span></td>
+                                <td>
+                                    <button class="btn-tabla">Editar</button>
+                                    <button class="btn-tabla btn-tabla-danger">Pausar</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>MacBook Pro 14" M3</td>
+                                <td>Laptops</td>
+                                <td>$1,999.00</td>
+                                <td><span class="badge stock-ok">23</span></td>
+                                <td>11</td>
+                                <td><span class="estado-badge estado-activo">Activo</span></td>
+                                <td>
+                                    <button class="btn-tabla">Editar</button>
+                                    <button class="btn-tabla btn-tabla-danger">Pausar</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>AirPods Pro 2nd Gen</td>
+                                <td>Audio</td>
+                                <td>$249.99</td>
+                                <td><span class="badge stock-low">8</span></td>
+                                <td>47</td>
+                                <td><span class="estado-badge estado-activo">Activo</span></td>
+                                <td>
+                                    <button class="btn-tabla">Editar</button>
+                                    <button class="btn-tabla btn-tabla-danger">Pausar</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Logitech MX Master 3S</td>
+                                <td>Accesorios</td>
+                                <td>$99.99</td>
+                                <td><span class="badge stock-ok">67</span></td>
+                                <td>31</td>
+                                <td><span class="estado-badge estado-activo">Activo</span></td>
+                                <td>
+                                    <button class="btn-tabla">Editar</button>
+                                    <button class="btn-tabla btn-tabla-danger">Pausar</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>iPad Pro 12.9" M2</td>
+                                <td>Tablets</td>
+                                <td>$1,099.00</td>
+                                <td><span class="badge stock-out">0</span></td>
+                                <td>9</td>
+                                <td><span class="estado-badge estado-agotado">Agotado</span></td>
+                                <td>
+                                    <button class="btn-tabla">Editar</button>
+                                    <button class="btn-tabla">Reponer</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                </div>
+
+                <!-- TAB: PEDIDOS -->
+                <div id="tab-pedidos" class="vendedor-tab">
+
+                    <div class="tab-header">
+                        <h2>Gestión de Pedidos</h2>
+                        <select id="filtro-estado-pedidos">
+                            <option>Todos los estados</option>
+                            <option>Pendiente</option>
+                            <option>Confirmado</option>
+                            <option>Enviado</option>
+                            <option>Entregado</option>
+                            <option>Cancelado</option>
+                        </select>
+                    </div>
+
+                    <table class="tabla-vendedor">
+                        <thead>
+                            <tr>
+                                <th>Pedido</th>
+                                <th>Cliente</th>
+                                <th>Fecha</th>
+                                <th>Productos</th>
+                                <th>Total</th>
+                                <th>Estado</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>#TS-2024-045</td>
+                                <td>María López</td>
+                                <td>3 feb 2024</td>
+                                <td>MacBook Pro 14" M3 x1</td>
+                                <td>$1,999.00</td>
+                                <td><span class="estado-badge estado-pendiente">Pendiente</span></td>
+                                <td>
+                                    <button class="btn-tabla">Confirmar</button>
+                                    <button class="btn-tabla btn-tabla-danger">Cancelar</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>#TS-2024-044</td>
+                                <td>Roberto Díaz</td>
+                                <td>2 feb 2024</td>
+                                <td>Samsung Galaxy S24 Ultra x1</td>
+                                <td>$1,299.99</td>
+                                <td><span class="estado-badge estado-enviado">Enviado</span></td>
+                                <td>
+                                    <button class="btn-tabla">Ver detalle</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>#TS-2024-043</td>
+                                <td>Ana Gómez</td>
+                                <td>1 feb 2024</td>
+                                <td>AirPods Pro x2</td>
+                                <td>$499.98</td>
+                                <td><span class="estado-badge estado-entregado">Entregado</span></td>
+                                <td>
+                                    <button class="btn-tabla">Ver detalle</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                </div>
+
+                <!-- TAB: GANANCIAS -->
+                <div id="tab-ganancias" class="vendedor-tab">
+
+                    <div class="tab-header">
+                        <h2>Ganancias</h2>
+                        <select>
+                            <option>Febrero 2024</option>
+                            <option>Enero 2024</option>
+                            <option>Diciembre 2023</option>
+                        </select>
+                    </div>
+
+                    <div class="ganancias-resumen">
+                        <div class="ganancia-card ganancia-principal">
+                            <span class="ganancia-label">Ganancias netas del mes</span>
+                            <span class="ganancia-valor">$12,450.00</span>
+                        </div>
+                        <div class="ganancia-card">
+                            <span class="ganancia-label">Ventas brutas</span>
+                            <span class="ganancia-valor">$14,200.00</span>
+                        </div>
+                        <div class="ganancia-card">
+                            <span class="ganancia-label">Comisión TT&DT (8%)</span>
+                            <span class="ganancia-valor negativo">-$1,136.00</span>
+                        </div>
+                        <div class="ganancia-card">
+                            <span class="ganancia-label">Devoluciones</span>
+                            <span class="ganancia-valor negativo">-$614.00</span>
+                        </div>
+                    </div>
+
+                    <div class="ganancias-tabla-wrap">
+                        <h3>Detalle por producto</h3>
+                        <table class="tabla-vendedor">
+                            <thead>
+                                <tr>
+                                    <th>Producto</th>
+                                    <th>Unidades vendidas</th>
+                                    <th>Ingresos brutos</th>
+                                    <th>Comisión</th>
+                                    <th>Neto</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Samsung Galaxy S24 Ultra</td>
+                                    <td>9</td>
+                                    <td>$11,699.91</td>
+                                    <td>-$935.99</td>
+                                    <td>$10,763.92</td>
+                                </tr>
+                                <tr>
+                                    <td>AirPods Pro 2nd Gen</td>
+                                    <td>6</td>
+                                    <td>$1,499.94</td>
+                                    <td>-$119.99</td>
+                                    <td>$1,379.95</td>
+                                </tr>
+                                <tr>
+                                    <td>Logitech MX Master 3S</td>
+                                    <td>3</td>
+                                    <td>$299.97</td>
+                                    <td>-$24.00</td>
+                                    <td>$275.97</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <button class="btn-descargar">Descargar reporte PDF</button>
+
+                </div>
+
+                <!-- TAB: RESEÑAS -->
+                <div id="tab-resenas" class="vendedor-tab">
+
+                    <div class="tab-header">
+                        <h2>Reseñas recibidas</h2>
+                        <div class="resumen-rating">
+                            <span class="rating-numero">4.8</span>
+                            <span>(128 reseñas)</span>
+                        </div>
+                    </div>
+
+                    <div class="resenas-lista">
+
+                        <div class="resena-card">
+                            <div class="resena-header">
+                                <div class="resena-autor">
+                                    <div class="autor-avatar">ML</div>
+                                    <div>
+                                        <strong>María López</strong>
+                                        <span class="resena-fecha">3 febrero 2024</span>
+                                    </div>
+                                </div>
+                                <div class="resena-estrellas"></div>
+                            </div>
+                            <p class="resena-producto">Producto: <a href="producto-detalle.html">MacBook Pro 14" M3</a></p>
+                            <p class="resena-texto">Excelente vendedor, el producto llegó en perfecto estado y antes del tiempo estimado. Muy recomendado.</p>
+                            <div class="resena-respuesta-vendedor">
+                                <strong>Tu respuesta:</strong>
+                                <p>¡Gracias María! Fue un placer atenderte. Esperamos verte de nuevo pronto.</p>
+                            </div>
+                        </div>
+
+                        <div class="resena-card">
+                            <div class="resena-header">
+                                <div class="resena-autor">
+                                    <div class="autor-avatar">RD</div>
+                                    <div>
+                                        <strong>Roberto Díaz</strong>
+                                        <span class="resena-fecha">2 febrero 2024</span>
+                                    </div>
+                                </div>
+                                <div class="resena-estrellas"></div>
+                            </div>
+                            <p class="resena-producto">Producto: <a href="producto-detalle.html">Samsung Galaxy S24 Ultra</a></p>
+                            <p class="resena-texto">Muy buen producto y atención. El empaque podría mejorar un poco pero en general todo perfecto.</p>
+                            <button class="btn-responder-resena">Responder esta reseña</button>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- TAB: MI TIENDA -->
+                <div id="tab-mi-tienda" class="vendedor-tab">
+                    <h2>Configuración de mi Tienda</h2>
+
+                    <div class="form-seccion">
+                        <h3>Información del negocio</h3>
+                        <div class="form-group">
+                            <label for="t-nombre">Nombre de la tienda</label>
+                            <input type="text" id="t-nombre" value="TT&DT Oficial">
+                        </div>
+                        <div class="form-group">
+                            <label for="t-descripcion">Descripción</label>
+                            <textarea id="t-descripcion" rows="3">Tu tienda de confianza para productos tecnológicos de alta calidad.</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="t-telefono">Teléfono de contacto</label>
+                            <input type="tel" id="t-telefono" placeholder="+57 300 000 0000">
+                        </div>
+                        <div class="form-group">
+                            <label for="t-categoria">Categoría principal</label>
+                            <select id="t-categoria">
+                                <option selected>Electrónica</option>
+                                <option>Robótica</option>
+                                <option>Accesorios</option>
+                                <option>Software</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Logo de la tienda</label>
+                            <div class="upload-area upload-area-mini">
+                                <p><label for="logo-tienda" class="link-upload">Subir logo</label></p>
+                                <input type="file" id="logo-tienda" accept="image/*" style="display:none;">
+                                <p class="upload-restricciones">PNG o JPG. Máximo 2 MB. Recomendado: 200x200px</p>
+                            </div>
+                        </div>
+                        <button class="btn-guardar-datos">Guardar configuración</button>
+                    </div>
+
+                    <div class="form-seccion">
+                        <h3>Política de envíos</h3>
+                        <div class="form-group">
+                            <label for="t-envio-gratis">Envío gratis en compras mayores a:</label>
+                            <input type="number" id="t-envio-gratis" value="100" placeholder="$">
+                        </div>
+                        <div class="form-group">
+                            <label for="t-tiempo-envio">Tiempo de entrega estimado</label>
+                            <select id="t-tiempo-envio">
+                                <option>1-3 días hábiles</option>
+                                <option selected>3-5 días hábiles</option>
+                                <option>5-7 días hábiles</option>
+                            </select>
+                        </div>
+                        <button class="btn-guardar-datos">Guardar política</button>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+    </main>
+
+    <!-- ============================================================
+         FOOTER
+         ============================================================ -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-column">
+                <h3>Sobre Nosotros</h3>
+                <ul>
+                    <li><a href="#">Quiénes somos</a></li>
+                    <li><a href="#">Nuestra misión</a></li>
+                    <li><a href="#">Equipo</a></li>
+                    <li><a href="#">Trabaja con nosotros</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Enlaces Rápidos</h3>
+                <ul>
+                    <li><a href="catalogo.html">Catálogo</a></li>
+                    <li><a href="foro.html">Foro</a></li>
+                    <li><a href="vendedor.html">Vende con nosotros</a></li>
+                    <li><a href="#">Blog tecnológico</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Soporte</h3>
+                <ul>
+                    <li><a href="#">Centro de ayuda</a></li>
+                    <li><a href="#">Política de devoluciones</a></li>
+                    <li><a href="#">Envíos y entregas</a></li>
+                    <li><a href="#">Términos y condiciones</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Redes Sociales</h3>
+                <ul>
+                    <li><a href="#">Facebook</a></li>
+                    <li><a href="#">Twitter</a></li>
+                    <li><a href="#">Instagram</a></li>
+                    <li><a href="#">YouTube</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 TT&DT. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <script src="./panel-vendedor.js"></script>
+
+</body>
+</html>
+
+</body>
+</html>

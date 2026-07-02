@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Pedidos - TT&DT</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+
+    <!-- ============================================================
+         HEADER
+         ============================================================ -->
+    <header>
+        <div class="header-container">
+            <a href="index.html" class="logo">TT&DT</a>
+            <nav>
+                <a href="index.html">Inicio</a>
+                <a href="catalogo.html">Catálogo</a>
+                <a href="foro.html">Foro</a>
+            </nav>
+            <div class="header-actions">
+                <span class="dueno-saludo">Hola, <strong id="nombre-usuario">Comprador</strong></span>
+                <div class="cart-icon">
+                    <a href="carrito.html">
+                        <span class="cart-badge">0</span>
+                    </a>
+                </div>
+                <a href="index.html"><button class="btn-login">Cerrar Sesión</button></a>
+            </div>
+        </div>
+    </header>
+
+    <!-- ============================================================
+         MAIN
+         ============================================================ -->
+    <main>
+        <div class="perfil-layout">
+
+            <!-- SIDEBAR IZQUIERDO -->
+            <aside>
+
+                <div class="perfil-card">
+                    <div class="perfil-avatar-grande" id="avatar-iniciales">CM</div>
+                    <p class="perfil-nombre" id="perfil-nombre">Carlos Méndez</p>
+                    <p class="perfil-rol">Comprador</p>
+                    <p class="perfil-miembro-desde">Miembro desde Enero 2023</p>
+                    <div class="perfil-stats">
+                        <div class="stat">
+                            <span class="stat-numero" id="stat-pedidos">0</span>
+                            <span class="stat-label">Pedidos</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-numero" id="stat-gastado">$0</span>
+                            <span class="stat-label">Gastado</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-numero" id="stat-resenas">0</span>
+                            <span class="stat-label">Reseñas</span>
+                        </div>
+                    </div>
+                </div>
+
+                <nav class="perfil-nav">
+                    <button class="perfil-nav-item active" onclick="cambiarTab('pedidos')">📦 Mis Pedidos</button>
+                    <button class="perfil-nav-item" onclick="cambiarTab('favoritos')">❤️ Favoritos</button>
+                    <button class="perfil-nav-item" onclick="cambiarTab('direcciones')">📍 Mis Direcciones</button>
+                    <button class="perfil-nav-item" onclick="cambiarTab('cuenta')">👤 Mi Cuenta</button>
+                    <button class="perfil-nav-item btn-cerrar-sesion" onclick="cerrarSesion()">Cerrar Sesión</button>
+                </nav>
+
+            </aside>
+
+            <!-- CONTENIDO PRINCIPAL -->
+            <div class="perfil-contenido">
+
+                <!-- ── TAB: MIS PEDIDOS ── -->
+                <div class="perfil-tab active" id="tab-pedidos">
+                    <h2>Mis Pedidos</h2>
+
+                    <!-- Filtros de pedidos -->
+                    <div class="gt-filtros" style="margin-bottom: 20px;">
+                        <div class="gt-busqueda">
+                            <span>🔍</span>
+                            <input type="text" id="buscar-pedido" placeholder="Buscar por producto o número...">
+                        </div>
+                        <div class="gt-filtro-grupo">
+                            <label>Estado</label>
+                            <select id="filtro-estado-pedido">
+                                <option value="">Todos</option>
+                                <option value="Completada">Completada</option>
+                                <option value="En espera">En espera</option>
+                                <option value="Pendiente">Pendiente</option>
+                                <option value="Cancelada">Cancelada</option>
+                            </select>
+                        </div>
+                        <div class="gt-filtro-grupo">
+                            <label>Ordenar</label>
+                            <select id="ordenar-pedidos">
+                                <option value="reciente">Más reciente</option>
+                                <option value="antiguo">Más antiguo</option>
+                                <option value="mayor">Mayor total</option>
+                                <option value="menor">Menor total</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Lista de pedidos -->
+                    <div id="lista-pedidos">
+                        <!-- JS inserta aquí -->
+                    </div>
+
+                    <!-- Mensaje sin resultados -->
+                    <p id="sin-pedidos" class="hidden" style="text-align:center; padding:2rem; color:var(--text-muted);">
+                        No se encontraron pedidos con esos filtros.
+                    </p>
+
+                </div>
+
+                <!-- ── TAB: FAVORITOS ── -->
+                <div class="perfil-tab hidden" id="tab-favoritos">
+                    <h2>Mis Favoritos</h2>
+                    <div class="favoritos-grid" id="lista-favoritos">
+                        <!-- JS inserta aquí -->
+                    </div>
+                </div>
+
+                <!-- ── TAB: DIRECCIONES ── -->
+                <div class="perfil-tab hidden" id="tab-direcciones">
+                    <h2>Mis Direcciones</h2>
+                    <div class="direcciones-grid" id="lista-direcciones">
+                        <!-- JS inserta aquí -->
+                    </div>
+                </div>
+
+                <!-- ── TAB: MI CUENTA ── -->
+                <div class="perfil-tab hidden" id="tab-cuenta">
+                    <h2>Mi Cuenta</h2>
+
+                    <div class="form-seccion">
+                        <h3>Información Personal</h3>
+                        <div class="form-grupo-horizontal">
+                            <div class="form-group">
+                                <label>Nombre</label>
+                                <input type="text" id="cuenta-nombre" value="Carlos">
+                            </div>
+                            <div class="form-group">
+                                <label>Apellido</label>
+                                <input type="text" id="cuenta-apellido" value="Méndez">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Correo electrónico</label>
+                            <input type="email" id="cuenta-correo" value="carlos.mendez@email.com">
+                        </div>
+                        <div class="form-group">
+                            <label>Fecha de nacimiento</label>
+                            <input type="date" id="cuenta-nacimiento" value="1995-03-15">
+                        </div>
+                        <div class="form-group">
+                            <label>Dirección principal</label>
+                            <input type="text" id="cuenta-direccion" value="Calle 80 #45-12, Bogotá">
+                        </div>
+                        <div class="form-group">
+                            <label>Código postal</label>
+                            <input type="text" id="cuenta-postal" value="110111">
+                        </div>
+                        <button class="btn-guardar-datos" id="btn-guardar-cuenta">Guardar cambios</button>
+                        <p id="msg-cuenta" style="margin-top:10px; font-size:0.9rem;"></p>
+                    </div>
+
+                    <div class="form-seccion">
+                        <h3>Cambiar Contraseña</h3>
+                        <div class="form-group">
+                            <label>Contraseña actual</label>
+                            <input type="password" id="pass-actual" placeholder="••••••••">
+                        </div>
+                        <div class="form-grupo-horizontal">
+                            <div class="form-group">
+                                <label>Nueva contraseña</label>
+                                <input type="password" id="pass-nueva" placeholder="••••••••">
+                            </div>
+                            <div class="form-group">
+                                <label>Confirmar contraseña</label>
+                                <input type="password" id="pass-confirmar" placeholder="••••••••">
+                            </div>
+                        </div>
+                        <button class="btn-guardar-datos" id="btn-cambiar-pass">Cambiar contraseña</button>
+                        <p id="msg-pass" style="margin-top:10px; font-size:0.9rem;"></p>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- ============================================================
+         FOOTER
+         ============================================================ -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-column">
+                <h3>Sobre Nosotros</h3>
+                <ul>
+                    <li><a href="#">Quiénes somos</a></li>
+                    <li><a href="#">Nuestra misión</a></li>
+                    <li><a href="#">Equipo</a></li>
+                    <li><a href="#">Trabaja con nosotros</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Enlaces Rápidos</h3>
+                <ul>
+                    <li><a href="catalogo.html">Catálogo</a></li>
+                    <li><a href="foro.html">Foro</a></li>
+                    <li><a href="#">Blog tecnológico</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Soporte</h3>
+                <ul>
+                    <li><a href="#">Centro de ayuda</a></li>
+                    <li><a href="#">Política de devoluciones</a></li>
+                    <li><a href="#">Términos y condiciones</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Redes Sociales</h3>
+                <ul>
+                    <li><a href="#">Facebook</a></li>
+                    <li><a href="#">Twitter</a></li>
+                    <li><a href="#">Instagram</a></li>
+                    <li><a href="#">YouTube</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 TT&DT. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- ============================================================
+         SCRIPT
+         ============================================================ -->
+    <script src="./mis-pedidos.js"></script>
+
+</body>
+</html>
+
+</body>
+</html>

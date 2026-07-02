@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Tareas - TT&DT</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+
+    <!-- ============================================================
+         HEADER
+         ============================================================ -->
+    <header>
+        <div class="header-container">
+            <a href="index.html" class="logo">TT&DT</a>
+            <nav>
+                <a href="dashboard-dueno.html">Dashboard</a>
+                <a href="gestion-usuarios.html">Usuarios</a>
+                <a href="gestion-inventario.html">Inventario</a>
+                <a href="gestion-tareas.html" class="active">Tareas</a>
+                <a href="informes.html">Informes</a>
+            </nav>
+            <div class="header-actions">
+                <span class="dueno-saludo">Bienvenido, <strong>Admin</strong></span>
+                <a href="index.html"><button class="btn-login">Cerrar Sesión</button></a>
+            </div>
+        </div>
+    </header>
+
+    <!-- ============================================================
+         MAIN
+         ============================================================ -->
+    <main>
+        <div class="gt-wrapper">
+
+            <!-- TÍTULO -->
+            <div class="gt-titulo">
+                <div>
+                    <h1>Gestión de Tareas</h1>
+                    <p class="gt-subtitulo">Asigna y supervisa tareas a los técnicos moderadores</p>
+                </div>
+                <button class="btn-nueva-tarea" id="btn-abrir-modal">+ Nueva Tarea</button>
+            </div>
+
+            <!-- STATS -->
+            <div class="gt-stats">
+                <div class="gt-stat-card">
+                    <p class="gt-stat-num" id="st-total">0</p>
+                    <p class="gt-stat-label">Total tareas</p>
+                </div>
+                <div class="gt-stat-card">
+                    <p class="gt-stat-num color-yellow" id="st-pendiente">0</p>
+                    <p class="gt-stat-label">Pendientes</p>
+                </div>
+                <div class="gt-stat-card">
+                    <p class="gt-stat-num color-blue" id="st-proceso">0</p>
+                    <p class="gt-stat-label">En proceso</p>
+                </div>
+                <div class="gt-stat-card">
+                    <p class="gt-stat-num color-green" id="st-terminado">0</p>
+                    <p class="gt-stat-label">Terminadas</p>
+                </div>
+            </div>
+
+            <!-- FILTROS -->
+            <div class="gt-filtros">
+                <div class="gt-busqueda">
+                    <span>S</span>
+                    <input type="text" id="gt-busqueda" placeholder="Buscar tarea...">
+                </div>
+                <div class="gt-filtro-grupo">
+                    <label>Estado</label>
+                    <select id="gt-filtro-estado">
+                        <option value="">Todos</option>
+                        <option value="Pendiente">Pendiente</option>
+                        <option value="En proceso">En proceso</option>
+                        <option value="Terminado">Terminado</option>
+                    </select>
+                </div>
+                <div class="gt-filtro-grupo">
+                    <label>Prioridad</label>
+                    <select id="gt-filtro-prioridad">
+                        <option value="">Todas</option>
+                        <option value="alta">Alta</option>
+                        <option value="media">Media</option>
+                        <option value="baja">Baja</option>
+                    </select>
+                </div>
+                <div class="gt-filtro-grupo">
+                    <label>Técnico</label>
+                    <select id="gt-filtro-tecnico">
+                        <option value="">Todos</option>
+                        <option value="Juan">Juan</option>
+                        <option value="María">María</option>
+                        <option value="Carlos">Carlos</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- TABLERO KANBAN -->
+            <div class="gt-kanban">
+
+                <!-- Columna Pendiente -->
+                <div class="gt-kanban-col">
+                    <div class="gt-kanban-header header-pendiente">
+                        <span class="gt-kanban-titulo">Pendiente</span>
+                        <span class="gt-kanban-badge" id="badge-pendiente">0</span>
+                    </div>
+                    <div class="gt-kanban-lista" id="col-pendiente">
+                        <!-- JS inserta cards aquí -->
+                    </div>
+                </div>
+
+                <!-- Columna En proceso -->
+                <div class="gt-kanban-col">
+                    <div class="gt-kanban-header header-proceso">
+                        <span class="gt-kanban-titulo">En proceso</span>
+                        <span class="gt-kanban-badge" id="badge-proceso">0</span>
+                    </div>
+                    <div class="gt-kanban-lista" id="col-proceso">
+                        <!-- JS inserta cards aquí -->
+                    </div>
+                </div>
+
+                <!-- Columna Terminado -->
+                <div class="gt-kanban-col">
+                    <div class="gt-kanban-header header-terminado">
+                        <span class="gt-kanban-titulo">Terminado</span>
+                        <span class="gt-kanban-badge" id="badge-terminado">0</span>
+                    </div>
+                    <div class="gt-kanban-lista" id="col-terminado">
+                        <!-- JS inserta cards aquí -->
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- TABLA DETALLADA -->
+            <section class="gt-tabla-seccion">
+                <div class="gt-tabla-header">
+                    <h2>Vista de tabla</h2>
+                    <span style="font-size:0.82rem; color:var(--text-muted);">Haz clic en una tarea para editar</span>
+                </div>
+                <div class="gt-tabla-contenedor">
+                    <table class="gt-tabla">
+                        <thead>
+                            <tr>
+                                <th>#ID</th>
+                                <th>Descripción</th>
+                                <th>Técnico asignado</th>
+                                <th>Prioridad</th>
+                                <th>Estado</th>
+                                <th>Fecha asignación</th>
+                                <th>Fecha límite</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="gt-tabla-body"></tbody>
+                    </table>
+                    <p id="gt-sin-resultados" style="display:none; text-align:center; padding:2rem; color:#888;">
+                        No se encontraron tareas con esos filtros.
+                    </p>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- ============================================================
+         MODAL: NUEVA / EDITAR TAREA
+         ============================================================ -->
+    <div class="modal-overlay" id="modal-tarea" style="display:none;">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h2 id="modal-tarea-titulo">Nueva Tarea</h2>
+                <button class="modal-cerrar" id="btn-cerrar-modal">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-grupo">
+                    <label>Descripción de la tarea *</label>
+                    <textarea id="mt-descripcion" rows="3" placeholder="Describe la tarea con detalle..."></textarea>
+                    <span class="error-msg" id="err-mt-desc"></span>
+                </div>
+                <div class="modal-fila">
+                    <div class="modal-grupo">
+                        <label>Técnico asignado *</label>
+                        <select id="mt-tecnico">
+                            <option value="">Seleccionar...</option>
+                            <option value="Juan">Técnico: Juan</option>
+                            <option value="María">Técnico: María</option>
+                            <option value="Carlos">Técnico: Carlos</option>
+                        </select>
+                        <span class="error-msg" id="err-mt-tecnico"></span>
+                    </div>
+                    <div class="modal-grupo">
+                        <label>Prioridad *</label>
+                        <select id="mt-prioridad">
+                            <option value="">Seleccionar...</option>
+                            <option value="alta">Alta</option>
+                            <option value="media">Media</option>
+                            <option value="baja">Baja</option>
+                        </select>
+                        <span class="error-msg" id="err-mt-prioridad"></span>
+                    </div>
+                </div>
+                <div class="modal-fila">
+                    <div class="modal-grupo">
+                        <label>Estado</label>
+                        <select id="mt-estado">
+                            <option value="Pendiente">Pendiente</option>
+                            <option value="En proceso">En proceso</option>
+                            <option value="Terminado">Terminado</option>
+                        </select>
+                    </div>
+                    <div class="modal-grupo">
+                        <label>Fecha límite *</label>
+                        <input type="date" id="mt-fecha-limite">
+                        <span class="error-msg" id="err-mt-fecha"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancelar-modal" id="btn-cancelar-modal">Cancelar</button>
+                <button class="btn-guardar-modal" id="btn-guardar-tarea">Guardar Tarea</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         FOOTER
+         ============================================================ -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-column">
+                <h3>Sobre Nosotros</h3>
+                <ul>
+                    <li><a href="#">Quiénes somos</a></li>
+                    <li><a href="#">Nuestra misión</a></li>
+                    <li><a href="#">Equipo</a></li>
+                    <li><a href="#">Trabaja con nosotros</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Enlaces Rápidos</h3>
+                <ul>
+                    <li><a href="catalogo.html">Catálogo</a></li>
+                    <li><a href="foro.html">Foro</a></li>
+                    <li><a href="#">Blog tecnológico</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Soporte</h3>
+                <ul>
+                    <li><a href="#">Centro de ayuda</a></li>
+                    <li><a href="#">Política de devoluciones</a></li>
+                    <li><a href="#">Términos y condiciones</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Redes Sociales</h3>
+                <ul>
+                    <li><a href="#">Facebook</a></li>
+                    <li><a href="#">Twitter</a></li>
+                    <li><a href="#">Instagram</a></li>
+                    <li><a href="#">YouTube</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 TT&DT. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- ============================================================
+         SCRIPT
+         ============================================================ -->
+    <script src="./gestion-tareas.js"></script>
+
+</body>
+</html>
+
+</body>
+</html>

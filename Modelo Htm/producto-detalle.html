@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalle de Producto - TT&DT</title>    <link rel="stylesheet" href="./style.css"></head>
+<body>
+
+    <!-- ============================================================
+         HEADER
+         ============================================================ -->
+    <header>
+        <div class="header-container">
+            <a href="index.html" class="logo">TT&DT</a>
+            <nav>
+                <a href="index.html">Inicio</a>
+                <a href="catalogo.html" class="active">Catálogo</a>
+                <a href="foro.html">Foro</a>
+            </nav>
+            <div class="header-actions">
+                <a href="login.html">
+                    <button class="btn-login">Iniciar Sesión</button>
+                </a>
+                <div class="cart-icon">
+                    <a href="carrito.html">
+                        Carrito
+                        <span class="cart-badge">0</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ============================================================
+         MAIN
+         ============================================================ -->
+    <main>
+
+        <!-- BREADCRUMB -->
+        <nav class="breadcrumb">
+            <a href="index.html">Inicio</a>
+            <span>›</span>
+            <a href="catalogo.html">Catálogo</a>
+            <span>›</span>
+            <span>Samsung Galaxy S24 Ultra</span>
+        </nav>
+
+        <!-- PRODUCTO PRINCIPAL -->
+        <section class="producto-detalle">
+
+            <!-- Galería de imágenes -->
+            <div class="producto-galeria">
+                <div class="imagen-principal">
+                    <!-- imagen principal aquí -->
+                </div>
+                <div class="imagenes-miniaturas">
+                    <div class="miniatura active"></div>
+                    <div class="miniatura"></div>
+                    <div class="miniatura"></div>
+                    <div class="miniatura"></div>
+                </div>
+            </div>
+
+            <!-- Info del producto -->
+            <div class="producto-detalle-info">
+
+                <span class="producto-categoria">Smartphones</span>
+                <h1 class="producto-nombre">Samsung Galaxy S24 Ultra</h1>
+
+                <div class="producto-estrellas">
+                    5 estrellas
+                    <span class="resenas-count">128 reseñas</span>
+                </div>
+
+                <div class="producto-precio-container">
+                    <p class="producto-precio">$1,299.99</p>
+                    <span class="producto-stock en-stock">En stock (45 unidades)</span>
+                </div>
+
+                <p class="producto-descripcion-corta">
+                    El Samsung Galaxy S24 Ultra es el smartphone más avanzado de Samsung, con cámara de 200MP, S Pen integrado, procesador Snapdragon 8 Gen 3 y batería de 5000mAh.
+                </p>
+
+                <div class="producto-opciones">
+                    <div class="opcion-grupo">
+                        <label>Color:</label>
+                        <div class="colores">
+                            <button class="color-btn active" data-color="negro" title="Negro Titanio"></button>
+                            <button class="color-btn" data-color="gris" title="Gris Titanio"></button>
+                            <button class="color-btn" data-color="violeta" title="Violeta Titanio"></button>
+                        </div>
+                    </div>
+
+                    <div class="opcion-grupo">
+                        <label for="almacenamiento">Almacenamiento:</label>
+                        <select id="almacenamiento">
+                            <option value="256">256 GB</option>
+                            <option value="512">512 GB</option>
+                            <option value="1tb">1 TB</option>
+                        </select>
+                    </div>
+
+                    <div class="opcion-grupo">
+                        <label for="cantidad">Cantidad:</label>
+                        <div class="cantidad-control">
+                            <button class="btn-cantidad" id="btn-menos">−</button>
+                            <input type="number" id="cantidad" value="1" min="1" max="45">
+                            <button class="btn-cantidad" id="btn-mas">+</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="producto-botones">
+                    <button class="btn-agregar-carrito">Agregar al carrito</button>
+                    <button class="btn-comprar-ahora">Comprar ahora</button>
+                    <button class="btn-favorito">Guardar</button>
+                </div>
+
+                <div class="producto-vendedor">
+                    <p>Vendido por: <a href="panel-vendedor.html"><strong>TT&DT Oficial</strong></a></p>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- TABS DE INFORMACIÓN -->
+        <section class="producto-tabs">
+            <div class="tabs">
+                <button class="tab active" id="tab-descripcion" onclick="switchTab('descripcion')">Descripción</button>
+                <button class="tab" id="tab-especificaciones" onclick="switchTab('especificaciones')">Especificaciones</button>
+                <button class="tab" id="tab-resenas" onclick="switchTab('resenas')">Reseñas (128)</button>
+            </div>
+
+            <!-- Tab Descripción -->
+            <div id="content-descripcion" class="tab-content active">
+                <h2>Descripción del producto</h2>
+                <p>El Galaxy S24 Ultra representa la cúspide de la innovación móvil de Samsung. Con su impresionante cámara de 200 megapíxeles y el S Pen integrado, ofrece una experiencia sin igual tanto para creativos como para profesionales.</p>
+                <p>Su pantalla Dynamic AMOLED 2X de 6.8 pulgadas con tasa de refresco adaptativa de 120Hz garantiza imágenes fluidas y vibrantes en cualquier condición de iluminación.</p>
+                <ul>
+                    <li>Cámara principal de 200MP con zoom óptico 10x</li>
+                    <li>S Pen integrado con baja latencia</li>
+                    <li>Batería de 5000mAh con carga rápida de 45W</li>
+                    <li>Pantalla Dynamic AMOLED 2X, 6.8"</li>
+                    <li>Procesador Snapdragon 8 Gen 3</li>
+                    <li>12GB RAM + hasta 1TB almacenamiento</li>
+                </ul>
+            </div>
+
+            <!-- Tab Especificaciones -->
+            <div id="content-especificaciones" class="tab-content">
+                <h2>Especificaciones técnicas</h2>
+                <table class="tabla-especificaciones">
+                    <tr>
+                        <th>Pantalla</th>
+                        <td>6.8" Dynamic AMOLED 2X, 3088x1440, 120Hz</td>
+                    </tr>
+                    <tr>
+                        <th>Procesador</th>
+                        <td>Snapdragon 8 Gen 3 for Galaxy</td>
+                    </tr>
+                    <tr>
+                        <th>RAM</th>
+                        <td>12 GB</td>
+                    </tr>
+                    <tr>
+                        <th>Almacenamiento</th>
+                        <td>256GB / 512GB / 1TB</td>
+                    </tr>
+                    <tr>
+                        <th>Cámara principal</th>
+                        <td>200MP + 12MP + 10MP + 50MP</td>
+                    </tr>
+                    <tr>
+                        <th>Cámara frontal</th>
+                        <td>12MP</td>
+                    </tr>
+                    <tr>
+                        <th>Batería</th>
+                        <td>5000mAh, carga rápida 45W</td>
+                    </tr>
+                    <tr>
+                        <th>Sistema operativo</th>
+                        <td>Android 14 / One UI 6.1</td>
+                    </tr>
+                    <tr>
+                        <th>Dimensiones</th>
+                        <td>162.3 x 79 x 8.6 mm</td>
+                    </tr>
+                    <tr>
+                        <th>Peso</th>
+                        <td>232 g</td>
+                    </tr>
+                    <tr>
+                        <th>Conectividad</th>
+                        <td>5G, Wi-Fi 7, Bluetooth 5.3, NFC, USB-C 3.2</td>
+                    </tr>
+                </table>
+            </div>
+
+            <!-- Tab Reseñas -->
+            <div id="content-resenas" class="tab-content">
+                <h2>Reseñas de clientes</h2>
+
+                <div class="resenas-resumen">
+                    <div class="resumen-puntuacion">
+                        <span class="puntuacion-numero">4.8</span>
+                        <div class="puntuacion-estrellas">5 estrellas</div>
+                        <span>128 reseñas</span>
+                    </div>
+                    <div class="resumen-barras">
+                        <div class="barra-fila">
+                            <span>5 estrellas</span>
+                            <div class="barra"><div class="barra-fill" style="width:80%"></div></div>
+                            <span>80%</span>
+                        </div>
+                        <div class="barra-fila">
+                            <span>4 estrellas</span>
+                            <div class="barra"><div class="barra-fill" style="width:12%"></div></div>
+                            <span>12%</span>
+                        </div>
+                        <div class="barra-fila">
+                            <span>3 estrellas</span>
+                            <div class="barra"><div class="barra-fill" style="width:5%"></div></div>
+                            <span>5%</span>
+                        </div>
+                        <div class="barra-fila">
+                            <span>2 estrellas</span>
+                            <div class="barra"><div class="barra-fill" style="width:2%"></div></div>
+                            <span>2%</span>
+                        </div>
+                        <div class="barra-fila">
+                            <span>1 estrella</span>
+                            <div class="barra"><div class="barra-fill" style="width:1%"></div></div>
+                            <span>1%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reseña 1 -->
+                <div class="resena-card">
+                    <div class="resena-header">
+                        <div class="resena-autor">
+                            <div class="autor-avatar">CM</div>
+                            <div>
+                                <strong>Carlos Méndez</strong>
+                                <span class="resena-fecha">15 enero 2024</span>
+                            </div>
+                        </div>
+                        <div class="resena-estrellas">5 estrellas</div>
+                    </div>
+                    <h4 class="resena-titulo">Increíble cámara y rendimiento</h4>
+                    <p class="resena-texto">Llevo 2 meses usándolo y no podría estar más satisfecho. La cámara es simplemente espectacular, las fotos nocturnas son perfectas. El S Pen lo uso a diario.</p>
+                    <div class="resena-util">
+                        <span>¿Fue útil?</span>
+                        <button>Sí (23)</button>
+                        <button>No (1)</button>
+                    </div>
+                </div>
+
+                <!-- Reseña 2 -->
+                <div class="resena-card">
+                    <div class="resena-header">
+                        <div class="resena-autor">
+                            <div class="autor-avatar">LR</div>
+                            <div>
+                                <strong>Laura Rodríguez</strong>
+                                <span class="resena-fecha">3 febrero 2024</span>
+                            </div>
+                        </div>
+                        <div class="resena-estrellas">4 de 5</div>
+                    </div>
+                    <h4 class="resena-titulo">Excelente pero caro</h4>
+                    <p class="resena-texto">El teléfono es fantástico en todos los aspectos. La única pega es el precio, pero si puedes pagarlo, vale cada centavo.</p>
+                    <div class="resena-util">
+                        <span>¿Fue útil?</span>
+                        <button>Sí (14)</button>
+                        <button>No (0)</button>
+                    </div>
+                </div>
+
+                <!-- Escribir reseña -->
+                <div class="escribir-resena">
+                    <h3>Escribe tu reseña</h3>
+                    <p>¿Ya compraste este producto? <a href="login.html">Inicia sesión</a> para dejar tu opinión.</p>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- PRODUCTOS RELACIONADOS -->
+        <section class="productos-relacionados">
+            <h2>Productos relacionados</h2>
+            <div class="relacionados-grid">
+
+                <div class="producto-card-mini">
+                    <div class="producto-imagen-mini"></div>
+                    <p class="producto-nombre-mini">iPhone 15 Pro Max</p>
+                    <p class="producto-precio-mini">$1,199.99</p>
+                    <a href="producto-detalle.html"><button class="btn-ver-mini">Ver</button></a>
+                </div>
+
+                <div class="producto-card-mini">
+                    <div class="producto-imagen-mini"></div>
+                    <p class="producto-nombre-mini">Google Pixel 8 Pro</p>
+                    <p class="producto-precio-mini">$999.99</p>
+                    <a href="producto-detalle.html"><button class="btn-ver-mini">Ver</button></a>
+                </div>
+
+                <div class="producto-card-mini">
+                    <div class="producto-imagen-mini"></div>
+                    <p class="producto-nombre-mini">Samsung Galaxy S24+</p>
+                    <p class="producto-precio-mini">$999.99</p>
+                    <a href="producto-detalle.html"><button class="btn-ver-mini">Ver</button></a>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ============================================================
+         FOOTER
+         ============================================================ -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-column">
+                <h3>Sobre Nosotros</h3>
+                <ul>
+                    <li><a href="#">Quiénes somos</a></li>
+                    <li><a href="#">Nuestra misión</a></li>
+                    <li><a href="#">Equipo</a></li>
+                    <li><a href="#">Trabaja con nosotros</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Enlaces Rápidos</h3>
+                <ul>
+                    <li><a href="catalogo.html">Catálogo</a></li>
+                    <li><a href="foro.html">Foro</a></li>
+                    <li><a href="vendedor.html">Vende con nosotros</a></li>
+                    <li><a href="#">Blog tecnológico</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Soporte</h3>
+                <ul>
+                    <li><a href="#">Centro de ayuda</a></li>
+                    <li><a href="#">Política de devoluciones</a></li>
+                    <li><a href="#">Envíos y entregas</a></li>
+                    <li><a href="#">Términos y condiciones</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Redes Sociales</h3>
+                <ul>
+                    <li><a href="#">Facebook</a></li>
+                    <li><a href="#">Twitter</a></li>
+                    <li><a href="#">Instagram</a></li>
+                    <li><a href="#">YouTube</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 TT&DT. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <script src="./producto-detalle.js"></script>
+
+</body>
+</html>
+
+</body>
+</html>
