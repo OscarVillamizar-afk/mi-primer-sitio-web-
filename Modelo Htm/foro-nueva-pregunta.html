@@ -49,11 +49,12 @@
  
             <!-- FORMULARIO PRINCIPAL -->
             <div class="nueva-pregunta-form">
+                <form id="form-foro" action="/FotoServlet" method="post" enctype="multipart/form-data">
  
-                <h1>Publicar una pregunta</h1>
-                <p class="form-subtitulo">Antes de publicar, asegúrate de que tu pregunta no ha sido respondida antes en el foro.</p>
+                    <h1>Publicar una pregunta</h1>
+                    <p class="form-subtitulo">Antes de publicar, asegúrate de que tu pregunta no ha sido respondida antes en el foro.</p>
  
-                <!-- PASO 1: Título -->
+                    <!-- PASO 1: Título -->
                 <div class="form-seccion">
                     <div class="form-seccion-header">
                         <span class="paso-numero">1</span>
@@ -146,7 +147,6 @@
                 </div>
  
                 <!-- TÉRMINOS Y ENVÍO -->
-                <form id="form-foro" action="/FotoServlet" method="post" enctype="multipart/form-data">
                     <div class="form-seccion form-seccion-final">
                         <div class="form-group">
                             <label class="checkbox-label">
