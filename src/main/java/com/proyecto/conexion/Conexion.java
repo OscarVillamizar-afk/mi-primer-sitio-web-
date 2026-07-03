@@ -18,18 +18,29 @@ public class Conexion {
         String url = System.getProperty("DB_URL", DEFAULT_URL);
         String user = System.getProperty("DB_USER", DEFAULT_USER);
         String password = System.getProperty("DB_PASSWORD", DEFAULT_PASSWORD);
+        SQLException lastException = null;
+
+        System.out.println("Conectar: URL=" + url + " USER=" + user);
 
         for (String driverClassName : DRIVER_CLASS_NAMES) {
+            System.out.println("Conectar: probando driver " + driverClassName);
             try {
                 Class.forName(driverClassName);
+                System.out.println("Conectar: driver cargado " + driverClassName);
                 return DriverManager.getConnection(url, user, password);
-            } catch (ClassNotFoundException ignored) {
-                // Se intenta con el siguiente driver.
+            } catch (ClassNotFoundException e) {
+                System.err.println("Conectar: driver no encontrado " + driverClassName + " -> " + e.getMessage());
             } catch (SQLException e) {
+                System.err.println("Conectar: SQLException con " + driverClassName + " -> " + e.getMessage());
+                lastException = e;
                 if (driverClassName.equals(DRIVER_CLASS_NAMES[DRIVER_CLASS_NAMES.length - 1])) {
                     throw e;
                 }
             }
+        }
+
+        if (lastException != null) {
+            throw lastException;
         }
 
         throw new SQLException("No se encontró un driver JDBC compatible para MySQL/MariaDB.");
