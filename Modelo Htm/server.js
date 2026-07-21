@@ -25,11 +25,10 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/uploads', express.static(uploadsDir));
 
 // ── 3. CONEXIÓN A MYSQL ───────────────────────────────────────────
-// Usamos el nombre real de tu BD: db_final_ttdt
 const db = mysql.createPool({
     host: process.env.DB_HOST || 'localhost',
     user: process.env.DB_USER || 'root',
-    password: process.env.DB_PASSWORD || '',
+    password: process.env.DB_PASSWORD || '1234', // <--- Poner comillas '1234'
     database: process.env.DB_NAME || 'db_final_ttdt',
     waitForConnections: true,
     connectionLimit: 10,
