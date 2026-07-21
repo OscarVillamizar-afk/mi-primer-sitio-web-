@@ -1,34 +1,71 @@
-// ── DATOS INICIALES SIMULADOS ────────────────────────────────
-let productos = [
-    { id: 1, nombre: 'Samsung Galaxy S24 Ultra', categoria: 'Smartphones', precio: 1299.99, stock: 12, variante: 'Negro Titanio, 256GB', descripcion: 'Smartphone premium con S Pen integrado.', ventas: 34 },
-    { id: 2, nombre: 'AirPods Pro 2nd Gen',      categoria: 'Audio',        precio: 249.99,  stock: 8,  variante: 'Blanco',               descripcion: 'Auriculares inalámbricos con cancelación de ruido.', ventas: 51 },
-    { id: 3, nombre: 'Logitech MX Master 3S',    categoria: 'Accesorios',   precio: 99.99,   stock: 5,  variante: 'Grafito',              descripcion: 'Mouse ergonómico de alta precisión.', ventas: 28 },
-    { id: 4, nombre: 'iPad Pro 12.9" M2',        categoria: 'Tablets',      precio: 1099.00, stock: 0,  variante: 'Gris Espacial, 256GB', descripcion: 'Tablet profesional con chip M2.', ventas: 9  },
-    { id: 5, nombre: 'Kit Arduino Starter Pro',  categoria: 'Robótica',     precio: 59.99,   stock: 3,  variante: 'Kit completo',          descripcion: 'Kit para aprender electrónica y programación.', ventas: 22 },
-    { id: 6, nombre: 'MacBook Pro 14" M3',       categoria: 'Laptops',      precio: 1999.00, stock: 6,  variante: 'Plata, 512GB',         descripcion: 'Laptop profesional con chip M3.', ventas: 15 },
-    { id: 7, nombre: 'Cable USB-C 2m',           categoria: 'Accesorios',   precio: 14.99,   stock: 2,  variante: 'Negro',                descripcion: 'Cable de carga rápida USB-C.', ventas: 67 },
-];
+const URL_API = "http://localhost:3000/api";
+const SEPARADOR_VARIANTE = " | Variante: ";
 
-let idEditando = null;       // null = nuevo, número = editando
-let idEliminando = null;     // id del producto a eliminar
+let productos = [];
+let categorias = [];
+let idEditando = null;
+let idEliminando = null;
 
+// ── HELPERS PARA DESCRIPCIÓN + VARIANTE COMBINADAS ────────────
+function combinarDescripcion(descripcion, variante) {
+    const desc = descripcion || '—';
+    return variante ? `${desc}${SEPARADOR_VARIANTE}${variante}` : desc;
+}
 
-// ── HELPERS ──────────────────────────────────────────────────
+function separarDescripcion(descripcionCompleta) {
+    if (!descripcionCompleta) return { descripcion: '', variante: '' };
+    const partes = descripcionCompleta.split(SEPARADOR_VARIANTE);
+    return {
+        descripcion: partes[0] || '',
+        variante: partes[1] || ''
+    };
+}
 
-// Determina el estado según el stock
+// ── HELPERS DE ESTADO ─────────────────────────────────────────
 function getEstado(stock) {
     if (stock === 0)  return 'Agotado';
     if (stock < 5)    return 'Stock bajo';
     return 'Activo';
 }
 
-// Clase CSS del badge de estado
 function getBadgeEstado(estado) {
     if (estado === 'Agotado')    return 'stock-out';
     if (estado === 'Stock bajo') return 'stock-low';
     return 'stock-ok';
 }
 
+// ── CARGAR DATOS DESDE LA BASE DE DATOS ───────────────────────
+async function cargarProductos() {
+    try {
+        const respuesta = await fetch(`${URL_API}/productos`);
+        if (!respuesta.ok) throw new Error("Error al obtener productos");
+        productos = await respuesta.json();
+        actualizarStats();
+        aplicarFiltros();
+    } catch (error) {
+        console.error("Error cargando productos:", error);
+    }
+}
+
+async function cargarCategorias() {
+    try {
+        const respuesta = await fetch(`${URL_API}/categorias`);
+        if (!respuesta.ok) throw new Error("Error al obtener categorías");
+        categorias = await respuesta.json();
+
+        // Select del modal (valor = id_categoria)
+        const selectModal = document.getElementById('campo-categoria');
+        selectModal.innerHTML = '<option value="">Selecciona una categoría</option>' +
+            categorias.map(c => `<option value="${c.id_categoria}">${c.nombre}</option>`).join('');
+
+        // Select del filtro (valor = nombre, para comparar contra p.categoria)
+        const selectFiltro = document.getElementById('filtro-categoria');
+        selectFiltro.innerHTML = '<option value="">Todas las categorías</option>' +
+            categorias.map(c => `<option value="${c.nombre}">${c.nombre}</option>`).join('');
+    } catch (error) {
+        console.error("Error cargando categorías:", error);
+    }
+}
 
 // ── ACTUALIZAR ESTADÍSTICAS ──────────────────────────────────
 function actualizarStats() {
@@ -37,12 +74,11 @@ function actualizarStats() {
     const stockBajo = productos.filter(p => p.stock > 0 && p.stock < 5).length;
     const activos   = total - agotados - stockBajo;
 
-    document.getElementById('stat-total').textContent     = total;
-    document.getElementById('stat-activos').textContent   = activos;
-    document.getElementById('stat-agotados').textContent  = agotados;
+    document.getElementById('stat-total').textContent      = total;
+    document.getElementById('stat-activos').textContent    = activos;
+    document.getElementById('stat-agotados').textContent   = agotados;
     document.getElementById('stat-stock-bajo').textContent = stockBajo;
 }
-
 
 // ── RENDERIZAR TABLA ─────────────────────────────────────────
 function renderizarTabla(lista) {
@@ -66,16 +102,17 @@ function renderizarTabla(lista) {
     lista.forEach(function (p) {
         const estado = getEstado(p.stock);
         const badge  = getBadgeEstado(estado);
+        const { variante } = separarDescripcion(p.descripcion);
 
         tbody.innerHTML += `
             <tr>
                 <td>
                     <strong style="color:var(--text-primary);">${p.nombre}</strong>
                     <br>
-                    <span style="font-size:0.78rem; color:var(--text-muted);">${p.variante}</span>
+                    <span style="font-size:0.78rem; color:var(--text-muted);">${variante}</span>
                 </td>
                 <td>${p.categoria}</td>
-                <td style="color:var(--accent-light); font-weight:700;">$${p.precio.toFixed(2)}</td>
+                <td style="color:var(--accent-light); font-weight:700;">$${Number(p.precio).toFixed(2)}</td>
                 <td>${p.stock} uds.</td>
                 <td><span class="badge ${badge}">${estado}</span></td>
                 <td>${p.ventas} vendidos</td>
@@ -87,7 +124,6 @@ function renderizarTabla(lista) {
         `;
     });
 }
-
 
 // ── FILTRAR Y ORDENAR ────────────────────────────────────────
 function aplicarFiltros() {
@@ -104,17 +140,15 @@ function aplicarFiltros() {
         return coincideNombre && coincideCategoria && coincideEstado;
     });
 
-    // Ordenar
     lista.sort(function (a, b) {
         if (orden === 'precio-asc')  return a.precio - b.precio;
         if (orden === 'precio-desc') return b.precio - a.precio;
         if (orden === 'stock-asc')   return a.stock - b.stock;
-        return a.nombre.localeCompare(b.nombre); // nombre A-Z por defecto
+        return a.nombre.localeCompare(b.nombre);
     });
 
     renderizarTabla(lista);
 }
-
 
 // ── MODAL AGREGAR / EDITAR ───────────────────────────────────
 function abrirModal(id) {
@@ -122,17 +156,17 @@ function abrirModal(id) {
     limpiarErrores();
 
     if (idEditando !== null) {
-        // Modo edición: llenar campos con datos del producto
         const p = productos.find(function (x) { return x.id === idEditando; });
+        const { descripcion, variante } = separarDescripcion(p.descripcion);
+
         document.getElementById('modal-titulo').textContent      = 'Editar Producto';
         document.getElementById('campo-nombre').value            = p.nombre;
-        document.getElementById('campo-categoria').value         = p.categoria;
-        document.getElementById('campo-precio').value            = p.precio;
+        document.getElementById('campo-categoria').value         = p.id_categoria;
+        document.getElementById('campo-precio').value             = p.precio;
         document.getElementById('campo-stock').value             = p.stock;
-        document.getElementById('campo-variante').value          = p.variante;
-        document.getElementById('campo-descripcion').value       = p.descripcion;
+        document.getElementById('campo-variante').value          = variante;
+        document.getElementById('campo-descripcion').value       = descripcion;
     } else {
-        // Modo agregar: limpiar campos
         document.getElementById('modal-titulo').textContent = 'Agregar Producto';
         document.getElementById('campo-nombre').value       = '';
         document.getElementById('campo-categoria').value    = '';
@@ -156,28 +190,25 @@ function limpiarErrores() {
     });
 }
 
-// Función global para el botón de editar en la tabla
 function abrirEditar(id) { abrirModal(id); }
 
-
 // ── GUARDAR PRODUCTO ─────────────────────────────────────────
-document.getElementById('btn-guardar-producto').addEventListener('click', function () {
+document.getElementById('btn-guardar-producto').addEventListener('click', async function () {
     limpiarErrores();
 
-    const nombre      = document.getElementById('campo-nombre').value.trim();
-    const categoria   = document.getElementById('campo-categoria').value;
-    const precio      = parseFloat(document.getElementById('campo-precio').value);
-    const stock       = parseInt(document.getElementById('campo-stock').value);
-    const variante    = document.getElementById('campo-variante').value.trim();
-    const descripcion = document.getElementById('campo-descripcion').value.trim();
+    const nombre       = document.getElementById('campo-nombre').value.trim();
+    const id_categoria = document.getElementById('campo-categoria').value;
+    const precio        = parseFloat(document.getElementById('campo-precio').value);
+    const stock         = parseInt(document.getElementById('campo-stock').value);
+    const variante      = document.getElementById('campo-variante').value.trim();
+    const descripcion   = document.getElementById('campo-descripcion').value.trim();
 
-    // Validaciones
     let hayError = false;
     if (!nombre) {
         document.getElementById('err-nombre').textContent = 'El nombre es obligatorio.';
         hayError = true;
     }
-    if (!categoria) {
+    if (!id_categoria) {
         document.getElementById('err-categoria').textContent = 'Selecciona una categoría.';
         hayError = true;
     }
@@ -191,32 +222,33 @@ document.getElementById('btn-guardar-producto').addEventListener('click', functi
     }
     if (hayError) return;
 
-    if (idEditando !== null) {
-        // Actualizar producto existente
-        const idx = productos.findIndex(function (p) { return p.id === idEditando; });
-        productos[idx].nombre      = nombre;
-        productos[idx].categoria   = categoria;
-        productos[idx].precio      = precio;
-        productos[idx].stock       = stock;
-        productos[idx].variante    = variante;
-        productos[idx].descripcion = descripcion;
-    } else {
-        // Agregar nuevo producto
-        const nuevoId = productos.length > 0 ? Math.max.apply(null, productos.map(function (p) { return p.id; })) + 1 : 1;
-        productos.push({
-            id: nuevoId,
-            nombre, categoria, precio, stock,
-            variante:    variante    || '—',
-            descripcion: descripcion || '—',
-            ventas: 0
-        });
+    const descripcionCompleta = combinarDescripcion(descripcion, variante);
+
+    try {
+        let respuesta;
+        if (idEditando !== null) {
+            respuesta = await fetch(`${URL_API}/productos/${idEditando}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ nombre, id_categoria, precio, stock, descripcion: descripcionCompleta })
+            });
+        } else {
+            respuesta = await fetch(`${URL_API}/productos`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ nombre, id_categoria, precio, stock, descripcion: descripcionCompleta })
+            });
+        }
+
+        if (!respuesta.ok) throw new Error("Error al guardar el producto");
+
+        cerrarModal();
+        await cargarProductos();
+    } catch (error) {
+        console.error("Error guardando producto:", error);
+        alert("No se pudo guardar el producto.");
     }
-
-    cerrarModal();
-    actualizarStats();
-    aplicarFiltros();
 });
-
 
 // ── MODAL ELIMINAR ───────────────────────────────────────────
 function abrirEliminar(id) {
@@ -231,13 +263,25 @@ function cerrarEliminar() {
     idEliminando = null;
 }
 
-document.getElementById('btn-confirmar-eliminar').addEventListener('click', function () {
-    productos = productos.filter(function (p) { return p.id !== idEliminando; });
-    cerrarEliminar();
-    actualizarStats();
-    aplicarFiltros();
-});
+document.getElementById('btn-confirmar-eliminar').addEventListener('click', async function () {
+    try {
+        const respuesta = await fetch(`${URL_API}/productos/${idEliminando}`, { method: 'DELETE' });
+        const data = await respuesta.json();
 
+        if (!respuesta.ok) {
+            alert(data.error || "No se pudo eliminar el producto.");
+            cerrarEliminar();
+            return;
+        }
+
+        cerrarEliminar();
+        await cargarProductos();
+    } catch (error) {
+        console.error("Error eliminando producto:", error);
+        alert("No se pudo eliminar el producto.");
+        cerrarEliminar();
+    }
+});
 
 // ── EVENTOS DE MODALES ───────────────────────────────────────
 document.getElementById('btn-abrir-modal').addEventListener('click',    function () { abrirModal(null); });
@@ -246,7 +290,6 @@ document.getElementById('btn-cancelar-modal').addEventListener('click', cerrarMo
 document.getElementById('btn-cerrar-eliminar').addEventListener('click',   cerrarEliminar);
 document.getElementById('btn-cancelar-eliminar').addEventListener('click', cerrarEliminar);
 
-// Cerrar modales al hacer clic fuera del contenido
 document.getElementById('modal-producto').addEventListener('click', function (e) {
     if (e.target === this) cerrarModal();
 });
@@ -254,13 +297,11 @@ document.getElementById('modal-eliminar').addEventListener('click', function (e)
     if (e.target === this) cerrarEliminar();
 });
 
-
 // ── EVENTOS DE FILTROS ───────────────────────────────────────
 document.getElementById('input-busqueda').addEventListener('input',   aplicarFiltros);
 document.getElementById('filtro-categoria').addEventListener('change', aplicarFiltros);
 document.getElementById('filtro-estado').addEventListener('change',    aplicarFiltros);
 document.getElementById('filtro-orden').addEventListener('change',     aplicarFiltros);
-
 
 // ── CERRAR SESIÓN ────────────────────────────────────────────
 document.querySelector('a[href="index.html"] .btn-login').addEventListener('click', function (e) {
@@ -269,7 +310,5 @@ document.querySelector('a[href="index.html"] .btn-login').addEventListener('clic
     window.location.href = 'index.html';
 });
 
-
 // ── INICIALIZAR ──────────────────────────────────────────────
-actualizarStats();
-aplicarFiltros();
+cargarCategorias().then(cargarProductos);

@@ -1,23 +1,129 @@
-// ── CUPONES VÁLIDOS ──────────────────────────────────────────
-// Objeto con los cupones disponibles y su % de descuento
+const URL_API = "http://localhost:3000/api";
+
 const cuponesValidos = {
-    'TECH10': 10,   // 10% de descuento
-    'PROMO20': 20,  // 20% de descuento
-    'BIENVENIDO': 5 // 5% de descuento
+    'TECH10': 10,
+    'PROMO20': 20,
+    'BIENVENIDO': 5
 };
 
-let descuentoActivo = 0; // Guarda el % de descuento aplicado actualmente
+let descuentoActivo = 0;
 
-// ── FUNCIÓN: Actualizar el resumen del pedido ────────────────
-// Se llama cada vez que cambia una cantidad o se aplica un cupón
+// ── 1. CARGAR CARRITO DESDE LA BASE DE DATOS (MySQL) ──────────
+async function cargarCarritoDesdeBD() {
+    const usuarioId = localStorage.getItem('usuario_id');
+    const contenedorItems = document.querySelector('.carrito-items');
+
+    if (!usuarioId) {
+        console.warn("No hay ID de usuario en localStorage");
+        return;
+    }
+
+    try {
+        const respuesta = await fetch(`${URL_API}/carrito/${usuarioId}`);
+        if (!respuesta.ok) throw new Error("Error al obtener productos del carrito");
+
+        const productos = await respuesta.json();
+        
+        // Limpiamos los productos estáticos del HTML antes de renderizar
+        const itemsPrevios = contenedorItems.querySelectorAll('.carrito-item');
+        itemsPrevios.forEach(item => item.remove());
+
+        // Si el carrito está vacío en la BD
+        if (productos.length === 0) {
+            const mensajeVacio = document.createElement('p');
+            mensajeVacio.textContent = "Tu carrito está vacío.";
+            contenedorItems.prepend(mensajeVacio);
+            actualizarResumen();
+            return;
+        }
+
+        // Renderizamos cada producto traído de la BD
+        productos.forEach(prod => {
+            const itemHTML = document.createElement('div');
+            itemHTML.classList.add('carrito-item');
+            itemHTML.dataset.precio = prod.precio;
+            itemHTML.dataset.idProducto = prod.id_producto;
+
+            itemHTML.innerHTML = `
+                <div class="item-imagen"></div>
+                <div class="item-info">
+                    <span class="item-categoria">${prod.categoria || 'General'}</span>
+                    <h3 class="item-nombre">${prod.nombre_producto}</h3>
+                    <p class="item-vendedor">Vendido por: <strong>TT&DT Oficial</strong></p>
+                    <p class="item-stock">En stock</p>
+                </div>
+                <div class="item-cantidad">
+                    <button class="btn-cantidad btn-menos">−</button>
+                    <input type="number" value="${prod.cantidad}" min="1" max="50">
+                    <button class="btn-cantidad btn-mas">+</button>
+                </div>
+                <div class="item-precio">
+                    <p class="precio-unitario">$${parseFloat(prod.precio).toFixed(2)} c/u</p>
+                    <p class="precio-total">$${(prod.precio * prod.cantidad).toFixed(2)}</p>
+                </div>
+                <div class="item-acciones">
+                    <button class="btn-eliminar">Eliminar</button>
+                </div>
+            `;
+            contenedorItems.prepend(itemHTML);
+        });
+
+        // Reasignamos los eventos a los nuevos botones dinámicos
+        inicializarControlesCantidad();
+        inicializarBotonesEliminar();
+        actualizarResumen();
+
+    } catch (error) {
+        console.error("Error cargando carrito:", error);
+    }
+}
+
+// ── 2. ACTUALIZAR CANTIDAD EN LA BASE DE DATOS ────────────────
+async function actualizarCantidadBD(idProducto, nuevaCantidad) {
+    const usuarioId = localStorage.getItem('usuario_id');
+    try {
+        await fetch(`${URL_API}/carrito/actualizar`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                usuario_id: usuarioId,
+                producto_id: idProducto,
+                cantidad: nuevaCantidad
+            })
+        });
+    } catch (error) {
+        console.error("Error al actualizar cantidad en el servidor:", error);
+    }
+}
+
+// ── 3. ELIMINAR PRODUCTO DE LA BASE DE DATOS ─────────────────
+async function eliminarProductoBD(idProducto) {
+    const usuarioId = localStorage.getItem('usuario_id');
+    try {
+        await fetch(`${URL_API}/carrito/eliminar`, {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                usuario_id: usuarioId,
+                producto_id: idProducto
+            })
+        });
+    } catch (error) {
+        console.error("Error al eliminar del servidor:", error);
+    }
+}
+
+// ── 4. RESUMEN Y EVENTOS ──────────────────────────────────────
 function actualizarResumen() {
     let subtotal = 0;
     let totalArticulos = 0;
 
-    // Recorre CADA producto en el carrito
     document.querySelectorAll('.carrito-item').forEach(function(item) {
         const precioUnitario = parseFloat(item.dataset.precio);
-        const cantidad = parseInt(item.querySelector('input[type="number"]').value);
+        const inputCantidad = item.querySelector('input[type="number"]');
+        if (!inputCantidad) return;
+        
+        const cantidad = parseInt(inputCantidad.value);
         const precioTotal = precioUnitario * cantidad;
 
         item.querySelector('.precio-total').textContent = '$' + precioTotal.toFixed(2);
@@ -28,55 +134,69 @@ function actualizarResumen() {
     const montoDescuento = subtotal * (descuentoActivo / 100);
     const total = subtotal - montoDescuento;
 
-    document.getElementById('resumen-cantidad').textContent =
-        'Subtotal (' + totalArticulos + ' artículo' + (totalArticulos !== 1 ? 's' : '') + ')';
-    document.getElementById('resumen-subtotal').textContent = '$' + subtotal.toFixed(2);
-    document.getElementById('resumen-descuento').textContent = '-$' + montoDescuento.toFixed(2);
-    document.getElementById('resumen-total').textContent = '$' + total.toFixed(2);
+    const elCantidad = document.getElementById('resumen-cantidad');
+    const elSubtotal = document.getElementById('resumen-subtotal');
+    const elDescuento = document.getElementById('resumen-descuento');
+    const elTotal = document.getElementById('resumen-total');
+
+    if (elCantidad) elCantidad.textContent = 'Subtotal (' + totalArticulos + ' artículo' + (totalArticulos !== 1 ? 's' : '') + ')';
+    if (elSubtotal) elSubtotal.textContent = '$' + subtotal.toFixed(2);
+    if (elDescuento) elDescuento.textContent = '-$' + montoDescuento.toFixed(2);
+    if (elTotal) elTotal.textContent = '$' + total.toFixed(2);
 }
 
-// ── BOTONES + y − de cantidad ────────────────────────────────
 function inicializarControlesCantidad() {
     document.querySelectorAll('.carrito-item').forEach(function(item) {
         const input = item.querySelector('input[type="number"]');
         const btnMenos = item.querySelector('.btn-menos');
         const btnMas = item.querySelector('.btn-mas');
+        const idProducto = item.dataset.idProducto;
 
-        btnMenos.addEventListener('click', function() {
-            const minimo = parseInt(input.min);
-            if (parseInt(input.value) > minimo) {
+        if (!input || !btnMenos || !btnMas) return;
+
+        btnMenos.onclick = function() {
+            if (parseInt(input.value) > parseInt(input.min)) {
                 input.value = parseInt(input.value) - 1;
                 actualizarResumen();
+                if (idProducto) actualizarCantidadBD(idProducto, input.value);
             }
-        });
+        };
 
-        btnMas.addEventListener('click', function() {
-            const maximo = parseInt(input.max);
-            if (parseInt(input.value) < maximo) {
+        btnMas.onclick = function() {
+            if (parseInt(input.value) < parseInt(input.max)) {
                 input.value = parseInt(input.value) + 1;
                 actualizarResumen();
+                if (idProducto) actualizarCantidadBD(idProducto, input.value);
             }
-        });
+        };
 
-        input.addEventListener('change', function() {
+        input.onchange = function() {
             actualizarResumen();
-        });
+            if (idProducto) actualizarCantidadBD(idProducto, input.value);
+        };
     });
 }
 
 function inicializarBotonesEliminar() {
     document.querySelectorAll('.btn-eliminar').forEach(function(btn) {
-        btn.addEventListener('click', function() {
+        btn.onclick = function() {
+            const item = btn.closest('.carrito-item');
+            const idProducto = item.dataset.idProducto;
+
             if (confirm('¿Seguro que deseas eliminar este producto?')) {
-                btn.closest('.carrito-item').remove();
+                item.remove();
                 actualizarResumen();
+                if (idProducto) eliminarProductoBD(idProducto);
             }
-        });
+        };
     });
 }
 
 function inicializarCupon() {
-    document.querySelector('.btn-aplicar-cupon').addEventListener('click', function() {
+    const btnCupon = document.querySelector('.btn-aplicar-cupon');
+    if (!btnCupon) return;
+
+    btnCupon.addEventListener('click', function() {
         const codigo = document.getElementById('input-cupon').value.trim().toUpperCase();
         const msgCupon = document.getElementById('msg-cupon');
 
@@ -84,37 +204,37 @@ function inicializarCupon() {
             descuentoActivo = cuponesValidos[codigo];
             msgCupon.style.color = 'green';
             msgCupon.textContent = 'Cupón aplicado: ' + descuentoActivo + '% de descuento';
-            actualizarResumen();
         } else {
             descuentoActivo = 0;
             msgCupon.style.color = 'red';
-            msgCupon.textContent = 'Cupón no válido. Intenta con otro código.';
-            actualizarResumen();
+            msgCupon.textContent = 'Cupón no válido.';
         }
+        actualizarResumen();
     });
 }
 
 function verificarSesion() {
     const usuarioLogueado = localStorage.getItem('usuario_logueado');
-    const usuarioTipo = localStorage.getItem('usuario_tipo');
-
-    if (!usuarioLogueado || usuarioTipo !== 'usuario') {
+    if (!usuarioLogueado) {
         window.location.href = 'login.html';
     }
 }
 
 function inicializarCerrarSesion() {
-    document.querySelector('.btn-login').addEventListener('click', function(e) {
-        e.preventDefault();
-        localStorage.clear();
-        window.location.href = 'index.html';
-    });
+    const btnLogout = document.querySelector('.btn-login');
+    if (btnLogout) {
+        btnLogout.addEventListener('click', function(e) {
+            e.preventDefault();
+            localStorage.clear();
+            window.location.href = 'index.html';
+        });
+    }
 }
 
-// ── INICIALIZAR ──────────────────────────────────────────────
-inicializarControlesCantidad();
-inicializarBotonesEliminar();
-inicializarCupon();
-actualizarResumen();
-verificarSesion();
-inicializarCerrarSesion();
+// ── INICIALIZACIÓN PRINCIPAL ─────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+    verificarSesion();
+    inicializarCupon();
+    inicializarCerrarSesion();
+    cargarCarritoDesdeBD(); // Hace la petición a MySQL
+});

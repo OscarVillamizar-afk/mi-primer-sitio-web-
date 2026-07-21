@@ -1,44 +1,81 @@
-// ── VARIABLES GLOBALES ───────────────────────────────────────
+const URL_API = "http://localhost:3000/api";
+
 let pasoActual = 1;
 let metodoPagoActual = 'tarjeta';
+let subtotalReal = 0;
 
-// Costos de envío según selección
 const costosEnvio = {
     'gratis':    { texto: 'Gratis',  valor: 0 },
     'express':   { texto: '$9.99',   valor: 9.99 },
     'mismo-dia': { texto: '$19.99',  valor: 19.99 }
 };
 
-const subtotal = 1799.97;
+// ── 1. OBTENEMOS EL TOTAL REAL DEL CARRITO DESDE MYSQL ───────
+async function cargarResumenPedidoBD() {
+    const usuarioId = localStorage.getItem('usuario_id');
+    if (!usuarioId) {
+        window.location.href = 'login.html';
+        return;
+    }
+
+    try {
+        const respuesta = await fetch(`${URL_API}/carrito/${usuarioId}`);
+        if (!respuesta.ok) throw new Error("Error al consultar el carrito");
+
+        const productos = await respuesta.json();
+
+        // Calculamos el subtotal de la base de datos
+        subtotalReal = productos.reduce((acc, item) => acc + (item.precio * item.cantidad), 0);
+
+        // Actualizamos los elementos del resumen en el HTML
+        const subtotalEl = document.getElementById('subtotal-resumen');
+        if (subtotalEl) subtotalEl.textContent = '$' + subtotalReal.toFixed(2);
+
+        actualizarTotalFinal();
+    } catch (error) {
+        console.error("Error al cargar datos del carrito:", error);
+    }
+}
+
+function actualizarTotalFinal() {
+    const metodoEnvioSelect = document.getElementById('metodo-envio');
+    const seleccion = costosEnvio[metodoEnvioSelect ? metodoEnvioSelect.value : 'gratis'];
+    
+    const costoEl = document.getElementById('costo-envio');
+    const totalEl = document.getElementById('total-final');
+
+    if (costoEl) {
+        costoEl.textContent = seleccion.texto;
+        costoEl.className = seleccion.valor === 0 ? 'envio-gratis' : '';
+    }
+
+    const total = subtotalReal + seleccion.valor;
+    if (totalEl) totalEl.textContent = '$' + total.toFixed(2);
+}
 
 // ── NAVEGAR ENTRE PASOS ──────────────────────────────────────
 function irPaso(paso) {
-    // Valida antes de avanzar
     if (paso > pasoActual) {
         if (pasoActual === 1 && !validarPaso1()) return;
         if (pasoActual === 2 && !validarPaso2()) return;
     }
 
-    // Oculta el paso actual y muestra el nuevo
     document.getElementById('step-' + pasoActual).classList.remove('active');
     document.getElementById('step-' + paso).classList.add('active');
 
-    // Actualiza los indicadores de progreso
     actualizarIndicadores(paso);
 
-    // Si llegamos al paso 3, muestra el resumen
     if (paso === 3) mostrarResumenConfirmacion();
 
     pasoActual = paso;
-
-    // Scroll suave al inicio del formulario
     window.scrollTo({ top: 200, behavior: 'smooth' });
 }
 
-// ── INDICADORES DE PASO (los círculos de arriba) ─────────────
 function actualizarIndicadores(pasoNuevo) {
     for (let i = 1; i <= 3; i++) {
         const indicator = document.getElementById('step-indicator-' + i);
+        if (!indicator) continue;
+        
         indicator.classList.remove('active', 'completado');
 
         if (i < pasoNuevo) {
@@ -53,33 +90,32 @@ function actualizarIndicadores(pasoNuevo) {
     }
 }
 
-// ── VALIDAR PASO 1: ENVÍO ────────────────────────────────────
+// ── VALIDACIONES ─────────────────────────────────────────────
 function validarPaso1() {
     let valido = true;
-
-    // Campos obligatorios del paso 1
     const campos = [
-        { id: 'nombre',       err: 'err-nombre',       msg: 'El nombre es obligatorio.' },
-        { id: 'apellido',     err: 'err-apellido',     msg: 'El apellido es obligatorio.' },
-        { id: 'email',        err: 'err-email',        msg: 'El correo es obligatorio.' },
-        { id: 'telefono',     err: 'err-telefono',     msg: 'El teléfono es obligatorio.' },
-        { id: 'direccion',    err: 'err-direccion',    msg: 'La dirección es obligatoria.' },
-        { id: 'ciudad',       err: 'err-ciudad',       msg: 'La ciudad es obligatoria.' },
-        { id: 'codigo-postal',err: 'err-codigo-postal',msg: 'El código postal es obligatorio.' },
+        { id: 'nombre',        err: 'err-nombre',        msg: 'El nombre es obligatorio.' },
+        { id: 'apellido',      err: 'err-apellido',      msg: 'El apellido es obligatorio.' },
+        { id: 'email',         err: 'err-email',         msg: 'El correo es obligatorio.' },
+        { id: 'telefono',      err: 'err-telefono',      msg: 'El teléfono es obligatorio.' },
+        { id: 'direccion',     err: 'err-direccion',     msg: 'La dirección es obligatoria.' },
+        { id: 'ciudad',        err: 'err-ciudad',        msg: 'La ciudad es obligatoria.' },
+        { id: 'codigo-postal', err: 'err-codigo-postal', msg: 'El código postal es obligatorio.' },
     ];
 
     campos.forEach(function(campo) {
         const input = document.getElementById(campo.id);
         const error = document.getElementById(campo.err);
-        if (!input.value.trim()) {
-            error.textContent = campo.msg;
-            valido = false;
-        } else {
-            error.textContent = '';
+        if (input && error) {
+            if (!input.value.trim()) {
+                error.textContent = campo.msg;
+                valido = false;
+            } else {
+                error.textContent = '';
+            }
         }
     });
 
-    // Validación extra del email
     const email = document.getElementById('email').value;
     if (email && !email.includes('@')) {
         document.getElementById('err-email').textContent = 'Ingresa un correo válido.';
@@ -89,7 +125,6 @@ function validarPaso1() {
     return valido;
 }
 
-// ── VALIDAR PASO 2: PAGO ─────────────────────────────────────
 function validarPaso2() {
     let valido = true;
 
@@ -137,20 +172,17 @@ function validarPaso2() {
     return valido;
 }
 
-// ── MOSTRAR RESUMEN EN PASO 3 ────────────────────────────────
 function mostrarResumenConfirmacion() {
-    // Texto de envío
-    const nombre    = document.getElementById('nombre').value;
-    const apellido  = document.getElementById('apellido').value;
-    const direccion = document.getElementById('direccion').value;
-    const ciudad    = document.getElementById('ciudad').value;
+    const nombre      = document.getElementById('nombre').value;
+    const apellido    = document.getElementById('apellido').value;
+    const direccion   = document.getElementById('direccion').value;
+    const ciudad      = document.getElementById('ciudad').value;
     const metodoEnvio = document.getElementById('metodo-envio');
     const textoEnvio  = metodoEnvio.options[metodoEnvio.selectedIndex].text;
 
     document.getElementById('resumen-envio-texto').textContent =
         nombre + ' ' + apellido + ' · ' + direccion + ', ' + ciudad + ' · ' + textoEnvio;
 
-    // Texto de pago
     const textosPago = {
         tarjeta:  'Tarjeta terminada en ' + document.getElementById('numero-tarjeta').value.slice(-4),
         pse:      'PSE · ' + (document.getElementById('banco').value || 'Banco seleccionado'),
@@ -159,72 +191,99 @@ function mostrarResumenConfirmacion() {
     document.getElementById('resumen-pago-texto').textContent = textosPago[metodoPagoActual];
 }
 
-// ── CONFIRMAR PEDIDO ─────────────────────────────────────────
-function confirmarPedido() {
-    // Genera un número de pedido simulado
-    const numeroPedido = '#TS-2024-' + Math.floor(Math.random() * 900 + 100);
-    document.getElementById('numero-pedido').textContent = numeroPedido;
+// ── 2. GUARDAR EL PEDIDO EN LA BASE DE DATOS ─────────────────
+async function confirmarPedido() {
+    const usuarioId = localStorage.getItem('usuario_id');
+    const metodoEnvioVal = document.getElementById('metodo-envio').value;
+    const costoEnvio = costosEnvio[metodoEnvioVal].valor;
+    const totalPedido = subtotalReal + costoEnvio;
 
-    // Oculta el paso 3 y muestra el éxito
-    document.getElementById('step-3').classList.remove('active');
-    document.getElementById('step-exito').classList.add('active');
+    const datosOrden = {
+        usuario_id: usuarioId,
+        direccion: document.getElementById('direccion').value,
+        ciudad: document.getElementById('ciudad').value,
+        metodo_pago: metodoPagoActual,
+        costo_envio: costoEnvio,
+        total: totalPedido
+    };
 
-    // Oculta el resumen lateral al completar la compra
-    document.getElementById('resumen-lateral').style.display = 'none';
+    try {
+        const respuesta = await fetch(`${URL_API}/ordenes/crear`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(datosOrden)
+        });
 
-    // Marca todos los steps como completados
-    for (let i = 1; i <= 3; i++) {
-        const ind = document.getElementById('step-indicator-' + i);
-        ind.classList.remove('active');
-        ind.classList.add('completado');
-        ind.querySelector('.step-numero').textContent = '✓';
+        if (!respuesta.ok) throw new Error("No se pudo procesar la orden");
+
+        const data = await respuesta.json();
+
+        // Si la base de datos retorna el ID de la orden generada, la mostramos
+        const numeroPedido = data.id_orden ? `#TS-2026-${data.id_orden}` : '#TS-2026-' + Math.floor(Math.random() * 900 + 100);
+        document.getElementById('numero-pedido').textContent = numeroPedido;
+
+        document.getElementById('step-3').classList.remove('active');
+        document.getElementById('step-exito').classList.add('active');
+        document.getElementById('resumen-lateral').style.display = 'none';
+
+        for (let i = 1; i <= 3; i++) {
+            const ind = document.getElementById('step-indicator-' + i);
+            if (!ind) continue;
+            ind.classList.remove('active');
+            ind.classList.add('completado');
+            ind.querySelector('.step-numero').textContent = '✓';
+        }
+
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    } catch (error) {
+        console.error("Error al confirmar pedido:", error);
+        alert("Ocurrió un error al procesar la compra en el servidor.");
     }
-
-    window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// ── SELECCIÓN DE MÉTODO DE PAGO ──────────────────────────────
 function seleccionarMetodo(metodo) {
     metodoPagoActual = metodo;
 
-    // Quita el estilo activo de todos los botones
     document.querySelectorAll('.metodo-btn').forEach(b => b.classList.remove('activo'));
     document.getElementById('btn-' + metodo).classList.add('activo');
 
-    // Muestra el formulario del método elegido
     document.getElementById('form-tarjeta').style.display  = metodo === 'tarjeta'  ? 'block' : 'none';
-    document.getElementById('form-pse').style.display      = metodo === 'pse'       ? 'block' : 'none';
+    document.getElementById('form-pse').style.display      = metodo === 'pse'      ? 'block' : 'none';
     document.getElementById('form-efectivo').style.display = metodo === 'efectivo'  ? 'block' : 'none';
 }
 
-// ── EVENTOS ──────────────────────────────────────────────────
-// Formateo automático de tarjeta
-document.getElementById('numero-tarjeta').addEventListener('input', function() {
-    let val = this.value.replace(/\D/g, '').substring(0, 16);
-    this.value = val.match(/.{1,4}/g)?.join(' ') || val;
-});
+// ── EVENTOS DE ENTRADA Y MASCARAS ─────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+    cargarResumenPedidoBD();
 
-// Formato automático MM/AA en el campo vencimiento
-document.getElementById('vencimiento').addEventListener('input', function() {
-    let val = this.value.replace(/\D/g, '').substring(0, 4);
-    if (val.length >= 2) val = val.slice(0, 2) + '/' + val.slice(2);
-    this.value = val;
-});
+    const elTarjeta = document.getElementById('numero-tarjeta');
+    const elVenc = document.getElementById('vencimiento');
+    const elCvv = document.getElementById('cvv');
+    const elEnvio = document.getElementById('metodo-envio');
 
-// Solo números en el CVV
-document.getElementById('cvv').addEventListener('input', function() {
-    this.value = this.value.replace(/\D/g, '').substring(0, 4);
-});
+    if (elTarjeta) {
+        elTarjeta.addEventListener('input', function() {
+            let val = this.value.replace(/\D/g, '').substring(0, 16);
+            this.value = val.match(/.{1,4}/g)?.join(' ') || val;
+        });
+    }
 
-// Actualizar costo de envío en el resumen
-document.getElementById('metodo-envio').addEventListener('change', function() {
-    const seleccion = costosEnvio[this.value];
-    const costoEl   = document.getElementById('costo-envio');
-    const totalEl   = document.getElementById('total-final');
+    if (elVenc) {
+        elVenc.addEventListener('input', function() {
+            let val = this.value.replace(/\D/g, '').substring(0, 4);
+            if (val.length >= 2) val = val.slice(0, 2) + '/' + val.slice(2);
+            this.value = val;
+        });
+    }
 
-    costoEl.textContent = seleccion.texto;
-    costoEl.className   = seleccion.valor === 0 ? 'envio-gratis' : '';
+    if (elCvv) {
+        elCvv.addEventListener('input', function() {
+            this.value = this.value.replace(/\D/g, '').substring(0, 4);
+        });
+    }
 
-    const total = subtotal + seleccion.valor;
-    totalEl.textContent = '$' + total.toFixed(2);
+    if (elEnvio) {
+        elEnvio.addEventListener('change', actualizarTotalFinal);
+    }
 });

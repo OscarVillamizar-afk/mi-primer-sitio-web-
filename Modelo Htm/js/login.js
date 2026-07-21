@@ -1,3 +1,5 @@
+const URL_API = "http://localhost:3000/api";
+
 // ── FUNCIÓN PARA CAMBIAR DE TAB ─────────────────────────────
 function switchTab(tab) {
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -9,129 +11,169 @@ function switchTab(tab) {
 
 // ── MANEJADOR DEL FORMULARIO DE LOGIN ────────────────────────
 function inicializarLogin() {
-    document.getElementById('form-login').addEventListener('submit', function(e) {
+    document.getElementById('form-login').addEventListener('submit', async function(e) {
         e.preventDefault();
 
         const tipoUsuario = document.getElementById('loginTipo').value;
         const email = document.getElementById('loginEmail').value;
         const password = document.getElementById('loginPassword').value;
 
-        // Validación simple
         if (!tipoUsuario || !email || !password) {
             alert('Por favor completa todos los campos');
             return;
         }
 
-        // Credenciales de prueba
-        let credencialesValidas = false;
-        if (tipoUsuario === 'dueno' && email === 'admin@admin.com' && password === 'admin') {
-            credencialesValidas = true;
-        } else if (tipoUsuario === 'vendedor' && email === 'vendedor@vendedor.com' && password === 'vendedor') {
-            credencialesValidas = true;
-        } else if (tipoUsuario === 'usuario' && email === 'usuario@usuario.com' && password === 'usuario') {
-            credencialesValidas = true;
-        }
+        try {
+            const respuesta = await fetch(`${URL_API}/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ tipoUsuario, email, password })
+            });
 
-        if (!credencialesValidas) {
-            alert('Credenciales incorrectas. Para pruebas:\n- Admin: admin@admin.com / admin\n- Vendedor: vendedor@vendedor.com / vendedor\n- Usuario: usuario@usuario.com / usuario');
-            return;
-        }
+            const data = await respuesta.json();
 
-        // Guardar datos en localStorage
-        localStorage.setItem('usuario_tipo', tipoUsuario);
-        localStorage.setItem('usuario_email', email);
-        localStorage.setItem('usuario_nombre', email.split('@')[0]);
-        localStorage.setItem('usuario_logueado', 'true');
+            if (!respuesta.ok) {
+                alert(data.error || 'Credenciales incorrectas');
+                return;
+            }
 
-        // Redirigir según el tipo de usuario
-        if (tipoUsuario === 'dueno') {
-            // Redirigir al dashboard del dueño
-            window.location.href = 'dashboard-dueno.html';
-        } else if (tipoUsuario === 'vendedor') {
-            // Redirigir al panel del vendedor
-            window.location.href = 'panel-vendedor.html';
-        } else if (tipoUsuario === 'usuario') {
-            // Redirigir al perfil del usuario o al catálogo
-            window.location.href = 'perfil.html';
+            localStorage.setItem('usuario_id', data.id);
+            localStorage.setItem('usuario_tipo', data.tipo);
+            localStorage.setItem('usuario_email', data.correo);
+            localStorage.setItem('usuario_nombre', data.nombre);
+            localStorage.setItem('usuario_logueado', 'true');
+
+            if (tipoUsuario === 'dueno') {
+                window.location.href = 'dashboard-dueno.html';
+            } else if (tipoUsuario === 'vendedor') {
+                window.location.href = 'panel-vendedor.html';
+            } else if (tipoUsuario === 'usuario') {
+                window.location.href = 'perfil.html';
+            }
+        } catch (error) {
+            console.error("Error en login:", error);
+            alert('No se pudo conectar con el servidor.');
         }
     });
 }
 
 // ── MANEJADOR DEL FORMULARIO DE REGISTRO USUARIO ──────────────
 function inicializarRegistroUsuario() {
-    document.getElementById('form-usuario').addEventListener('submit', function(e) {
+    document.getElementById('form-usuario').addEventListener('submit', async function(e) {
         e.preventDefault();
 
-        const nombre = document.getElementById('usuarioNombre').value;
-        const email = document.getElementById('usuarioEmail').value;
+        const nombre = document.getElementById('usuarioNombre').value.trim();
+        const email = document.getElementById('usuarioEmail').value.trim();
         const password = document.getElementById('usuarioPassword').value;
         const passwordConfirm = document.getElementById('usuarioPasswordConfirm').value;
+        const direccion = document.getElementById('usuarioDireccion').value.trim();
+        const codigoPostal = document.getElementById('usuarioCodigoPostal').value.trim();
+        const fechaNac = document.getElementById('usuarioFechaNac').value;
         const terminos = document.getElementById('usuarioTerminos').checked;
 
-        // Validaciones
         if (password !== passwordConfirm) {
             alert('Las contraseñas no coinciden');
             return;
         }
-
         if (!terminos) {
             alert('Debes aceptar los términos y condiciones');
             return;
         }
 
-        // Guardar datos en localStorage
-        localStorage.setItem('usuario_tipo', 'usuario');
-        localStorage.setItem('usuario_email', email);
-        localStorage.setItem('usuario_nombre', nombre);
-        localStorage.setItem('usuario_logueado', 'true');
+        try {
+            const respuesta = await fetch(`${URL_API}/registro/usuario`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ nombre, email, password, direccion, codigoPostal, fechaNac })
+            });
 
-        // Mostrar mensaje de éxito y redirigir
-        document.getElementById('successMessage').textContent = 'Cuenta creada exitosamente. Redirigiendo...';
-        document.getElementById('successMessage').style.display = 'block';
+            const data = await respuesta.json();
 
-        setTimeout(() => {
-            window.location.href = 'perfil.html';
-        }, 2000);
+            if (!respuesta.ok) {
+                alert(data.error || 'No se pudo crear la cuenta');
+                return;
+            }
+
+            localStorage.setItem('usuario_id', data.id);
+            localStorage.setItem('usuario_tipo', data.tipo);
+            localStorage.setItem('usuario_email', data.correo);
+            localStorage.setItem('usuario_nombre', data.nombre);
+            localStorage.setItem('usuario_logueado', 'true');
+
+            document.getElementById('successMessage').textContent = 'Cuenta creada exitosamente. Redirigiendo...';
+            document.getElementById('successMessage').style.display = 'block';
+
+            setTimeout(() => {
+                window.location.href = 'perfil.html';
+            }, 2000);
+        } catch (error) {
+            console.error("Error en registro de usuario:", error);
+            alert('No se pudo conectar con el servidor.');
+        }
     });
 }
 
 // ── MANEJADOR DEL FORMULARIO DE REGISTRO VENDEDOR ───────────────
 function inicializarRegistroVendedor() {
-    document.getElementById('form-vendedor').addEventListener('submit', function(e) {
+    document.getElementById('form-vendedor').addEventListener('submit', async function(e) {
         e.preventDefault();
 
-        const nombre = document.getElementById('vendedorNombre').value;
-        const email = document.getElementById('vendedorEmail').value;
+        const nombre = document.getElementById('vendedorNombre').value.trim();
+        const email = document.getElementById('vendedorEmail').value.trim();
         const password = document.getElementById('vendedorPassword').value;
         const passwordConfirm = document.getElementById('vendedorPasswordConfirm').value;
-        const negocio = document.getElementById('vendedorNegocio').value;
+        const direccion = document.getElementById('vendedorDireccion').value.trim();
+        const codigoPostal = document.getElementById('vendedorCodigoPostal').value.trim();
+        const fechaNac = document.getElementById('vendedorFechaNac').value;
+        const negocio = document.getElementById('vendedorNegocio').value.trim();
+        const telefono = document.getElementById('vendedorTelefono').value.trim();
+        const categoria = document.getElementById('vendedorCategoria').value;
+        const descripcion = document.getElementById('vendedorDescripcion').value.trim();
         const terminos = document.getElementById('vendedorTerminos').checked;
 
-        // Validaciones
         if (password !== passwordConfirm) {
             alert('Las contraseñas no coinciden');
             return;
         }
-
         if (!terminos) {
             alert('Debes aceptar los términos para vendedores');
             return;
         }
 
-        // Guardar datos en localStorage
-        localStorage.setItem('usuario_tipo', 'vendedor');
-        localStorage.setItem('usuario_email', email);
-        localStorage.setItem('usuario_nombre', nombre);
-        localStorage.setItem('usuario_negocio', negocio);
-        localStorage.setItem('usuario_logueado', 'true');
+        try {
+            const respuesta = await fetch(`${URL_API}/registro/vendedor`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    nombre, email, password, direccion, codigoPostal, fechaNac,
+                    negocio, telefono, categoria, descripcion
+                })
+            });
 
-        // Mostrar mensaje de éxito y redirigir
-        document.getElementById('successMessage').textContent = 'Cuenta de vendedor creada exitosamente. Redirigiendo...';
-        document.getElementById('successMessage').style.display = 'block';
+            const data = await respuesta.json();
 
-        setTimeout(() => {
-            window.location.href = 'panel-vendedor.html';
-        }, 2000);
+            if (!respuesta.ok) {
+                alert(data.error || 'No se pudo crear la cuenta de vendedor');
+                return;
+            }
+
+            localStorage.setItem('usuario_id', data.id);
+            localStorage.setItem('usuario_tipo', data.tipo);
+            localStorage.setItem('usuario_email', data.correo);
+            localStorage.setItem('usuario_nombre', data.nombre);
+            localStorage.setItem('usuario_negocio', negocio);
+            localStorage.setItem('usuario_logueado', 'true');
+
+            document.getElementById('successMessage').textContent = 'Cuenta de vendedor creada exitosamente. Redirigiendo...';
+            document.getElementById('successMessage').style.display = 'block';
+
+            setTimeout(() => {
+                window.location.href = 'panel-vendedor.html';
+            }, 2000);
+        } catch (error) {
+            console.error("Error en registro de vendedor:", error);
+            alert('No se pudo conectar con el servidor.');
+        }
     });
 }
 

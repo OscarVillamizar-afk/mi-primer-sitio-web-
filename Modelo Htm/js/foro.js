@@ -1,97 +1,166 @@
-// ── FUNCIÓN PRINCIPAL: Filtrar temas ─────────────────────────
-// Se llama cada vez que el usuario escribe, cambia categoría o hace clic en una pill
-function filtrarTemas(categoriaActiva) {
+const URL_API = "http://localhost:3000/api";
 
-    const textoBusqueda = document.getElementById('busqueda-foro').value.toLowerCase().trim();
-    const categoriaSelect = document.getElementById('filtro-categoria').value;
+// ── 1. CARGAR TEMAS DESDE EL BACKEND ─────────────────────────
+async function cargarTemasForo(categoriaFiltro = '', textoBusqueda = '') {
+    const contenedor = document.getElementById('contenedor-temas-foro');
+    const sinResultados = document.getElementById('sin-resultados-foro');
+    
+    if (!contenedor) return;
 
-    // Si se pasó una categoría desde una pill, esa tiene prioridad
-    // Si no, usa la del select
-    const categoriaFiltro = categoriaActiva !== undefined ? categoriaActiva : categoriaSelect;
+    try {
+        // Construir parámetros URL para búsqueda y filtrado en servidor
+        const params = new URLSearchParams();
+        if (categoriaFiltro) params.append('categoria', categoriaFiltro);
+        if (textoBusqueda) params.append('q', textoBusqueda);
 
-    const temas = document.querySelectorAll('.tema-card');
-    let visibles = 0;
+        const respuesta = await fetch(`${URL_API}/foro/publicaciones?${params.toString()}`);
+        if (!respuesta.ok) throw new Error("Error al obtener los temas del foro");
 
-    temas.forEach(function(tema) {
-        const titulo    = tema.dataset.titulo;       // texto del título en minúsculas
-        const categoria = tema.dataset.categoria;    // ej: "robotica", "hardware"
+        const temas = await respuesta.json();
 
-        const pasaBusqueda  = titulo.includes(textoBusqueda);
-        const pasaCategoria = categoriaFiltro === '' || categoria === categoriaFiltro;
+        contenedor.innerHTML = ''; // Limpiar publicaciones actuales
 
-        if (pasaBusqueda && pasaCategoria) {
-            tema.style.display = '';
-            visibles++;
-        } else {
-            tema.style.display = 'none';
+        if (temas.length === 0) {
+            if (sinResultados) sinResultados.style.display = 'block';
+            return;
         }
-    });
 
-    // Muestra u oculta el mensaje "sin resultados"
-    document.getElementById('sin-resultados-foro').style.display =
-        visibles === 0 ? 'block' : 'none';
+        if (sinResultados) sinResultados.style.display = 'none';
+
+        // Renderizar cada tema recibido de MySQL
+        temas.forEach(tema => {
+            const fechaFormateada = new Date(tema.fecha_creacion || tema.created_at).toLocaleDateString('es-CO', {
+                day: '2-digit',
+                month: 'short',
+                year: 'numeric'
+            });
+
+            contenedor.innerHTML += `
+                <article class="tema-card" data-titulo="${tema.titulo.toLowerCase()}" data-categoria="${tema.categoria.toLowerCase()}">
+                    <div class="tema-header">
+                        <span class="tema-categoria badge-${tema.categoria.toLowerCase()}">${tema.categoria}</span>
+                        <span class="tema-fecha">${fechaFormateada}</span>
+                    </div>
+                    <h3 class="tema-titulo">
+                        <a href="tema.html?id=${tema.id}">${tema.titulo}</a>
+                    </h3>
+                    <p class="tema-extracto">${tema.contenido ? tema.contenido.substring(0, 140) + '...' : ''}</p>
+                    <div class="tema-footer">
+                        <div class="tema-autor">
+                            <span class="autor-avatar">${(tema.autor_nombre || 'U').charAt(0).toUpperCase()}</span>
+                            <span class="autor-nombre">${tema.autor_nombre || 'Usuario'}</span>
+                        </div>
+                        <div class="tema-stats">
+                            <span>💬 ${tema.num_respuestas || 0} respuestas</span>
+                            <span>👁️ ${tema.vistas || 0} vistas</span>
+                        </div>
+                    </div>
+                </article>
+            `;
+        });
+
+    } catch (error) {
+        console.error("Error al cargar publicaciones del foro:", error);
+    }
 }
 
+// ── 2. FILTRAR TEMAS EN TIEMPO REAL ──────────────────────────
+function aplicarFiltros() {
+    const inputBusqueda = document.getElementById('busqueda-foro');
+    const selectCategoria = document.getElementById('filtro-categoria');
 
-// ── PILLS DE CATEGORÍA ───────────────────────────────────────
-// Las pills son los botones: Todos, Robótica, Software, Hardware, General
+    const texto = inputBusqueda ? inputBusqueda.value.toLowerCase().trim() : '';
+    const categoria = selectCategoria ? selectCategoria.value : '';
+
+    cargarTemasForo(categoria, texto);
+}
+
+// ── 3. PILLS DE CATEGORÍA ─────────────────────────────────────
 function inicializarPillsCategoria() {
-    document.querySelectorAll('.categoria-pill').forEach(function(pill) {
+    document.querySelectorAll('.categoria-pill').forEach(pill => {
+        pill.addEventListener('click', function () {
 
-        pill.addEventListener('click', function() {
-
-            // Quita la clase "active" de todas las pills
+            // Quitar "active" de todas las pills
             document.querySelectorAll('.categoria-pill').forEach(p => p.classList.remove('active'));
 
-            // Se la pone solo a la que se hizo clic
-            pill.classList.add('active');
+            // Activar la pill seleccionada
+            this.classList.add('active');
 
-            // Lee la categoría de la pill (el botón "Todos" no tiene clase extra)
-            // Buscamos si tiene alguna clase que no sea "categoria-pill" ni "active"
-            const clases = Array.from(pill.classList).filter(
+            // Identificar categoría de las clases extra
+            const clases = Array.from(this.classList).filter(
                 c => c !== 'categoria-pill' && c !== 'active'
             );
             const categoria = clases.length > 0 ? clases[0] : '';
 
-            // También sincroniza el select con la pill seleccionada
-            document.getElementById('filtro-categoria').value = categoria;
+            // Sincronizar con el select
+            const selectCat = document.getElementById('filtro-categoria');
+            if (selectCat) selectCat.value = categoria;
 
-            filtrarTemas(categoria);
+            const inputBusqueda = document.getElementById('busqueda-foro');
+            const texto = inputBusqueda ? inputBusqueda.value.toLowerCase().trim() : '';
+
+            cargarTemasForo(categoria, texto);
         });
     });
 }
 
-
-// ── BÚSQUEDA EN TIEMPO REAL ──────────────────────────────────
-function inicializarBusqueda() {
-    document.getElementById('busqueda-foro').addEventListener('input', function() {
-        filtrarTemas();
-    });
-}
-
-
-// ── SELECT DE CATEGORÍA ──────────────────────────────────────
-function inicializarSelectCategoria() {
-    document.getElementById('filtro-categoria').addEventListener('change', function() {
-        // Sincroniza las pills con el select
-        const val = this.value;
-        document.querySelectorAll('.categoria-pill').forEach(function(pill) {
-            pill.classList.remove('active');
-            const clases = Array.from(pill.classList).filter(
-                c => c !== 'categoria-pill' && c !== 'active'
-            );
-            const pillCat = clases.length > 0 ? clases[0] : '';
-            if (pillCat === val) pill.classList.add('active');
+// ── 4. BÚSQUEDA Y SELECT ──────────────────────────────────────
+function inicializarControlesFiltro() {
+    const inputBusqueda = document.getElementById('busqueda-foro');
+    if (inputBusqueda) {
+        let timeoutDebounce;
+        inputBusqueda.addEventListener('input', function () {
+            // Debounce para evitar saturar el servidor en cada tecla
+            clearTimeout(timeoutDebounce);
+            timeoutDebounce = setTimeout(() => {
+                aplicarFiltros();
+            }, 300);
         });
-        // Si el select dice "Todas", activa la pill "Todos"
-        if (val === '') {
-            document.querySelector('.categoria-pill:first-child').classList.add('active');
-        }
-        filtrarTemas(val);
-    });
+    }
+
+    const selectCategoria = document.getElementById('filtro-categoria');
+    if (selectCategoria) {
+        selectCategoria.addEventListener('change', function () {
+            const val = this.value;
+
+            // Sincronizar pills
+            document.querySelectorAll('.categoria-pill').forEach(pill => {
+                pill.classList.remove('active');
+                const clases = Array.from(pill.classList).filter(
+                    c => c !== 'categoria-pill' && c !== 'active'
+                );
+                const pillCat = clases.length > 0 ? clases[0] : '';
+                if (pillCat === val) pill.classList.add('active');
+            });
+
+            if (val === '') {
+                const primeraPill = document.querySelector('.categoria-pill:first-child');
+                if (primeraPill) primeraPill.classList.add('active');
+            }
+
+            aplicarFiltros();
+        });
+    }
 }
 
-// ── INICIALIZACIÓN ───────────────────────────────────────────
-inicializarPillsCategoria();
-inicializarBusqueda();
-inicializarSelectCategoria();
+// ── 5. CERRAR SESIÓN ──────────────────────────────────────────
+function inicializarCerrarSesion() {
+    const btnCerrar = document.querySelector('a[href="index.html"] .btn-login') || document.querySelector('.btn-login');
+    if (btnCerrar) {
+        btnCerrar.addEventListener('click', function (e) {
+            e.preventDefault();
+            localStorage.clear();
+            window.location.href = 'index.html';
+        });
+    }
+}
+
+// ── INICIALIZACIÓN GENERAL ───────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+    inicializarPillsCategoria();
+    inicializarControlesFiltro();
+    inicializarCerrarSesion();
+    
+    // Cargar todas las publicaciones al iniciar
+    cargarTemasForo();
+});

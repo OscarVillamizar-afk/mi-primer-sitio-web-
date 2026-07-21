@@ -1,28 +1,47 @@
-// ── DATOS SIMULADOS ──────────────────────────────────────────
-// (Espeja Inventario + Detalle_inventario + Producto de la BD)
-let productos = [
-    { id: 1, nombre: 'Samsung Galaxy S24 Ultra', categoria: 'smartphones', precio: 1299.99, stock: 18, actualizado: '09/05/2026' },
-    { id: 2, nombre: 'AirPods Pro 2nd Gen',      categoria: 'audio',       precio: 249.99,  stock: 4,  actualizado: '08/05/2026' },
-    { id: 3, nombre: 'Logitech MX Master 3S',    categoria: 'accesorios',  precio: 99.99,   stock: 22, actualizado: '07/05/2026' },
-    { id: 4, nombre: 'iPad Pro 12.9" M2',        categoria: 'tablets',     precio: 1099.00, stock: 2,  actualizado: '06/05/2026' },
-    { id: 5, nombre: 'Kit Arduino Starter Pro',  categoria: 'robotica',    precio: 59.99,   stock: 0,  actualizado: '05/05/2026' },
-    { id: 6, nombre: 'MacBook Pro 14" M3',       categoria: 'laptops',     precio: 1999.00, stock: 7,  actualizado: '04/05/2026' },
-    { id: 7, nombre: 'Sony WH-1000XM5',          categoria: 'audio',       precio: 349.99,  stock: 5,  actualizado: '03/05/2026' },
-];
+// ── CONFIGURACIÓN DE LA API ──────────────────────────────────
+const API_BASE_URL = 'http://localhost:8080/api'; // Ajusta la URL base de tu servidor/backend
 
-let historial = [
-    { tipo: 'entrada', texto: '<strong>+10 unidades</strong> añadidas a Samsung Galaxy S24 Ultra',    tiempo: 'Hace 2h' },
-    { tipo: 'salida',  texto: '<strong>-3 unidades</strong> vendidas de AirPods Pro 2nd Gen',         tiempo: 'Hace 4h' },
-    { tipo: 'ajuste',  texto: '<strong>Ajuste</strong>: iPad Pro actualizado a 2 unidades',            tiempo: 'Hace 1 día' },
-    { tipo: 'agotado', texto: '<strong>Sin stock</strong>: Kit Arduino Starter Pro agotado',           tiempo: 'Hace 2 días' },
-    { tipo: 'entrada', texto: '<strong>+15 unidades</strong> añadidas a Logitech MX Master 3S',       tiempo: 'Hace 3 días' },
-];
-
-let productosFiltrados = [...productos];
+let productos = [];
+let historial = [];
+let productosFiltrados = [];
 let stockProductoActual = null;
-const STOCK_MAX_REF = 30; // Referencia para la barra visual
+const STOCK_MAX_REF = 30; // Referencia visual para las barras
 
-// ── ESTADO STOCK ─────────────────────────────────────────────
+// ── AUXILIARES DE CABECERA Y PETICIONES HTTP ─────────────────
+function obtenerHeaders() {
+    return {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token') || ''}`
+    };
+}
+
+async function cargarProductos() {
+    try {
+        const res = await fetch(`${API_BASE_URL}/productos`, { headers: obtenerHeaders() });
+        if (!res.ok) throw new Error('Error al obtener la lista de productos.');
+        productos = await res.json();
+        
+        filtrar();
+        actualizarStats();
+        renderizarAlertas();
+    } catch (error) {
+        console.error('Error en cargarProductos:', error);
+    }
+}
+
+async function cargarHistorial() {
+    try {
+        const res = await fetch(`${API_BASE_URL}/historial`, { headers: obtenerHeaders() });
+        if (!res.ok) throw new Error('Error al obtener el historial de movimientos.');
+        historial = await res.json();
+        
+        renderizarHistorial();
+    } catch (error) {
+        console.error('Error en cargarHistorial:', error);
+    }
+}
+
+// ── ESTADO Y FORMATO DE STOCK ────────────────────────────────
 function estadoStock(stock) {
     if (stock === 0) return 'agotado';
     if (stock <= 5)  return 'bajo';
@@ -43,13 +62,21 @@ function colorBarra(stock) {
     return 'var(--success)';
 }
 
-const catLabel = { smartphones:'Smartphones', laptops:'Laptops', audio:'Audio', accesorios:'Accesorios', tablets:'Tablets', robotica:'Robótica' };
+const catLabel = { 
+    smartphones: 'Smartphones', 
+    laptops: 'Laptops', 
+    audio: 'Audio', 
+    accesorios: 'Accesorios', 
+    tablets: 'Tablets', 
+    robotica: 'Robótica' 
+};
 
-// ── ALERTAS ──────────────────────────────────────────────────
+// ── ALERTAS Y MÉTRICAS ───────────────────────────────────────
 function renderizarAlertas() {
     const cont = document.getElementById('gi-alertas');
+    if (!cont) return;
     cont.innerHTML = '';
-    productos.forEach(function(p) {
+    productos.forEach(p => {
         const e = estadoStock(p.stock);
         if (e === 'agotado') {
             cont.innerHTML += `<div class="gi-alerta gi-alerta-agotado"><span class="gi-alerta-icono"></span><strong>${p.nombre}</strong>&nbsp;está agotado. Requiere reabastecimiento urgente.</div>`;
@@ -59,38 +86,42 @@ function renderizarAlertas() {
     });
 }
 
-// ── STATS ────────────────────────────────────────────────────
 function actualizarStats() {
     const total    = productos.length;
     const enStock  = productos.filter(p => estadoStock(p.stock) === 'ok').length;
     const bajo     = productos.filter(p => estadoStock(p.stock) === 'bajo').length;
     const agotados = productos.filter(p => estadoStock(p.stock) === 'agotado').length;
+    
     document.getElementById('si-total-prod').textContent = total;
     document.getElementById('si-en-stock').textContent   = enStock;
     document.getElementById('si-stock-bajo').textContent  = bajo;
     document.getElementById('si-agotados').textContent    = agotados;
 }
 
-// ── RENDERIZAR TABLA ─────────────────────────────────────────
+// ── RENDERIZAR TABLA E HISTORIAL ─────────────────────────────
 function renderizarTabla() {
     const tbody = document.getElementById('gi-tabla-body');
+    const sinRes = document.getElementById('gi-sin-resultados');
+    if (!tbody) return;
+
     tbody.innerHTML = '';
 
     if (productosFiltrados.length === 0) {
-        document.getElementById('gi-sin-resultados').style.display = 'block';
+        if (sinRes) sinRes.style.display = 'block';
         return;
     }
-    document.getElementById('gi-sin-resultados').style.display = 'none';
+    if (sinRes) sinRes.style.display = 'none';
 
-    productosFiltrados.forEach(function(p) {
+    productosFiltrados.forEach(p => {
         const pct   = Math.min(100, Math.round((p.stock / STOCK_MAX_REF) * 100));
         const color = colorBarra(p.stock);
-        const tr = document.createElement('tr');
+        const tr    = document.createElement('tr');
+        
         tr.innerHTML = `
             <td><strong>#${p.id}</strong></td>
             <td><strong class="gi-producto-nombre">${p.nombre}</strong></td>
             <td>${catLabel[p.categoria] || p.categoria}</td>
-            <td><strong>$${p.precio.toFixed(2)}</strong></td>
+            <td><strong>$${Number(p.precio).toFixed(2)}</strong></td>
             <td>
                 <div class="gi-stock-wrap">
                     <span class="gi-stock-num" style="--stock-color: ${color};">${p.stock}</span>
@@ -100,7 +131,7 @@ function renderizarTabla() {
                 </div>
             </td>
             <td>${labelEstado(p.stock)}</td>
-            <td class="gi-actualizado">${p.actualizado}</td>
+            <td class="gi-actualizado">${p.actualizado || 'Reciente'}</td>
             <td>
                 <button class="btn-accion btn-editar-stock" onclick="abrirModalStock(${p.id})">Editar stock</button>
                 <button class="btn-accion btn-eliminar-prod" onclick="eliminarProducto(${p.id})">Eliminar</button>
@@ -110,13 +141,15 @@ function renderizarTabla() {
     });
 }
 
-// ── HISTORIAL ────────────────────────────────────────────────
 function renderizarHistorial() {
     const lista = document.getElementById('gi-historial-lista');
+    if (!lista) return;
+
     lista.innerHTML = '';
-    document.getElementById('gi-total-movs').textContent = historial.length + ' registros';
+    document.getElementById('gi-total-movs').textContent = `${historial.length} registros`;
     const iconos = { entrada: '↑', salida: '↓', ajuste: '⟳', agotado: '!' };
-    historial.forEach(function(h) {
+
+    historial.forEach(h => {
         lista.innerHTML += `
             <li class="gi-historial-item">
                 <div class="gi-hist-icono hist-${h.tipo === 'agotado' ? 'salida' : h.tipo}">${iconos[h.tipo] || '·'}</div>
@@ -127,13 +160,13 @@ function renderizarHistorial() {
     });
 }
 
-// ── FILTRAR ──────────────────────────────────────────────────
+// ── FILTROS Y ELIMINACIÓN ────────────────────────────────────
 function filtrar() {
     const texto = document.getElementById('gi-input-busqueda').value.toLowerCase().trim();
     const cat   = document.getElementById('gi-filtro-cat').value;
     const est   = document.getElementById('gi-filtro-stock').value;
 
-    productosFiltrados = productos.filter(function(p) {
+    productosFiltrados = productos.filter(p => {
         const textoM = !texto || p.nombre.toLowerCase().includes(texto);
         const catM   = !cat   || p.categoria === cat;
         const estM   = !est   || estadoStock(p.stock) === (est === 'ok' ? 'ok' : est === 'bajo' ? 'bajo' : 'agotado');
@@ -142,28 +175,38 @@ function filtrar() {
     renderizarTabla();
 }
 
-// ── ELIMINAR ─────────────────────────────────────────────────
-function eliminarProducto(id) {
+async function eliminarProducto(id) {
     const p = productos.find(x => x.id === id);
+    if (!p) return;
+
     if (confirm(`¿Eliminar "${p.nombre}" del inventario?`)) {
-        productos = productos.filter(x => x.id !== id);
-        historial.unshift({ tipo: 'salida', texto: `<strong>Eliminado</strong>: ${p.nombre} del inventario`, tiempo: 'Ahora' });
-        actualizarStats();
-        renderizarAlertas();
-        filtrar();
-        renderizarHistorial();
+        try {
+            const res = await fetch(`${API_BASE_URL}/productos/${id}`, {
+                method: 'DELETE',
+                headers: obtenerHeaders()
+            });
+
+            if (!res.ok) throw new Error('No se pudo eliminar el producto en la base de datos.');
+
+            await cargarProductos();
+            await cargarHistorial();
+        } catch (error) {
+            alert(error.message);
+        }
     }
 }
 
-// ── MODAL STOCK ──────────────────────────────────────────────
+// ── MODAL ACTUALIZAR STOCK ───────────────────────────────────
 function abrirModalStock(id) {
     stockProductoActual = id;
     const p = productos.find(x => x.id === id);
-    document.getElementById('modal-stock-titulo').textContent = 'Actualizar Stock — ' + p.nombre;
+    if (!p) return;
+
+    document.getElementById('modal-stock-titulo').textContent = `Actualizar Stock — ${p.nombre}`;
     document.getElementById('gi-prod-preview').innerHTML = `
         <p class="gi-prod-preview-nombre">${p.nombre}</p>
         <p class="gi-prod-preview-info">
-            <span>Categoría: ${catLabel[p.categoria]}</span>
+            <span>Categoría: ${catLabel[p.categoria] || p.categoria}</span>
             <span>Stock actual: <strong class="gi-stock-total" style="--stock-total-color: ${colorBarra(p.stock)};">${p.stock} unidades</strong></span>
         </p>
     `;
@@ -175,57 +218,51 @@ function abrirModalStock(id) {
 }
 
 function inicializarModalStock() {
-    document.getElementById('btn-guardar-stock').addEventListener('click', function() {
+    document.getElementById('btn-guardar-stock').addEventListener('click', async function() {
         const cant = parseInt(document.getElementById('ms-cantidad').value);
         const tipo = document.getElementById('ms-tipo').value;
         const obs  = document.getElementById('ms-obs').value.trim();
 
-        if (!cant || cant <= 0) {
+        if (isNaN(cant) || cant <= 0) {
             document.getElementById('err-ms-cantidad').textContent = 'Ingresa una cantidad válida.';
             return;
         }
         document.getElementById('err-ms-cantidad').textContent = '';
 
-        const p = productos.find(x => x.id === stockProductoActual);
-        let stockAnterior = p.stock;
+        try {
+            const res = await fetch(`${API_BASE_URL}/productos/${stockProductoActual}/stock`, {
+                method: 'PATCH',
+                headers: obtenerHeaders(),
+                body: JSON.stringify({ cantidad: cant, tipo, observacion: obs })
+            });
 
-        if (tipo === 'entrada')  p.stock += cant;
-        if (tipo === 'salida')   p.stock = Math.max(0, p.stock - cant);
-        if (tipo === 'ajuste')   p.stock = cant;
+            if (!res.ok) throw new Error('Error al actualizar el stock en el servidor.');
 
-        const hoy = new Date().toLocaleDateString('es-CO', { day:'2-digit', month:'2-digit', year:'numeric' });
-        p.actualizado = hoy;
+            await cargarProductos();
+            await cargarHistorial();
 
-        const tipoTexto = { entrada: `+${cant} unidades añadidas`, salida: `-${cant} unidades retiradas`, ajuste: `Ajuste: ${stockAnterior} → ${p.stock} unidades` };
-        historial.unshift({
-            tipo: tipo,
-            texto: `<strong>${tipoTexto[tipo]}</strong> en ${p.nombre}${obs ? ' — ' + obs : ''}`,
-            tiempo: 'Ahora'
-        });
-
-        actualizarStats();
-        renderizarAlertas();
-        filtrar();
-        renderizarHistorial();
-        document.getElementById('modal-stock').style.display = 'none';
-        stockProductoActual = null;
+            document.getElementById('modal-stock').style.display = 'none';
+            stockProductoActual = null;
+        } catch (error) {
+            alert(error.message);
+        }
     });
 }
 
 // ── MODAL NUEVO PRODUCTO ─────────────────────────────────────
 function inicializarModalProducto() {
     document.getElementById('btn-abrir-modal-prod').addEventListener('click', function() {
-        ['np-nombre','np-desc'].forEach(id => document.getElementById(id).value = '');
+        ['np-nombre', 'np-desc'].forEach(id => document.getElementById(id).value = '');
         document.getElementById('np-cat').value    = '';
         document.getElementById('np-precio').value = '';
         document.getElementById('np-stock').value  = '';
-        ['err-np-nombre','err-np-cat','err-np-precio','err-np-stock'].forEach(id => {
+        ['err-np-nombre', 'err-np-cat', 'err-np-precio', 'err-np-stock'].forEach(id => {
             document.getElementById(id).textContent = '';
         });
         document.getElementById('modal-producto').style.display = 'flex';
     });
 
-    document.getElementById('btn-guardar-prod').addEventListener('click', function() {
+    document.getElementById('btn-guardar-prod').addEventListener('click', async function() {
         let ok = true;
         const nombre = document.getElementById('np-nombre').value.trim();
         const cat    = document.getElementById('np-cat').value;
@@ -233,91 +270,99 @@ function inicializarModalProducto() {
         const stock  = parseInt(document.getElementById('np-stock').value);
         const desc   = document.getElementById('np-desc').value.trim();
 
-        if (!nombre)         { document.getElementById('err-np-nombre').textContent = 'Campo requerido.'; ok = false; }
-        if (!cat)            { document.getElementById('err-np-cat').textContent    = 'Selecciona categoría.'; ok = false; }
-        if (!precio || precio < 0) { document.getElementById('err-np-precio').textContent = 'Precio inválido.'; ok = false; }
-        if (isNaN(stock) || stock < 0) { document.getElementById('err-np-stock').textContent = 'Stock inválido.'; ok = false; }
+        if (!nombre)                     { document.getElementById('err-np-nombre').textContent = 'Campo requerido.'; ok = false; }
+        if (!cat)                        { document.getElementById('err-np-cat').textContent    = 'Selecciona categoría.'; ok = false; }
+        if (isNaN(precio) || precio < 0) { document.getElementById('err-np-precio').textContent = 'Precio inválido.'; ok = false; }
+        if (isNaN(stock) || stock < 0)   { document.getElementById('err-np-stock').textContent  = 'Stock inválido.'; ok = false; }
 
         if (!ok) return;
 
-        const nuevoId = Math.max(...productos.map(p => p.id)) + 1;
-        const hoy = new Date().toLocaleDateString('es-CO', { day:'2-digit', month:'2-digit', year:'numeric' });
-        productos.push({ id: nuevoId, nombre, categoria: cat, precio, stock, actualizado: hoy, descripcion: desc });
-        historial.unshift({ tipo: 'entrada', texto: `<strong>Nuevo producto</strong> creado: ${nombre} con ${stock} unidades`, tiempo: 'Ahora' });
+        try {
+            const res = await fetch(`${API_BASE_URL}/productos`, {
+                method: 'POST',
+                headers: obtenerHeaders(),
+                body: JSON.stringify({ nombre, categoria: cat, precio, stock, descripcion: desc })
+            });
 
-        actualizarStats();
-        renderizarAlertas();
-        filtrar();
-        renderizarHistorial();
-        document.getElementById('modal-producto').style.display = 'none';
-    });
-}
+            if (!res.ok) throw new Error('Error al guardar el nuevo producto.');
 
-// ── CERRAR MODALES ───────────────────────────────────────────
-function inicializarCerrarModales() {
-    ['btn-cerrar-stock','btn-cancelar-stock'].forEach(id => {
-        document.getElementById(id).addEventListener('click', () => {
-            document.getElementById('modal-stock').style.display = 'none';
-        });
-    });
-    ['btn-cerrar-prod','btn-cancelar-prod'].forEach(id => {
-        document.getElementById(id).addEventListener('click', () => {
+            await cargarProductos();
+            await cargarHistorial();
+
             document.getElementById('modal-producto').style.display = 'none';
-        });
+        } catch (error) {
+            alert(error.message);
+        }
     });
-    document.getElementById('modal-stock').addEventListener('click', function(e) { if (e.target===this) this.style.display='none'; });
-    document.getElementById('modal-producto').addEventListener('click', function(e) { if (e.target===this) this.style.display='none'; });
 }
 
-// ── ACTUALIZAR TODO ──────────────────────────────────────────
+// ── MANEJO DE EVENTOS Y MODALES ──────────────────────────────
+function inicializarCerrarModales() {
+    ['btn-cerrar-stock', 'btn-cancelar-stock'].forEach(id => {
+        const btn = document.getElementById(id);
+        if (btn) btn.addEventListener('click', () => { document.getElementById('modal-stock').style.display = 'none'; });
+    });
+    ['btn-cerrar-prod', 'btn-cancelar-prod'].forEach(id => {
+        const btn = document.getElementById(id);
+        if (btn) btn.addEventListener('click', () => { document.getElementById('modal-producto').style.display = 'none'; });
+    });
+
+    document.getElementById('modal-stock').addEventListener('click', function(e) { if (e.target === this) this.style.display = 'none'; });
+    document.getElementById('modal-producto').addEventListener('click', function(e) { if (e.target === this) this.style.display = 'none'; });
+}
+
 function inicializarActualizarTodo() {
-    document.getElementById('btn-actualizar-todo').addEventListener('click', function() {
-        this.textContent = '↻ Actualizando...';
-        setTimeout(() => { this.textContent = '↻ Actualizar todo'; }, 1000);
-    });
+    const btn = document.getElementById('btn-actualizar-todo');
+    if (btn) {
+        btn.addEventListener('click', async function() {
+            this.textContent = '↻ Actualizando...';
+            await Promise.all([cargarProductos(), cargarHistorial()]);
+            this.textContent = '↻ Actualizar todo';
+        });
+    }
 }
 
-// ── FILTROS EN TIEMPO REAL ───────────────────────────────────
 function inicializarFiltros() {
     document.getElementById('gi-input-busqueda').addEventListener('input', filtrar);
     document.getElementById('gi-filtro-cat').addEventListener('change', filtrar);
     document.getElementById('gi-filtro-stock').addEventListener('change', filtrar);
 }
 
-// ── VERIFICACIÓN DE SESIÓN ───────────────────────────────────
+// ── AUTENTICACIÓN Y SESIÓN ───────────────────────────────────
 function verificarSesion() {
     const usuarioLogueado = localStorage.getItem('usuario_logueado');
     const usuarioTipo = localStorage.getItem('usuario_tipo');
 
     if (!usuarioLogueado || usuarioTipo !== 'dueno') {
-        // Si no está logueado o no es dueño, redirigir a login
         window.location.href = 'login.html';
     }
 }
 
-// ── CERRAR SESIÓN ────────────────────────────────────────────
 function inicializarCerrarSesion() {
-    document.querySelector('a[href="index.html"] .btn-login').addEventListener('click', function(e) {
-        e.preventDefault();
-        localStorage.clear();
-        window.location.href = 'index.html';
-    });
+    const btnCerrar = document.querySelector('a[href="index.html"] .btn-login');
+    if (btnCerrar) {
+        btnCerrar.addEventListener('click', function(e) {
+            e.preventDefault();
+            localStorage.clear();
+            window.location.href = 'index.html';
+        });
+    }
 }
 
-// ── INICIALIZACIÓN ───────────────────────────────────────────
-function inicializarGestionInventario() {
-    actualizarStats();
-    renderizarAlertas();
-    filtrar();
-    renderizarHistorial();
+// ── INICIALIZACIÓN PRINCIPAL ────────────────────────────────
+async function inicializarGestionInventario() {
+    verificarSesion();
+
+    // Peticiones asíncronas iniciales a la BD
+    await Promise.all([cargarProductos(), cargarHistorial()]);
+
     inicializarModalStock();
     inicializarModalProducto();
     inicializarCerrarModales();
     inicializarActualizarTodo();
     inicializarFiltros();
     inicializarCerrarSesion();
-    verificarSesion();
 }
 
-// Ejecutar inicialización
+// Ejecutar script
 inicializarGestionInventario();

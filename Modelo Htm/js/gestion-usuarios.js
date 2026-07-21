@@ -1,21 +1,25 @@
-// ── DATOS SIMULADOS ──────────────────────────────────────────
-// (En producción vendrían de la tabla Usuario de la BD)
-let usuarios = [
-    { id: 1, nombre: 'Carlos',   apellido: 'Méndez',    correo: 'carlos@tt.com',   tipo: 'Dueno',             fecha: '01/01/2024', estado: 'activo' },
-    { id: 2, nombre: 'Laura',    apellido: 'Rodríguez', correo: 'laura@tt.com',    tipo: 'Colaborador',       fecha: '05/02/2024', estado: 'activo' },
-    { id: 3, nombre: 'Miguel',   apellido: 'García',    correo: 'miguel@tt.com',   tipo: 'Tecnico_moderador', fecha: '10/03/2024', estado: 'activo' },
-    { id: 4, nombre: 'Ana',      apellido: 'Pérez',     correo: 'ana@tt.com',      tipo: 'Comprador',         fecha: '15/04/2024', estado: 'inactivo' },
-    { id: 5, nombre: 'Juan',     apellido: 'Silva',     correo: 'juan@tt.com',     tipo: 'Comprador',         fecha: '20/04/2024', estado: 'activo' },
-    { id: 6, nombre: 'María',    apellido: 'López',     correo: 'maria@tt.com',    tipo: 'Tecnico_moderador', fecha: '01/05/2026', estado: 'activo' },
-    { id: 7, nombre: 'Pedro',    apellido: 'Gómez',     correo: 'pedro@tt.com',    tipo: 'Colaborador',       fecha: '03/05/2026', estado: 'inactivo' },
-    { id: 8, nombre: 'Sofía',    apellido: 'Torres',    correo: 'sofia@tt.com',    tipo: 'Comprador',         fecha: '07/05/2026', estado: 'activo' },
-];
+const URL_API = "http://localhost:3000/api";
 
-let usuariosFiltrados = [...usuarios];
+let usuarios = [];
+let usuariosFiltrados = [];
 let paginaActual = 1;
 const POR_PAGINA = 5;
 let modoEdicion = false;
 let idEdicion = null;
+
+// ── CARGAR USUARIOS DESDE LA BASE DE DATOS ────────────────────
+async function cargarUsuariosDesdeBD() {
+    try {
+        const respuesta = await fetch(`${URL_API}/usuarios`);
+        if (!respuesta.ok) throw new Error("Error al obtener usuarios");
+
+        usuarios = await respuesta.json();
+        actualizarStats();
+        filtrar();
+    } catch (error) {
+        console.error("Error cargando usuarios:", error);
+    }
+}
 
 // ── RENDERIZAR TABLA ─────────────────────────────────────────
 function renderizarTabla() {
@@ -26,16 +30,13 @@ function renderizarTabla() {
 
     tbody.innerHTML = '';
 
-    if (pagina.length === 0) {
-        document.getElementById('sin-usuarios').style.display = 'block';
-    } else {
-        document.getElementById('sin-usuarios').style.display = 'none';
-    }
+    document.getElementById('sin-usuarios').style.display = pagina.length === 0 ? 'block' : 'none';
 
     const tipoLabel = {
         'Dueno': 'Dueño',
         'Colaborador': 'Colaborador',
         'Tecnico_moderador': 'Tec. Moderador',
+        'Proveedor': 'Proveedor',
         'Comprador': 'Comprador'
     };
 
@@ -67,7 +68,6 @@ function renderizarTabla() {
         tbody.appendChild(tr);
     });
 
-    // Actualizar paginación
     const totalPaginas = Math.max(1, Math.ceil(usuariosFiltrados.length / POR_PAGINA));
     document.getElementById('info-pagina').textContent = `Página ${paginaActual} de ${totalPaginas}`;
     document.getElementById('btn-anterior').disabled = paginaActual === 1;
@@ -76,23 +76,22 @@ function renderizarTabla() {
 
 // ── ESTADÍSTICAS ─────────────────────────────────────────────
 function actualizarStats() {
-    const total    = usuarios.length;
-    const activos  = usuarios.filter(u => u.estado === 'activo').length;
-    const inactivos= usuarios.filter(u => u.estado === 'inactivo').length;
-    // "nuevos esta semana": fecha >= 03/05/2026 (simulado)
-    const nuevos   = usuarios.filter(u => u.fecha >= '03/05/2026').length;
+    const total     = usuarios.length;
+    const activos   = usuarios.filter(u => u.estado === 'activo').length;
+    const inactivos = usuarios.filter(u => u.estado === 'inactivo').length;
+    const nuevos    = usuarios.filter(u => u.fecha >= '03/05/2026').length;
 
-    document.getElementById('stat-total').textContent    = total;
-    document.getElementById('stat-activos').textContent  = activos;
-    document.getElementById('stat-inactivos').textContent= inactivos;
-    document.getElementById('stat-nuevos').textContent   = nuevos;
+    document.getElementById('stat-total').textContent     = total;
+    document.getElementById('stat-activos').textContent   = activos;
+    document.getElementById('stat-inactivos').textContent = inactivos;
+    document.getElementById('stat-nuevos').textContent    = nuevos;
 }
 
 // ── FILTRAR ──────────────────────────────────────────────────
 function filtrar() {
-    const texto   = document.getElementById('input-busqueda').value.toLowerCase().trim();
-    const tipo    = document.getElementById('filtro-tipo').value;
-    const estado  = document.getElementById('filtro-estado').value;
+    const texto  = document.getElementById('input-busqueda').value.toLowerCase().trim();
+    const tipo   = document.getElementById('filtro-tipo').value;
+    const estado = document.getElementById('filtro-estado').value;
 
     usuariosFiltrados = usuarios.filter(function(u) {
         const textoMatch = !texto ||
@@ -110,14 +109,27 @@ function filtrar() {
 }
 
 // ── TOGGLE ESTADO ────────────────────────────────────────────
-function toggleEstado(id) {
+async function toggleEstado(id) {
     const u = usuarios.find(x => x.id === id);
     if (!u) return;
+    const nuevoEstado = u.estado === 'activo' ? 'inactivo' : 'activo';
     const accion = u.estado === 'activo' ? 'desactivar' : 'activar';
-    if (confirm(`¿Seguro que deseas ${accion} a ${u.nombre} ${u.apellido}?`)) {
-        u.estado = u.estado === 'activo' ? 'inactivo' : 'activo';
+    if (!confirm(`¿Seguro que deseas ${accion} a ${u.nombre} ${u.apellido}?`)) return;
+
+    try {
+        const respuesta = await fetch(`${URL_API}/usuarios/${id}/estado`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ estado: nuevoEstado })
+        });
+        if (!respuesta.ok) throw new Error("Error al actualizar estado");
+
+        u.estado = nuevoEstado;
         actualizarStats();
         filtrar();
+    } catch (error) {
+        console.error("Error cambiando estado:", error);
+        alert("No se pudo cambiar el estado del usuario.");
     }
 }
 
@@ -168,7 +180,7 @@ function limpiarErrores() {
     });
 }
 
-document.getElementById('btn-guardar-modal').addEventListener('click', function() {
+document.getElementById('btn-guardar-modal').addEventListener('click', async function() {
     limpiarErrores();
     let ok = true;
 
@@ -192,20 +204,40 @@ document.getElementById('btn-guardar-modal').addEventListener('click', function(
 
     if (!ok) return;
 
-    if (modoEdicion) {
-        const u = usuarios.find(x => x.id === idEdicion);
-        u.nombre = nombre; u.apellido = apellido; u.correo = correo;
-        u.tipo = tipo; u.estado = estado; u.direccion = dir;
-        u.codigoPostal = cp; u.fechaNac = fnac;
-    } else {
-        const nuevoId = Math.max(...usuarios.map(u => u.id)) + 1;
-        const hoy = new Date().toLocaleDateString('es-CO', { day:'2-digit', month:'2-digit', year:'numeric' });
-        usuarios.push({ id: nuevoId, nombre, apellido, correo, tipo, fecha: hoy, estado, direccion: dir, codigoPostal: cp, fechaNac: fnac });
-    }
+    const payload = { nombre, apellido, correo, tipo, estado, direccion: dir, codigoPostal: cp, fechaNac: fnac };
 
-    actualizarStats();
-    filtrar();
-    cerrarModal();
+    try {
+        let respuesta;
+        if (modoEdicion) {
+            respuesta = await fetch(`${URL_API}/usuarios/${idEdicion}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+        } else {
+            respuesta = await fetch(`${URL_API}/usuarios`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+        }
+
+        if (!respuesta.ok) {
+            const err = await respuesta.json();
+            throw new Error(err.error || "Error al guardar");
+        }
+
+        const data = await respuesta.json();
+        if (!modoEdicion && data.password_temporal) {
+            alert(`Usuario creado. Contraseña temporal: ${data.password_temporal}`);
+        }
+
+        await cargarUsuariosDesdeBD();
+        cerrarModal();
+    } catch (error) {
+        console.error("Error guardando usuario:", error);
+        alert(error.message || "No se pudo guardar el usuario.");
+    }
 });
 
 // ── EVENTOS ──────────────────────────────────────────────────
@@ -229,27 +261,24 @@ document.getElementById('btn-siguiente').addEventListener('click', function() {
     if (paginaActual < totalPaginas) { paginaActual++; renderizarTabla(); }
 });
 
-// ── INICIALIZAR ──────────────────────────────────────────────
-actualizarStats();
-filtrar();
-
 // ── VERIFICACIÓN DE SESIÓN ───────────────────────────────────
 function verificarSesion() {
     const usuarioLogueado = localStorage.getItem('usuario_logueado');
     const usuarioTipo = localStorage.getItem('usuario_tipo');
-
     if (!usuarioLogueado || usuarioTipo !== 'dueno') {
-        // Si no está logueado o no es dueño, redirigir a login
         window.location.href = 'login.html';
     }
 }
 
-// ── CERRAR SESIÓN ────────────────────────────────────────────
-document.querySelector('a[href="index.html"] .btn-login').addEventListener('click', function(e) {
-    e.preventDefault();
-    localStorage.clear();
-    window.location.href = 'index.html';
-});
+function inicializarCerrarSesion() {
+    document.querySelector('a[href="index.html"] .btn-login').addEventListener('click', function(e) {
+        e.preventDefault();
+        localStorage.clear();
+        window.location.href = 'index.html';
+    });
+}
 
-// Verificar sesión al cargar la página
+// ── INICIALIZAR ──────────────────────────────────────────────
 verificarSesion();
+inicializarCerrarSesion();
+cargarUsuariosDesdeBD();
