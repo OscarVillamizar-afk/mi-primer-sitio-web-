@@ -28,23 +28,21 @@ app.use('/uploads', express.static(uploadsDir));
 const db = mysql.createPool({
     host: process.env.DB_HOST || 'localhost',
     user: process.env.DB_USER || 'root',
-    password: process.env.DB_PASSWORD || '1234', // <--- Poner comillas '1234'
+    password: process.env.DB_PASSWORD || '1234',
     database: process.env.DB_NAME || 'db_final_ttdt',
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0
 });
 
-// Comprobar la conexión asíncronamente
-(async () => {
-    try {
-        const connection = await db.getConnection();
-        console.log('✅ Conexión a MySQL (db_final_ttdt) establecida con éxito.');
+db.getConnection()
+    .then(connection => {
+        console.log('✅ Conexión a la base de datos MySQL (db_final_ttdt) establecida correctamente.');
         connection.release();
-    } catch (err) {
+    })
+    .catch(err => {
         console.error('❌ Error conectando a MySQL:', err.message);
-    }
-})();
+    });
 
 // ── 4. CONFIGURACIÓN DE MULTER ────────────────────────────────────
 const storage = multer.diskStorage({
@@ -63,7 +61,7 @@ const upload = multer({
 
 // ── 5. RUTAS API ──────────────────────────────────────────────────
 
-// TAREAS
+// ── TAREAS ────────────────────────────────────────────────────────
 app.get('/api/tareas/:usuarioId', async (req, res) => {
     try {
         const { usuarioId } = req.params;
@@ -102,7 +100,82 @@ app.get('/api/tecnicos', async (req, res) => {
     }
 });
 
-// LOGIN
+app.post('/api/tareas', async (req, res) => {
+    try {
+        const { usuario_id, descripcion, id_tecnico, prioridad, estado, fecha_limite } = req.body;
+        const [duenoRows] = await db.query('SELECT id_dueno FROM dueno WHERE id_usuario = ?', [usuario_id]);
+        if (duenoRows.length === 0) return res.status(404).json({ error: "Dueño no encontrado" });
+        
+        const id_dueno = duenoRows[0].id_dueno;
+        const [resultado] = await db.query(
+            `INSERT INTO tarea (descripcion, estado, prioridad, fecha_limite, id_dueno, id_tecnico) VALUES (?, ?, ?, ?, ?, ?)`,
+            [descripcion, estado, prioridad, fecha_limite, id_dueno, id_tecnico]
+        );
+        res.status(201).json({ mensaje: "Tarea creada con éxito", id: resultado.insertId });
+    } catch (error) {
+        console.error("Error creando tarea:", error);
+        res.status(500).json({ error: "Error al crear la tarea" });
+    }
+});
+
+app.put('/api/tareas/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { descripcion, id_tecnico, prioridad, estado, fecha_limite } = req.body;
+        await db.query(
+            `UPDATE tarea SET descripcion = ?, estado = ?, prioridad = ?, fecha_limite = ?, id_tecnico = ? WHERE id_tarea = ?`,
+            [descripcion, estado, prioridad, fecha_limite, id_tecnico, id]
+        );
+        res.json({ mensaje: "Tarea actualizada con éxito" });
+    } catch (error) {
+        console.error("Error actualizando tarea:", error);
+        res.status(500).json({ error: "Error al actualizar la tarea" });
+    }
+});
+
+app.delete('/api/tareas/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        await db.query('DELETE FROM tarea WHERE id_tarea = ?', [id]);
+        res.json({ mensaje: "Tarea eliminada con éxito" });
+    } catch (error) {
+        console.error("Error eliminando tarea:", error);
+        res.status(500).json({ error: "Error al eliminar la tarea" });
+    }
+});
+
+// ── DASHBOARD ADMIN ───────────────────────────────────────────────
+app.get('/api/admin/dashboard', async (req, res) => {
+    try {
+        const [ventas] = await db.query('SELECT SUM(total) as ventas_mes FROM pedidos WHERE MONTH(fecha) = MONTH(CURRENT_DATE())');
+        const [usuarios] = await db.query('SELECT COUNT(*) as usuarios_total FROM usuario');
+        const [productos] = await db.query('SELECT COUNT(*) as productos_total FROM producto');
+        const [pedidos] = await db.query('SELECT COUNT(*) as pedidos_pendientes FROM pedidos WHERE estado = "Pendiente"');
+        
+        const [ventasRecientes] = await db.query('SELECT id, cliente, producto, total, estado, DATE_FORMAT(fecha, "%d/%m/%Y") as fecha FROM pedidos ORDER BY fecha DESC LIMIT 5');
+        const [tareas] = await db.query('SELECT texto, asignado, prioridad FROM tareas_admin');
+        const [tiposUsuario] = await db.query('SELECT tipo_usuario as nombre, COUNT(*) as cantidad FROM usuario GROUP BY tipo_usuario');
+        const [incidencias] = await db.query('SELECT titulo, modulo, fecha FROM incidencias ORDER BY id DESC LIMIT 5');
+        const [actividad] = await db.query('SELECT icono, texto, tiempo FROM actividad_reciente ORDER BY id DESC LIMIT 6');
+
+        res.json({
+            ventas_mes: ventas[0]?.ventas_mes || 0,
+            usuarios_total: usuarios[0]?.usuarios_total || 0,
+            productos_total: productos[0]?.productos_total || 0,
+            pedidos_pendientes: pedidos[0]?.pedidos_pendientes || 0,
+            ventas_recientes: ventasRecientes,
+            tareas,
+            tipos_usuario: tiposUsuario,
+            incidencias,
+            actividad
+        });
+    } catch (error) {
+        console.error("Error Dashboard:", error);
+        res.status(500).json({ error: "Error al obtener métricas" });
+    }
+});
+
+// ── AUTENTICACIÓN Y REGISTRO ─────────────────────────────────────
 const MAPA_TIPO_FRONT_A_BD = {
     'dueno': 'Dueno',
     'vendedor': 'Colaborador',
@@ -133,23 +206,103 @@ app.post('/api/login', async (req, res) => {
     }
 });
 
-// PRODUCTOS
+app.post('/api/registro/usuario', async (req, res) => {
+    try {
+        const { nombre, apellido, email, password, direccion, codigoPostal, fechaNac } = req.body;
+        const [existe] = await db.query('SELECT id_usuario FROM usuario WHERE correo = ?', [email]);
+        if (existe.length > 0) return res.status(409).json({ error: "Ese correo ya está registrado" });
+
+        const hashContrasena = await bcrypt.hash(password, 10);
+        const [resultado] = await db.query(
+            `INSERT INTO usuario (nombre, apellido, correo, contrasena, direccion, codigo_postal, fecha_nacimiento, tipo_usuario, estado)
+             VALUES (?, ?, ?, ?, ?, ?, ?, 'Comprador', 'activo')`,
+            [nombre, apellido || '', email, hashContrasena, direccion, codigoPostal, fechaNac]
+        );
+
+        res.status(201).json({ id: resultado.insertId, nombre, correo: email, tipo: 'usuario' });
+    } catch (error) {
+        console.error("Error en registro:", error);
+        res.status(500).json({ error: "Error al crear la cuenta" });
+    }
+});
+
+app.post('/api/registro/vendedor', async (req, res) => {
+    let conexion;
+    try {
+        conexion = await db.getConnection();
+        const { nombre, apellido, email, password, direccion, codigoPostal, fechaNac, negocio, telefono, categoria, descripcion } = req.body;
+        
+        const [existe] = await conexion.query('SELECT id_usuario FROM usuario WHERE correo = ?', [email]);
+        if (existe.length > 0) return res.status(409).json({ error: "Ese correo ya está registrado" });
+
+        const hashContrasena = await bcrypt.hash(password, 10);
+        await conexion.beginTransaction();
+
+        const [resultadoUsuario] = await conexion.query(
+            `INSERT INTO usuario (nombre, apellido, correo, contrasena, direccion, codigo_postal, fecha_nacimiento, tipo_usuario, estado)
+             VALUES (?, ?, ?, ?, ?, ?, ?, 'Colaborador', 'activo')`,
+            [nombre, apellido || '', email, hashContrasena, direccion, codigoPostal, fechaNac]
+        );
+
+        const idUsuario = resultadoUsuario.insertId;
+        await conexion.query(
+            `INSERT INTO usuario_colaborador (id_usuario, nombre_negocio, tipo_negocio, telefono, categoria_principal, descripcion, comisiones_ventas)
+             VALUES (?, ?, ?, ?, ?, ?, 0.00)`,
+            [idUsuario, negocio, categoria, telefono, categoria, descripcion]
+        );
+
+        await conexion.commit();
+        res.status(201).json({ id: idUsuario, nombre, correo: email, tipo: 'vendedor' });
+    } catch (error) {
+        if (conexion) await conexion.rollback();
+        console.error("Error en registro vendedor:", error);
+        res.status(500).json({ error: "Error al crear la cuenta de vendedor" });
+    } finally {
+        if (conexion) conexion.release();
+    }
+});
+
+// ── PRODUCTOS (LEFT JOIN corregido para no retornar vacíos por categoría) ─────
 app.get('/api/productos', async (req, res) => {
     try {
         const [productos] = await db.query(`
-            SELECT p.id_producto AS id, p.nombre, p.descripcion, p.precio, p.stock, p.id_categoria, c.nombre AS categoria
+            SELECT 
+                p.id_producto AS id, 
+                p.nombre, 
+                p.descripcion, 
+                p.precio, 
+                p.stock, 
+                p.id_categoria, 
+                COALESCE(c.nombre, 'Sin Categoría') AS categoria, 
+                COALESCE(SUM(dv.cantidad), 0) AS ventas
             FROM producto p
-            JOIN categoria c ON p.id_categoria = c.id_categoria
+            LEFT JOIN categoria c ON p.id_categoria = c.id_categoria
+            LEFT JOIN detalle_venta dv ON dv.id_producto = p.id_producto
+            GROUP BY p.id_producto, p.nombre, p.descripcion, p.precio, p.stock, p.id_categoria, c.nombre
             ORDER BY p.id_producto DESC
         `);
         res.json(productos);
     } catch (error) {
-        console.error("Error productos:", error);
+        console.error("Error obteniendo productos:", error);
         res.status(500).json({ error: "Error al obtener los productos" });
     }
 });
 
-// ── 6. INICIALIZACIÓN DEL SERVIDOR ────────────────────────────────
+app.post('/api/productos', async (req, res) => {
+    try {
+        const { nombre, id_categoria, precio, stock, descripcion } = req.body;
+        const [resultado] = await db.query(
+            `INSERT INTO producto (nombre, id_categoria, precio, stock, descripcion) VALUES (?, ?, ?, ?, ?)`,
+            [nombre, id_categoria, precio, stock, descripcion]
+        );
+        res.status(201).json({ mensaje: "Producto creado con éxito", id: resultado.insertId });
+    } catch (error) {
+        console.error("Error creando producto:", error);
+        res.status(500).json({ error: "Error al crear el producto" });
+    }
+});
+
+// ── INICIALIZACIÓN DEL SERVIDOR ───────────────────────────────────
 app.listen(PORT, () => {
-    console.log(`🌐 Servidor escuchando en el puerto ${PORT}`);
+    console.log(`🌐 Servidor ejecutándose en http://localhost:${PORT}`);
 });
