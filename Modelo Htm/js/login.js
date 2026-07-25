@@ -1,17 +1,61 @@
 const URL_API = "http://localhost:3000/api";
 
-// ── FUNCIÓN PARA CAMBIAR DE TAB ─────────────────────────────
-function switchTab(tab) {
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+// ── FUNCIÓN PARA CAMBIAR DE TAB ────────────────────────────────
+// Ahora fuerza el display por JS además de las clases CSS,
+// así el formulario se muestra aunque falte alguna regla en style.css.
+function switchTab(tab, e) {
+    if (e && typeof e.preventDefault === 'function') {
+        e.preventDefault();
+    }
 
-    document.getElementById('tab-' + tab).classList.add('active');
-    document.getElementById('content-' + tab).classList.add('active');
+    const tabs = document.querySelectorAll('.tab');
+    const contents = document.querySelectorAll('.tab-content');
+
+    if (tabs.length === 0 || contents.length === 0) {
+        console.error('switchTab: no se encontraron elementos .tab o .tab-content en el DOM');
+        return;
+    }
+
+    tabs.forEach(t => t.classList.remove('active'));
+    contents.forEach(c => {
+        c.classList.remove('active');
+        c.style.display = 'none';
+    });
+
+    const targetTab = document.getElementById('tab-' + tab);
+    const targetContent = document.getElementById('content-' + tab);
+
+    if (!targetTab || !targetContent) {
+        console.error(`switchTab: no existe tab-${tab} o content-${tab} en el HTML`);
+        return;
+    }
+
+    targetTab.classList.add('active');
+    targetContent.classList.add('active');
+    targetContent.style.display = 'block';
+}
+
+// ── INICIALIZAR LOS CLICS DE LOS TABS Y LOS ENLACES "cambiar de tab" ──
+function inicializarTabs() {
+    document.querySelectorAll('.tab[data-tab]').forEach(btn => {
+        btn.addEventListener('click', (e) => switchTab(btn.dataset.tab, e));
+    });
+
+    document.querySelectorAll('.link-switch-tab[data-tab]').forEach(link => {
+        link.addEventListener('click', (e) => switchTab(link.dataset.tab, e));
+    });
+
+    // Forzamos el estado inicial (login visible) por si el CSS no tenía
+    // definido display:block para .tab-content.active
+    switchTab('login');
 }
 
 // ── MANEJADOR DEL FORMULARIO DE LOGIN ────────────────────────
 function inicializarLogin() {
-    document.getElementById('form-login').addEventListener('submit', async function(e) {
+    const formLogin = document.getElementById('form-login');
+    if (!formLogin) return;
+
+    formLogin.addEventListener('submit', async function(e) {
         e.preventDefault();
 
         const tipoUsuario = document.getElementById('loginTipo').value;
@@ -37,18 +81,20 @@ function inicializarLogin() {
                 return;
             }
 
-            localStorage.setItem('usuario_id', data.id);
-            localStorage.setItem('usuario_tipo', data.tipo);
-            localStorage.setItem('usuario_email', data.correo);
-            localStorage.setItem('usuario_nombre', data.nombre);
-            localStorage.setItem('usuario_logueado', 'true');
+            const sesionUsuario = {
+                id: data.id,
+                tipo: data.tipo,
+                correo: data.correo,
+                nombre: data.nombre
+            };
+            localStorage.setItem('usuario_ttdt', JSON.stringify(sesionUsuario));
 
-            if (tipoUsuario === 'dueno') {
+            if (data.tipo === 'dueno') {
                 window.location.href = 'dashboard-dueno.html';
-            } else if (tipoUsuario === 'vendedor') {
+            } else if (data.tipo === 'vendedor') {
                 window.location.href = 'panel-vendedor.html';
-            } else if (tipoUsuario === 'usuario') {
-                window.location.href = 'perfil.html';
+            } else {
+                window.location.href = 'index.html';
             }
         } catch (error) {
             console.error("Error en login:", error);
@@ -59,8 +105,14 @@ function inicializarLogin() {
 
 // ── MANEJADOR DEL FORMULARIO DE REGISTRO USUARIO ──────────────
 function inicializarRegistroUsuario() {
-    document.getElementById('form-usuario').addEventListener('submit', async function(e) {
+    const formUsuario = document.getElementById('form-usuario');
+    if (!formUsuario) return;
+
+    formUsuario.addEventListener('submit', async function(e) {
         e.preventDefault();
+
+        const btnSubmit = formUsuario.querySelector('.btn-submit');
+        if (btnSubmit.disabled) return; // ya hay un envío en curso, ignorar clics extra
 
         const nombre = document.getElementById('usuarioNombre').value.trim();
         const email = document.getElementById('usuarioEmail').value.trim();
@@ -80,6 +132,10 @@ function inicializarRegistroUsuario() {
             return;
         }
 
+        btnSubmit.disabled = true;
+        const textoOriginal = btnSubmit.textContent;
+        btnSubmit.textContent = 'Creando cuenta...';
+
         try {
             const respuesta = await fetch(`${URL_API}/registro/usuario`, {
                 method: 'POST',
@@ -91,32 +147,45 @@ function inicializarRegistroUsuario() {
 
             if (!respuesta.ok) {
                 alert(data.error || 'No se pudo crear la cuenta');
+                btnSubmit.disabled = false;
+                btnSubmit.textContent = textoOriginal;
                 return;
             }
 
-            localStorage.setItem('usuario_id', data.id);
-            localStorage.setItem('usuario_tipo', data.tipo);
-            localStorage.setItem('usuario_email', data.correo);
-            localStorage.setItem('usuario_nombre', data.nombre);
-            localStorage.setItem('usuario_logueado', 'true');
+            const sesionUsuario = {
+                id: data.id,
+                tipo: data.tipo || 'usuario',
+                correo: data.correo,
+                nombre: data.nombre
+            };
+            localStorage.setItem('usuario_ttdt', JSON.stringify(sesionUsuario));
 
-            document.getElementById('successMessage').textContent = 'Cuenta creada exitosamente. Redirigiendo...';
-            document.getElementById('successMessage').style.display = 'block';
+            const msg = document.getElementById('successMessage');
+            msg.textContent = 'Cuenta creada exitosamente. Redirigiendo...';
+            msg.style.display = 'block';
 
             setTimeout(() => {
-                window.location.href = 'perfil.html';
-            }, 2000);
+                window.location.href = 'index.html';
+            }, 1500);
         } catch (error) {
             console.error("Error en registro de usuario:", error);
             alert('No se pudo conectar con el servidor.');
+            btnSubmit.disabled = false;
+            btnSubmit.textContent = textoOriginal;
         }
     });
 }
 
 // ── MANEJADOR DEL FORMULARIO DE REGISTRO VENDEDOR ───────────────
 function inicializarRegistroVendedor() {
-    document.getElementById('form-vendedor').addEventListener('submit', async function(e) {
+    const formVendedor = document.getElementById('form-vendedor');
+    if (!formVendedor) return;
+
+    formVendedor.addEventListener('submit', async function(e) {
         e.preventDefault();
+
+        const btnSubmit = formVendedor.querySelector('.btn-submit');
+        if (btnSubmit.disabled) return; // ya hay un envío en curso, ignorar clics extra
 
         const nombre = document.getElementById('vendedorNombre').value.trim();
         const email = document.getElementById('vendedorEmail').value.trim();
@@ -140,6 +209,10 @@ function inicializarRegistroVendedor() {
             return;
         }
 
+        btnSubmit.disabled = true;
+        const textoOriginal = btnSubmit.textContent;
+        btnSubmit.textContent = 'Creando cuenta...';
+
         try {
             const respuesta = await fetch(`${URL_API}/registro/vendedor`, {
                 method: 'POST',
@@ -154,30 +227,40 @@ function inicializarRegistroVendedor() {
 
             if (!respuesta.ok) {
                 alert(data.error || 'No se pudo crear la cuenta de vendedor');
+                btnSubmit.disabled = false;
+                btnSubmit.textContent = textoOriginal;
                 return;
             }
 
-            localStorage.setItem('usuario_id', data.id);
-            localStorage.setItem('usuario_tipo', data.tipo);
-            localStorage.setItem('usuario_email', data.correo);
-            localStorage.setItem('usuario_nombre', data.nombre);
-            localStorage.setItem('usuario_negocio', negocio);
-            localStorage.setItem('usuario_logueado', 'true');
+            const sesionUsuario = {
+                id: data.id,
+                tipo: data.tipo || 'vendedor',
+                correo: data.correo,
+                nombre: data.nombre,
+                negocio: negocio
+            };
+            localStorage.setItem('usuario_ttdt', JSON.stringify(sesionUsuario));
 
-            document.getElementById('successMessage').textContent = 'Cuenta de vendedor creada exitosamente. Redirigiendo...';
-            document.getElementById('successMessage').style.display = 'block';
+            const msg = document.getElementById('successMessage');
+            msg.textContent = 'Cuenta de vendedor creada exitosamente. Redirigiendo...';
+            msg.style.display = 'block';
 
             setTimeout(() => {
                 window.location.href = 'panel-vendedor.html';
-            }, 2000);
+            }, 1500);
         } catch (error) {
             console.error("Error en registro de vendedor:", error);
             alert('No se pudo conectar con el servidor.');
+            btnSubmit.disabled = false;
+            btnSubmit.textContent = textoOriginal;
         }
     });
 }
 
 // ── INICIALIZACIÓN ───────────────────────────────────────────
-inicializarLogin();
-inicializarRegistroUsuario();
-inicializarRegistroVendedor();
+document.addEventListener('DOMContentLoaded', () => {
+    inicializarTabs();
+    inicializarLogin();
+    inicializarRegistroUsuario();
+    inicializarRegistroVendedor();
+});

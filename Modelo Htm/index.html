@@ -15,7 +15,7 @@
     <header>
         <div class="header-container">
             <a href="index.html" class="logo">
-                <img src="backgroun.jpeg" alt="TT&DT Logo" class="header-logo">
+                <img src="images/backgroun.jpeg" alt="TT&DT Logo" class="header-logo">
                 <span>TT&DT</span>
             </a>
 
@@ -31,9 +31,22 @@
                         <button class="btn-login">Panel Admin</button>
                     </a>
                 </div>
-                <a href="login.html">
+                <div id="vendedor-link" style="display: none;">
+                    <a href="panel-vendedor.html">
+                        <button class="btn-login">Panel Vendedor</button>
+                    </a>
+                </div>
+
+                <!-- Se muestra cuando NO hay sesión activa -->
+                <a href="login.html" id="login-link">
                     <button class="btn-login">Iniciar Sesión</button>
                 </a>
+
+                <!-- Se muestra cuando SÍ hay sesión activa -->
+                <div id="sesion-activa" style="display: none; align-items: center; gap: 10px;">
+                    <span id="nombre-usuario"></span>
+                    <button class="btn-login" id="btn-cerrar-sesion">Cerrar Sesión</button>
+                </div>
 
                 <div class="cart-icon">
                     <a href="carrito.html">
@@ -110,10 +123,8 @@
         </div>
     </footer>
 
-    <script src="./index.js"></script>
-
-</body>
-</html>
+    <!-- Script de integración -->
+    <script src="./js/index.js"></script>
 
 </body>
 </html>

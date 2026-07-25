@@ -9,19 +9,15 @@
 </head>
 <body>
 
-    <!-- ============================================================
-         HEADER
-         ============================================================ -->
+    <!-- HEADER -->
     <header>
         <div class="header-container">
             <a href="index.html" class="logo">TT&DT</a>
-
             <nav>
                 <a href="index.html">Inicio</a>
                 <a href="catalogo.html">Catálogo</a>
                 <a href="foro.html">Foro</a>
             </nav>
-
             <div class="header-actions">
                 <div class="cart-icon">
                     <a href="carrito.html">
@@ -32,30 +28,20 @@
         </div>
     </header>
 
-
-    <!-- ============================================================
-         MAIN
-         ============================================================ -->
+    <!-- MAIN -->
     <main>
-
         <div class="auth-container">
-
             <!-- Mensaje de éxito -->
-            <div class="success-message" id="successMessage"></div>
+            <div class="success-message" id="successMessage" style="display: none;"></div>
 
-            <!-- ------------------------------------------------
-                 TABS
-                 ------------------------------------------------ -->
+            <!-- TABS -->
             <div class="tabs">
-                <button class="tab active"   id="tab-login"    onclick="switchTab('login')">Iniciar Sesión</button>
-                <button class="tab"          id="tab-usuario"  onclick="switchTab('usuario')">Registro Usuario</button>
-                <button class="tab"          id="tab-vendedor" onclick="switchTab('vendedor')">Registro Vendedor</button>
+                <button type="button" class="tab active" id="tab-login" data-tab="login">Iniciar Sesión</button>
+                <button type="button" class="tab" id="tab-usuario" data-tab="usuario">Registro Usuario</button>
+                <button type="button" class="tab" id="tab-vendedor" data-tab="vendedor">Registro Vendedor</button>
             </div>
 
-
-            <!-- ------------------------------------------------
-                 TAB 1: INICIAR SESIÓN
-                 ------------------------------------------------ -->
+            <!-- TAB 1: INICIAR SESIÓN -->
             <div id="content-login" class="tab-content active">
                 <div class="prueba-info">
                     <p><strong>Credenciales de prueba:</strong></p>
@@ -64,7 +50,6 @@
                     <p>Usuario: usuario@usuario.com / usuario</p>
                 </div>
                 <form id="form-login">
-
                     <div class="form-group">
                         <label for="loginTipo">¿Qué tipo de cuenta tienes?</label>
                         <select id="loginTipo" required>
@@ -73,19 +58,16 @@
                             <option value="vendedor">Vendedor/Colaborador</option>
                             <option value="dueno">Administrador/Dueño</option>
                         </select>
-                        <span class="error-msg" id="error-loginTipo"></span>
                     </div>
 
                     <div class="form-group">
                         <label for="loginEmail">Correo electrónico</label>
                         <input type="email" id="loginEmail" placeholder="tu@correo.com" required>
-                        <span class="error-msg" id="error-loginEmail"></span>
                     </div>
 
                     <div class="form-group">
                         <label for="loginPassword">Contraseña</label>
                         <input type="password" id="loginPassword" placeholder="Tu contraseña" required>
-                        <span class="error-msg" id="error-loginPassword"></span>
                     </div>
 
                     <div class="form-extras">
@@ -100,59 +82,47 @@
 
                     <p class="auth-switch">
                         ¿No tienes cuenta?
-                        <a href="#" onclick="switchTab('usuario')">Regístrate aquí</a>
+                        <a href="#" class="link-switch-tab" data-tab="usuario">Regístrate aquí</a>
                     </p>
-
                 </form>
             </div>
 
-
-            <!-- ------------------------------------------------
-                 TAB 2: REGISTRO USUARIO
-                 ------------------------------------------------ -->
+            <!-- TAB 2: REGISTRO USUARIO -->
             <div id="content-usuario" class="tab-content">
                 <form id="form-usuario">
-
                     <div class="form-group">
                         <label for="usuarioNombre">Nombre completo</label>
                         <input type="text" id="usuarioNombre" placeholder="Tu nombre completo" required>
-                        <span class="error-msg" id="error-usuarioNombre"></span>
                     </div>
 
                     <div class="form-group">
                         <label for="usuarioEmail">Correo electrónico</label>
                         <input type="email" id="usuarioEmail" placeholder="tu@correo.com" required>
-                        <span class="error-msg" id="error-usuarioEmail"></span>
                     </div>
 
                     <div class="form-group">
                         <label for="usuarioPassword">Contraseña</label>
                         <input type="password" id="usuarioPassword" placeholder="Mínimo 8 caracteres" required>
-                        <span class="error-msg" id="error-usuarioPassword"></span>
                     </div>
 
                     <div class="form-group">
                         <label for="usuarioPasswordConfirm">Confirmar contraseña</label>
                         <input type="password" id="usuarioPasswordConfirm" placeholder="Repite tu contraseña" required>
-                        <span class="error-msg" id="error-usuarioPasswordConfirm"></span>
                     </div>
-                    
+
                     <div class="form-group">
                         <label for="usuarioDireccion">Dirección</label>
                         <input type="text" id="usuarioDireccion" placeholder="Tu dirección" required>
-                        <span class="error-msg" id="error-usuarioDireccion"></span>
                     </div>
 
                     <div class="form-group">
                         <label for="usuarioCodigoPostal">Código postal</label>
                         <input type="text" id="usuarioCodigoPostal" placeholder="Ej: 110111" required>
-                        <span class="error-msg" id="error-usuarioCodigoPostal"></span>
                     </div>
 
                     <div class="form-group">
                         <label for="usuarioFechaNac">Fecha de nacimiento</label>
                         <input type="date" id="usuarioFechaNac" required>
-                        <span class="error-msg" id="error-usuarioFechaNac"></span>
                     </div>
 
                     <div class="form-group">
@@ -160,88 +130,71 @@
                             <input type="checkbox" id="usuarioTerminos" required>
                             <span>Acepto los <a href="#" class="link-inline">Términos y Condiciones</a></span>
                         </label>
-                        <span class="error-msg" id="error-usuarioTerminos"></span>
                     </div>
 
                     <button type="submit" class="btn-submit">Crear Cuenta</button>
 
                     <p class="auth-switch">
                         ¿Ya tienes cuenta?
-                        <a href="#" onclick="switchTab('login')">Inicia sesión</a>
+                        <a href="#" class="link-switch-tab" data-tab="login">Inicia sesión</a>
                     </p>
-
                 </form>
             </div>
 
-
-            <!-- ------------------------------------------------
-                 TAB 3: REGISTRO VENDEDOR
-                 ------------------------------------------------ -->
+            <!-- TAB 3: REGISTRO VENDEDOR -->
             <div id="content-vendedor" class="tab-content">
                 <form id="form-vendedor">
-
                     <p class="tab-description">
                         Crea tu cuenta como vendedor o colaborador para publicar productos y participar en la comunidad.
                     </p>
 
-                    <!-- Datos personales -->
                     <div class="form-section-title">Datos personales</div>
 
                     <div class="form-group">
                         <label for="vendedorNombre">Nombre completo</label>
                         <input type="text" id="vendedorNombre" placeholder="Tu nombre completo" required>
-                        <span class="error-msg" id="error-vendedorNombre"></span>
                     </div>
 
                     <div class="form-group">
                         <label for="vendedorEmail">Correo electrónico</label>
                         <input type="email" id="vendedorEmail" placeholder="tu@correo.com" required>
-                        <span class="error-msg" id="error-vendedorEmail"></span>
                     </div>
 
                     <div class="form-group">
                         <label for="vendedorPassword">Contraseña</label>
                         <input type="password" id="vendedorPassword" placeholder="Mínimo 8 caracteres" required>
-                        <span class="error-msg" id="error-vendedorPassword"></span>
                     </div>
 
                     <div class="form-group">
                         <label for="vendedorPasswordConfirm">Confirmar contraseña</label>
                         <input type="password" id="vendedorPasswordConfirm" placeholder="Repite tu contraseña" required>
-                        <span class="error-msg" id="error-vendedorPasswordConfirm"></span>
                     </div>
 
                     <div class="form-group">
                        <label for="vendedorDireccion">Dirección</label>
                         <input type="text" id="vendedorDireccion" placeholder="Tu dirección" required>
-                        <span class="error-msg" id="error-vendedorDireccion"></span>
                     </div>
 
                     <div class="form-group">
                         <label for="vendedorCodigoPostal">Código postal</label>
                         <input type="text" id="vendedorCodigoPostal" placeholder="Ej: 110111" required>
-                        <span class="error-msg" id="error-vendedorCodigoPostal"></span>
                     </div>
 
                     <div class="form-group">
                         <label for="vendedorFechaNac">Fecha de nacimiento</label>
                         <input type="date" id="vendedorFechaNac" required>
-                        <span class="error-msg" id="error-vendedorFechaNac"></span>
                     </div>
 
-                    <!-- Datos del negocio -->
                     <div class="form-section-title">Datos del negocio</div>
 
                     <div class="form-group">
                         <label for="vendedorNegocio">Nombre del negocio</label>
                         <input type="text" id="vendedorNegocio" placeholder="Nombre de tu tienda o marca" required>
-                        <span class="error-msg" id="error-vendedorNegocio"></span>
                     </div>
 
                     <div class="form-group">
                         <label for="vendedorTelefono">Teléfono de contacto</label>
                         <input type="tel" id="vendedorTelefono" placeholder="+57 300 000 0000" required>
-                        <span class="error-msg" id="error-vendedorTelefono"></span>
                     </div>
 
                     <div class="form-group">
@@ -254,13 +207,11 @@
                             <option value="software">Software</option>
                             <option value="otro">Otro</option>
                         </select>
-                        <span class="error-msg" id="error-vendedorCategoria"></span>
                     </div>
 
                     <div class="form-group">
                         <label for="vendedorDescripcion">Descripción del negocio</label>
                         <textarea id="vendedorDescripcion" placeholder="Cuéntanos brevemente sobre tu negocio y los productos que ofreces..." rows="3"></textarea>
-                        <span class="error-msg" id="error-vendedorDescripcion"></span>
                     </div>
 
                     <div class="form-group">
@@ -268,27 +219,20 @@
                             <input type="checkbox" id="vendedorTerminos" required>
                             <span>Acepto los <a href="#" class="link-inline">Términos para Vendedores</a></span>
                         </label>
-                        <span class="error-msg" id="error-vendedorTerminos"></span>
                     </div>
 
                     <button type="submit" class="btn-submit">Crear Cuenta de Vendedor</button>
 
                     <p class="auth-switch">
                         ¿Solo quieres comprar?
-                        <a href="#" onclick="switchTab('usuario')">Regístrate como usuario</a>
+                        <a href="#" class="link-switch-tab" data-tab="usuario">Regístrate como usuario</a>
                     </p>
-
                 </form>
             </div>
-
-        </div><!-- /auth-container -->
-
+        </div>
     </main>
 
-
-    <!-- ============================================================
-         FOOTER
-         ============================================================ -->
+    <!-- FOOTER -->
     <footer>
         <div class="footer-container">
             <div class="footer-column">
@@ -333,14 +277,6 @@
         </div>
     </footer>
 
-
-    <!-- ============================================================
-         SCRIPT - Lógica de tabs
-         ============================================================ -->
-    <script src="./login.js"></script>
-
-</body>
-</html>
-
+    <script src="./js/login.js"></script>
 </body>
 </html>
