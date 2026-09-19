@@ -28,9 +28,11 @@ app.use(express.static(path.join(__dirname)));
 // ── 3. CONEXIÓN A MYSQL ───────────────────────────────────────────
 const db = mysql.createPool({
     host: process.env.DB_HOST || 'localhost',
+    port: process.env.DB_PORT || 3000,
     user: process.env.DB_USER || 'root',
     password: process.env.DB_PASSWORD || 'Oscar2007seguro',
     database: process.env.DB_NAME || 'db_final_ttdt',
+    ssl: process.env.DB_HOST ? { rejectUnauthorized: false } : false, // <--- SSL activado solo en la nube
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0
@@ -38,7 +40,7 @@ const db = mysql.createPool({
 
 db.getConnection()
     .then(connection => {
-        console.log('✅ Conexión a la base de datos MySQL (db_final_ttdt) establecida correctamente.');
+        console.log('✅ Conexión a la base de datos MySQL establecida correctamente.');
         connection.release();
     })
     .catch(err => {
@@ -1016,6 +1018,7 @@ app.put('/api/usuarios/:id', async (req, res) => {
 });
 
 // ── INICIALIZACIÓN DEL SERVIDOR ───────────────────────────────────
-app.listen(PORT, () => {
-    console.log(`🌐 Servidor ejecutándose en http://localhost:${PORT}`);
+// ── INICIALIZACIÓN DEL SERVIDOR ───────────────────────────────────
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`🌐 Servidor escuchando en el puerto ${PORT}`);
 });
