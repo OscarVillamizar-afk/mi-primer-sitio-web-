@@ -143,23 +143,11 @@ function inicializarControlesFiltro() {
     }
 }
 
-// ── 5. CERRAR SESIÓN ──────────────────────────────────────────
-function inicializarCerrarSesion() {
-    const btnCerrar = document.querySelector('a[href="index.html"] .btn-login') || document.querySelector('.btn-login');
-    if (btnCerrar) {
-        btnCerrar.addEventListener('click', function (e) {
-            e.preventDefault();
-            localStorage.clear();
-            window.location.href = 'index.html';
-        });
-    }
-}
 
 // ── INICIALIZACIÓN GENERAL ───────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
     inicializarPillsCategoria();
     inicializarControlesFiltro();
-    inicializarCerrarSesion();
     
     // Cargar todas las publicaciones al iniciar
     cargarTemasForo();
