@@ -8,22 +8,33 @@ const cuponesValidos = {
 
 let descuentoActivo = 0;
 
+// ── LEER SESIÓN (misma clave que auth-header.js: usuario_ttdt) ──────
+function leerSesion() {
+    const sesionRaw = localStorage.getItem('usuario_ttdt');
+    if (!sesionRaw) return null;
+    try {
+        return JSON.parse(sesionRaw);
+    } catch (e) {
+        return null;
+    }
+}
+
 // ── 1. CARGAR CARRITO DESDE LA BASE DE DATOS (MySQL) ──────────
 async function cargarCarritoDesdeBD() {
-    const usuarioId = localStorage.getItem('usuario_id');
+    const sesion = leerSesion();
     const contenedorItems = document.querySelector('.carrito-items');
 
-    if (!usuarioId) {
-        console.warn("No hay ID de usuario en localStorage");
+    if (!sesion || !sesion.id) {
+        console.warn("No hay sesión iniciada");
         return;
     }
 
     try {
-        const respuesta = await fetch(`${URL_API}/carrito/${usuarioId}`);
+        const respuesta = await fetch(`${URL_API}/carrito/${sesion.id}`);
         if (!respuesta.ok) throw new Error("Error al obtener productos del carrito");
 
         const productos = await respuesta.json();
-        
+
         // Limpiamos los productos estáticos del HTML antes de renderizar
         const itemsPrevios = contenedorItems.querySelectorAll('.carrito-item');
         itemsPrevios.forEach(item => item.remove());
@@ -32,6 +43,7 @@ async function cargarCarritoDesdeBD() {
         if (productos.length === 0) {
             const mensajeVacio = document.createElement('p');
             mensajeVacio.textContent = "Tu carrito está vacío.";
+            mensajeVacio.style.padding = '2rem 0';
             contenedorItems.prepend(mensajeVacio);
             actualizarResumen();
             return;
@@ -54,7 +66,7 @@ async function cargarCarritoDesdeBD() {
                 </div>
                 <div class="item-cantidad">
                     <button class="btn-cantidad btn-menos">−</button>
-                    <input type="number" value="${prod.cantidad}" min="1" max="50">
+                    <input type="number" value="${prod.cantidad}" min="1" max="${prod.stock || 99}">
                     <button class="btn-cantidad btn-mas">+</button>
                 </div>
                 <div class="item-precio">
@@ -80,13 +92,15 @@ async function cargarCarritoDesdeBD() {
 
 // ── 2. ACTUALIZAR CANTIDAD EN LA BASE DE DATOS ────────────────
 async function actualizarCantidadBD(idProducto, nuevaCantidad) {
-    const usuarioId = localStorage.getItem('usuario_id');
+    const sesion = leerSesion();
+    if (!sesion || !sesion.id) return;
+
     try {
         await fetch(`${URL_API}/carrito/actualizar`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                usuario_id: usuarioId,
+                usuario_id: sesion.id,
                 producto_id: idProducto,
                 cantidad: nuevaCantidad
             })
@@ -98,13 +112,15 @@ async function actualizarCantidadBD(idProducto, nuevaCantidad) {
 
 // ── 3. ELIMINAR PRODUCTO DE LA BASE DE DATOS ─────────────────
 async function eliminarProductoBD(idProducto) {
-    const usuarioId = localStorage.getItem('usuario_id');
+    const sesion = leerSesion();
+    if (!sesion || !sesion.id) return;
+
     try {
         await fetch(`${URL_API}/carrito/eliminar`, {
             method: 'DELETE',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                usuario_id: usuarioId,
+                usuario_id: sesion.id,
                 producto_id: idProducto
             })
         });
@@ -122,7 +138,7 @@ function actualizarResumen() {
         const precioUnitario = parseFloat(item.dataset.precio);
         const inputCantidad = item.querySelector('input[type="number"]');
         if (!inputCantidad) return;
-        
+
         const cantidad = parseInt(inputCantidad.value);
         const precioTotal = precioUnitario * cantidad;
 
@@ -213,21 +229,11 @@ function inicializarCupon() {
     });
 }
 
+// ── VERIFICAR SESIÓN: si no hay sesión, manda a login ─────────────────
 function verificarSesion() {
-    const usuarioLogueado = localStorage.getItem('usuario_logueado');
-    if (!usuarioLogueado) {
+    const sesion = leerSesion();
+    if (!sesion || !sesion.id) {
         window.location.href = 'login.html';
-    }
-}
-
-function inicializarCerrarSesion() {
-    const btnLogout = document.querySelector('.btn-login');
-    if (btnLogout) {
-        btnLogout.addEventListener('click', function(e) {
-            e.preventDefault();
-            localStorage.clear();
-            window.location.href = 'index.html';
-        });
     }
 }
 
@@ -235,6 +241,5 @@ function inicializarCerrarSesion() {
 document.addEventListener('DOMContentLoaded', () => {
     verificarSesion();
     inicializarCupon();
-    inicializarCerrarSesion();
     cargarCarritoDesdeBD(); // Hace la petición a MySQL
 });

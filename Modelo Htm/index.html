@@ -23,6 +23,7 @@
                 <a href="index.html">Inicio</a>
                 <a href="catalogo.html">Catálogo</a>
                 <a href="foro.html">Foro</a>
+                <a href="perfil.html" id="perfil-link" style="display: none;">Perfil</a>
             </nav>
 
             <div class="header-actions">
@@ -42,15 +43,18 @@
                     <button class="btn-login">Iniciar Sesión</button>
                 </a>
 
+                <div id="usuario-avatar-header" class="usuario-menu" style="display: none;">
+                    <div class="autor-avatar" id="avatar-usuario"></div>
+                </div>
+
                 <!-- Se muestra cuando SÍ hay sesión activa -->
                 <div id="sesion-activa" style="display: none; align-items: center; gap: 10px;">
-                    <span id="nombre-usuario"></span>
-                    <button class="btn-login" id="btn-cerrar-sesion">Cerrar Sesión</button>
+                    <button class="btn-login" id="btn-cerrar-sesion" type="button">Cerrar Sesión</button>
                 </div>
 
                 <div class="cart-icon">
                     <a href="carrito.html">
-                        <span class="cart-badge">0</span>
+                        <img src="images/carrito_logo.svg" alt="Carrito de compras" class="cart-logo">
                     </a>
                 </div>
             </div>
@@ -64,6 +68,7 @@
     <main>
 
         <section class="hero">
+            <img src="images/wall_paper_sitio_web.jpeg" alt="" class="hero-image">
             <div class="hero-copy">
                 <h1>Tu tienda y comunidad tecnológica</h1>
                 <p>Descubre los mejores productos tech y conecta con una comunidad apasionada</p>

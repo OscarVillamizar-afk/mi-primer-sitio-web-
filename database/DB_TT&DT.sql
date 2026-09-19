@@ -12,6 +12,9 @@ CREATE TABLE Usuario (
     codigo_postal VARCHAR(20) NOT NULL,
     fecha_nacimiento DATE NOT NULL,
     tipo_usuario VARCHAR(20),
+    telefono VARCHAR(20),
+    bio TEXT,
+    foto_perfil VARCHAR(255),
     PRIMARY KEY (id_usuario),
     CONSTRAINT chk_tipo_usuario CHECK (tipo_usuario IN ('Dueno', 'Colaborador', 'Tecnico_moderador', 'Proveedor'))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

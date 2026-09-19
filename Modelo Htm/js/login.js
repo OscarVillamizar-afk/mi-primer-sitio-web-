@@ -85,7 +85,9 @@ function inicializarLogin() {
                 id: data.id,
                 tipo: data.tipo,
                 correo: data.correo,
-                nombre: data.nombre
+                nombre: data.nombre,
+                apellido: data.apellido || '',
+                fotoPerfil: data.fotoPerfil || null
             };
             localStorage.setItem('usuario_ttdt', JSON.stringify(sesionUsuario));
 
@@ -156,7 +158,9 @@ function inicializarRegistroUsuario() {
                 id: data.id,
                 tipo: data.tipo || 'usuario',
                 correo: data.correo,
-                nombre: data.nombre
+                nombre: data.nombre,
+                apellido: data.apellido || '',
+                fotoPerfil: data.fotoPerfil || null
             };
             localStorage.setItem('usuario_ttdt', JSON.stringify(sesionUsuario));
 
@@ -237,6 +241,8 @@ function inicializarRegistroVendedor() {
                 tipo: data.tipo || 'vendedor',
                 correo: data.correo,
                 nombre: data.nombre,
+                apellido: data.apellido || '',
+                fotoPerfil: data.fotoPerfil || null,
                 negocio: negocio
             };
             localStorage.setItem('usuario_ttdt', JSON.stringify(sesionUsuario));

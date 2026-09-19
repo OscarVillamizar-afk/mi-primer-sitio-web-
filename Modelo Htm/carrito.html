@@ -13,17 +13,21 @@
          ============================================================ -->
     <header>
         <div class="header-container">
-            <a href="index.html" class="logo">TT&DT</a>
+            <a href="index.html" class="logo"><img src="images/backgroun.jpeg" alt="TT&DT Logo"><span>TT&DT</span></a>
             <nav>
                 <a href="index.html">Inicio</a>
                 <a href="catalogo.html">Catálogo</a>
-                <a href="carrito.html" class="active">Carrito</a>
                 <a href="foro.html">Foro</a>
-                <a href="perfil.html">Mi Perfil</a>
             </nav>
             <div class="header-actions">
-                <span class="dueno-saludo">Hola, <strong>Usuario</strong></span>
-                <a href="index.html" class="btn-login">Cerrar Sesión</a>
+                <a href="login.html">
+                    <button class="btn-login">Iniciar Sesión</button>
+                </a>
+                <div class="cart-icon">
+                    <a href="carrito.html">
+                        <img src="images/carrito_logo.svg" alt="Carrito de compras" class="cart-logo">
+                    </a>
+                </div>
             </div>
         </div>
     </header>
@@ -37,60 +41,9 @@
  
         <div class="carrito-layout">
  
-            <!-- LISTA DE PRODUCTOS -->
+            <!-- LISTA DE PRODUCTOS: se llena dinámicamente con carrito.js -->
             <section class="carrito-items">
- 
-                <!-- Item 1 -->
-                <!-- data-precio guarda el precio unitario para que JS lo use en cálculos -->
-                <div class="carrito-item" data-precio="1299.99">
-                    <div class="item-imagen"></div>
-                    <div class="item-info">
-                        <span class="item-categoria">Smartphones</span>
-                        <h3 class="item-nombre">Samsung Galaxy S24 Ultra</h3>
-                        <p class="item-variante">Color: Negro Titanio | Almacenamiento: 256 GB</p>
-                        <p class="item-vendedor">Vendido por: <strong>TT&DT Oficial</strong></p>
-                        <p class="item-stock">En stock</p>
-                    </div>
-                    <div class="item-cantidad">
-                        <button class="btn-cantidad btn-menos">−</button>
-                        <input type="number" value="1" min="1" max="45">
-                        <button class="btn-cantidad btn-mas">+</button>
-                    </div>
-                    <div class="item-precio">
-                        <p class="precio-unitario">$1,299.99 c/u</p>
-                        <p class="precio-total">$1,299.99</p>
-                    </div>
-                    <div class="item-acciones">
-                        <button class="btn-guardar">Guardar</button>
-                        <button class="btn-eliminar">Eliminar</button>
-                    </div>
-                </div>
- 
-                <!-- Item 2 -->
-                <div class="carrito-item" data-precio="249.99">
-                    <div class="item-imagen"></div>
-                    <div class="item-info">
-                        <span class="item-categoria">Audio</span>
-                        <h3 class="item-nombre">AirPods Pro 2nd Gen</h3>
-                        <p class="item-variante">Color: Blanco</p>
-                        <p class="item-vendedor">Vendido por: <strong>TT&DT Oficial</strong></p>
-                        <p class="item-stock">En stock</p>
-                    </div>
-                    <div class="item-cantidad">
-                        <button class="btn-cantidad btn-menos">−</button>
-                        <input type="number" value="2" min="1" max="20">
-                        <button class="btn-cantidad btn-mas">+</button>
-                    </div>
-                    <div class="item-precio">
-                        <p class="precio-unitario">$249.99 c/u</p>
-                        <p class="precio-total">$499.98</p>
-                    </div>
-                    <div class="item-acciones">
-                        <button class="btn-guardar">Guardar</button>
-                        <button class="btn-eliminar">Eliminar</button>
-                    </div>
-                </div>
- 
+
                 <!-- Cupon -->
                 <div class="cupon-container">
                     <h3>¿Tienes un cupón de descuento?</h3>
@@ -110,10 +63,8 @@
                 <h2>Resumen del pedido</h2>
  
                 <div class="resumen-linea">
-                    <!-- id="resumen-cantidad" para que JS actualice el texto de artículos -->
-                    <span id="resumen-cantidad">Subtotal (3 artículos)</span>
-                    <!-- id="resumen-subtotal" para que JS actualice el precio -->
-                    <span id="resumen-subtotal">$1,799.97</span>
+                    <span id="resumen-cantidad">Subtotal (0 artículos)</span>
+                    <span id="resumen-subtotal">$0.00</span>
                 </div>
                 <div class="resumen-linea">
                     <span>Envío</span>
@@ -128,7 +79,7 @@
  
                 <div class="resumen-linea resumen-total">
                     <strong>Total</strong>
-                    <strong id="resumen-total">$1,799.97</strong>
+                    <strong id="resumen-total">$0.00</strong>
                 </div>
  
                 <p class="resumen-impuestos">Impuestos incluidos</p>
@@ -156,35 +107,6 @@
             </aside>
  
         </div>
- 
-        <!-- TAMBIÉN TE PUEDE INTERESAR -->
-        <section class="sugerencias">
-            <h2>También te puede interesar</h2>
-            <div class="sugerencias-grid">
- 
-                <div class="producto-card-mini">
-                    <div class="producto-imagen-mini"></div>
-                    <p class="producto-nombre-mini">MacBook Pro 14" M3</p>
-                    <p class="producto-precio-mini">$1,999.00</p>
-                    <button class="btn-agregar-mini">Agregar</button>
-                </div>
- 
-                <div class="producto-card-mini">
-                    <div class="producto-imagen-mini"></div>
-                    <p class="producto-nombre-mini">Logitech MX Master 3S</p>
-                    <p class="producto-precio-mini">$99.99</p>
-                    <button class="btn-agregar-mini">Agregar</button>
-                </div>
- 
-                <div class="producto-card-mini">
-                    <div class="producto-imagen-mini"></div>
-                    <p class="producto-nombre-mini">Kit Arduino Starter Pro</p>
-                    <p class="producto-precio-mini">$59.99</p>
-                    <button class="btn-agregar-mini">Agregar</button>
-                </div>
- 
-            </div>
-        </section>
  
     </main>
  
@@ -238,7 +160,7 @@
     <!-- ============================================================
          SCRIPT - Lógica del carrito
          ============================================================ -->
-    <script src="./carrito.js"></script>
+    <script src="./js/auth-header.js"></script>
+    <script src="./js/carrito.js"></script>
 </body>
 </html>
-

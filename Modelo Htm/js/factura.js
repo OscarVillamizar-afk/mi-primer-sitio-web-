@@ -10,15 +10,19 @@ const claseEstado = {
 
 // ── 1. VERIFICAR SESIÓN ───────────────────────────────────────
 function verificarSesion() {
-    const sesion = JSON.parse(localStorage.getItem('sesionTT&DT'));
-    const usuarioLogueado = localStorage.getItem('usuario_logueado');
-
-    if (!sesion && !usuarioLogueado) {
+    const sesionRaw = localStorage.getItem('usuario_ttdt');
+    if (!sesionRaw) {
         window.location.href = 'login.html';
         return null;
     }
 
-    return sesion || { id: localStorage.getItem('usuario_id') };
+    try {
+        return JSON.parse(sesionRaw);
+    } catch (error) {
+        localStorage.removeItem('usuario_ttdt');
+        window.location.href = 'login.html';
+        return null;
+    }
 }
 
 // ── 2. LEER ID DE LA URL ──────────────────────────────────────
@@ -38,7 +42,7 @@ async function cargarFactura() {
     try {
         // Construcción de endpoint: Si hay id de pedido en URL, trae ese específico; si no, la última del usuario
         const endpoint = idPedido 
-            ? `${URL_API}/facturas/pedido/${encodeURIComponent(idPedido)}` 
+            ? `${URL_API}/facturas/pedido/${encodeURIComponent(idPedido)}?usuario_id=${encodeURIComponent(usuarioId)}`
             : `${URL_API}/facturas/usuario/${usuarioId}/ultima`;
 
         const respuesta = await fetch(endpoint);

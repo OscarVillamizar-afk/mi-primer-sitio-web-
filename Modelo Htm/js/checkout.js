@@ -4,6 +4,15 @@ let pasoActual = 1;
 let metodoPagoActual = 'tarjeta';
 let subtotalReal = 0;
 
+function obtenerUsuarioId() {
+    try {
+        const sesion = JSON.parse(localStorage.getItem('usuario_ttdt') || '{}');
+        return sesion.id || null;
+    } catch (error) {
+        return null;
+    }
+}
+
 const costosEnvio = {
     'gratis':    { texto: 'Gratis',  valor: 0 },
     'express':   { texto: '$9.99',   valor: 9.99 },
@@ -12,7 +21,7 @@ const costosEnvio = {
 
 // ── 1. OBTENEMOS EL TOTAL REAL DEL CARRITO DESDE MYSQL ───────
 async function cargarResumenPedidoBD() {
-    const usuarioId = localStorage.getItem('usuario_id');
+    const usuarioId = obtenerUsuarioId();
     if (!usuarioId) {
         window.location.href = 'login.html';
         return;
@@ -193,7 +202,7 @@ function mostrarResumenConfirmacion() {
 
 // ── 2. GUARDAR EL PEDIDO EN LA BASE DE DATOS ─────────────────
 async function confirmarPedido() {
-    const usuarioId = localStorage.getItem('usuario_id');
+    const usuarioId = obtenerUsuarioId();
     const metodoEnvioVal = document.getElementById('metodo-envio').value;
     const costoEnvio = costosEnvio[metodoEnvioVal].valor;
     const totalPedido = subtotalReal + costoEnvio;

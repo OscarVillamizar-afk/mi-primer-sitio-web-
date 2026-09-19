@@ -45,8 +45,12 @@ function renderizarProductos(productos) {
                 <h3 class="producto-nombre">${prod.nombre}</h3>
                 <p class="producto-descripcion">${prod.descripcion || ''}</p>
                 <p class="producto-precio">$${parseFloat(prod.precio).toFixed(2)}</p>
-                <button class="btn-agregar-carrito" onclick="agregarAlCarrito(${prod.id})">
-                </button>
+                <div class="producto-acciones">
+                    <a href="producto-detalle.html?id=${prod.id}">
+                        <button class="btn-ver">Ver detalle</button>
+                    </a>
+                    <button class="btn-carrito" onclick="agregarAlCarrito(${prod.id})">Agregar</button>
+                </div>
             </div>
         `;
 
@@ -93,7 +97,7 @@ async function agregarAlCarrito(idProducto) {
             alert("Producto agregado al carrito con éxito.");
         } else {
             const data = await respuesta.json();
-            alert(data.mensaje || "No se pudo agregar el producto.");
+            alert(data.mensaje || data.error || "No se pudo agregar el producto.");
         }
     } catch (error) {
         console.error("Error al agregar al carrito:", error);
