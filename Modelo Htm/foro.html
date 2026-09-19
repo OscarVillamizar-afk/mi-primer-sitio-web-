@@ -78,160 +78,11 @@
         </section>
  
         <!-- LISTA DE TEMAS -->
-        <!-- id="foro-temas" para que JS pueda acceder a todos los temas -->
-        <section class="foro-temas" id="foro-temas">
- 
-            <!-- data-categoria y data-titulo: JS los usa para filtrar -->
- 
-            <!-- Tema 1 -->
-            <div class="tema-card" data-categoria="robotica" data-titulo="cómo empezar con arduino para proyectos de robótica educativa">
-                <div class="tema-icono"></div>
-                <div class="tema-body">
-                    <div class="tema-header">
-                        <span class="tema-categoria robotica">Robótica</span>
-                        <span class="tema-badge badge-nuevo">Nuevo</span>
-                    </div>
-                    <h3 class="tema-titulo">
-                        <a href="foro-hilo.html">¿Cómo empezar con Arduino para proyectos de robótica educativa?</a>
-                    </h3>
-                    <p class="tema-extracto">
-                        Estoy iniciando en el mundo de la robótica educativa y me gustaría saber cuáles son los kits de Arduino más recomendados para principiantes...
-                    </p>
-                    <div class="tema-meta">
-                        <div class="tema-autor">
-                            <div class="autor-avatar">CM</div>
-                            <span>Carlos Méndez</span>
-                            <span>•</span>
-                            <span>Hace 2 horas</span>
-                        </div>
-                        <div class="tema-stats">
-                            <span>8 respuestas</span>
-                            <span>12 votos</span>
-                            <span>145 vistas</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
- 
-            <!-- Tema 2 -->
-            <div class="tema-card" data-categoria="software" data-titulo="mejores prácticas para optimizar código en python">
-                <div class="tema-icono"></div>
-                <div class="tema-body">
-                    <div class="tema-header">
-                        <span class="tema-categoria software">Software</span>
-                        <span class="tema-badge badge-respondido">Respondido</span>
-                    </div>
-                    <h3 class="tema-titulo">
-                        <a href="foro-hilo.html">Mejores prácticas para optimizar código en Python</a>
-                    </h3>
-                    <p class="tema-extracto">
-                        Tengo un script en Python que procesa grandes volúmenes de datos y está tardando demasiado. ¿Cuáles son las técnicas más efectivas para optimizar el rendimiento?
-                    </p>
-                    <div class="tema-meta">
-                        <div class="tema-autor">
-                            <div class="autor-avatar">LR</div>
-                            <span>Laura Rodríguez</span>
-                            <span>•</span>
-                            <span>Hace 5 horas</span>
-                        </div>
-                        <div class="tema-stats">
-                            <span>15 respuestas</span>
-                            <span>23 votos</span>
-                            <span>312 vistas</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
- 
-            <!-- Tema 3 -->
-            <div class="tema-card" data-categoria="hardware" data-titulo="vale la pena actualizar a ddr5 en 2024">
-                <div class="tema-icono"></div>
-                <div class="tema-body">
-                    <div class="tema-header">
-                        <span class="tema-categoria hardware">Hardware</span>
-                    </div>
-                    <h3 class="tema-titulo">
-                        <a href="foro-hilo.html">¿Vale la pena actualizar a DDR5 en 2024?</a>
-                    </h3>
-                    <p class="tema-extracto">
-                        Estoy armando un nuevo PC para gaming y desarrollo. La diferencia de precio entre DDR4 y DDR5 es considerable. ¿Realmente se nota la mejora en rendimiento?
-                    </p>
-                    <div class="tema-meta">
-                        <div class="tema-autor">
-                            <div class="autor-avatar">MG</div>
-                            <span>Miguel García</span>
-                            <span>•</span>
-                            <span>Hace 1 día</span>
-                        </div>
-                        <div class="tema-stats">
-                            <span>24 respuestas</span>
-                            <span>31 votos</span>
-                            <span>528 vistas</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
- 
-            <!-- Tema 4 - Reportado -->
-            <div class="tema-card tema-reportado" data-categoria="general" data-titulo="problema con instalación de drivers nvidia">
-                <div class="tema-icono"></div>
-                <div class="tema-body">
-                    <div class="tema-header">
-                        <span class="tema-categoria general">General</span>
-                        <span class="tema-badge badge-reportado">Reportado</span>
-                    </div>
-                    <h3 class="tema-titulo">
-                        <a href="foro-hilo.html">Problema con instalación de drivers NVIDIA</a>
-                    </h3>
-                    <p class="tema-extracto">
-                        No puedo instalar los drivers más recientes en mi GTX 3070. El instalador se queda congelado en el 50%. Ya probé desinstalar con DDU y sigue igual.
-                    </p>
-                    <div class="tema-meta">
-                        <div class="tema-autor">
-                            <div class="autor-avatar">AP</div>
-                            <span>Ana Pérez</span>
-                            <span>•</span>
-                            <span>Hace 2 días</span>
-                        </div>
-                        <div class="tema-stats">
-                            <span>6 respuestas</span>
-                            <span>4 votos</span>
-                            <span>89 vistas</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
- 
-            <!-- Tema 5 -->
-            <div class="tema-card" data-categoria="hardware" data-titulo="raspberry pi 5 vs pc de bajo consumo para servidor casero">
-                <div class="tema-icono"></div>
-                <div class="tema-body">
-                    <div class="tema-header">
-                        <span class="tema-categoria hardware">Hardware</span>
-                        <span class="tema-badge badge-popular">Popular</span>
-                    </div>
-                    <h3 class="tema-titulo">
-                        <a href="foro-hilo.html">Raspberry Pi 5 vs PC de bajo consumo para servidor casero</a>
-                    </h3>
-                    <p class="tema-extracto">
-                        Quiero montar un servidor casero para NAS, Home Assistant y Pi-hole. ¿Es mejor una Raspberry Pi 5 o un mini PC usado? Busco equilibrio entre consumo y rendimiento.
-                    </p>
-                    <div class="tema-meta">
-                        <div class="tema-autor">
-                            <div class="autor-avatar">JS</div>
-                            <span>Juan Silva</span>
-                            <span>•</span>
-                            <span>Hace 3 días</span>
-                        </div>
-                        <div class="tema-stats">
-                            <span>19 respuestas</span>
-                            <span>27 votos</span>
-                            <span>641 vistas</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
- 
+        <!-- id="contenedor-temas-foro": debe coincidir con el id que busca foro.js -->
+        <!-- Este contenedor se llena dinámicamente desde la base de datos (js/foro.js). -->
+        <!-- No agregar tarjetas de tema a mano aquí: se pierden al recargar y solo confunden. -->
+        <section class="foro-temas" id="contenedor-temas-foro">
+
             <!-- Mensaje cuando no hay resultados -->
             <p id="sin-resultados-foro" style="display:none; text-align:center; padding: 2rem; color: #666;">
                 No se encontraron temas con esa búsqueda o categoría.
@@ -300,11 +151,8 @@
     <!-- ============================================================
          SCRIPT - Lógica del foro
          ============================================================ -->
-    <script src="./foro.js"></script>
+    <script src="./js/auth-header.js"></script>
+    <script src="./js/foro.js"></script>
 
 </body>
 </html>
- 
-</body>
-</html>
- 

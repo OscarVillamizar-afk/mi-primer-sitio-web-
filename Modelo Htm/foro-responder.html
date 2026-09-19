@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Responder - TT&DT</title>    <link rel="stylesheet" href="./style.css"></head>
+    <title>Responder - TT&DT</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
 <body>
 
     <!-- ============================================================
@@ -42,33 +44,16 @@
             <span>›</span>
             <a href="foro.html">Foro</a>
             <span>›</span>
-            <a href="foro-hilo.html">¿Cómo empezar con Arduino para robótica educativa?</a>
+            <a href="foro-hilo.html" id="breadcrumb-hilo">Cargando...</a>
             <span>›</span>
             <span>Responder</span>
         </nav>
 
         <div class="responder-layout">
 
-            <!-- PREGUNTA ORIGINAL - Resumen -->
+            <!-- PREGUNTA ORIGINAL - se llena dinámicamente con js/foro-responder.js -->
             <div class="pregunta-resumen">
-                <div class="pregunta-resumen-header">
-                    <span class="tema-categoria robotica">Robótica</span>
-                    <h2>¿Cómo empezar con Arduino para proyectos de robótica educativa?</h2>
-                </div>
-                <div class="pregunta-resumen-meta">
-                    <div class="autor-avatar pequeño">CM</div>
-                    <span><strong>Carlos Méndez</strong></span>
-                    <span>•</span>
-                    <span>Hace 2 horas</span>
-                    <span>•</span>
-                    <span>8 respuestas</span>
-                    <span>•</span>
-                    <span>12 votos</span>
-                </div>
-                <div class="pregunta-resumen-texto">
-                    <p>Hola a todos, soy nuevo en el foro y en el mundo de la robótica educativa. Me gustaría empezar a enseñar a mis estudiantes de secundaria conceptos básicos de programación y electrónica usando Arduino. Mis preguntas principales son: ¿Cuál es el kit más recomendado para principiantes? ¿Hay recursos en español para estudiantes de 12-15 años? ¿Qué proyectos simples recomendarían para empezar?</p>
-                </div>
-                <a href="foro-hilo.html" class="link-ver-hilo">Ver hilo completo →</a>
+                <p style="padding:1.5rem;text-align:center;color:#666;">Cargando pregunta...</p>
             </div>
 
             <!-- FORMULARIO RESPUESTA -->
@@ -77,35 +62,13 @@
                 <h1>Tu respuesta</h1>
                 <p class="form-subtitulo">Comparte tu conocimiento de forma clara y respetuosa. Una buena respuesta incluye contexto, ejemplos y fuentes cuando aplique.</p>
 
-                <!-- Barra de herramientas del editor -->
-                <div class="editor-toolbar">
-                    <button class="toolbar-btn" title="Negrita"><strong>B</strong></button>
-                    <button class="toolbar-btn" title="Cursiva"><em>I</em></button>
-                    <button class="toolbar-btn" title="Subrayado"><u>U</u></button>
-                    <div class="toolbar-separador"></div>
-                    <button class="toolbar-btn" title="Lista con viñetas">≡</button>
-                    <button class="toolbar-btn" title="Lista numerada">1.</button>
-                    <div class="toolbar-separador"></div>
-                    <button class="toolbar-btn" title="Citar">Citar</button>
-                    <button class="toolbar-btn" title="Código">{ }</button>
-                    <button class="toolbar-btn" title="Bloque de código">⌨</button>
-                    <div class="toolbar-separador"></div>
-                    <button class="toolbar-btn" title="Enlace">Enlace</button>
-                    <button class="toolbar-btn" title="Imagen">Imagen</button>
-                    <div class="toolbar-separador"></div>
-                    <button class="toolbar-btn toolbar-btn-preview">Vista previa</button>
-                </div>
-
-                <!-- Área de texto / vista previa -->
+                <!-- Área de texto -->
                 <div class="editor-area">
                     <textarea
                         id="respuesta-texto"
-                        placeholder="Escribe tu respuesta aquí. Sé específico y detallado. Si incluyes código, usa el botón de bloque de código para formatearlo correctamente..."
+                        placeholder="Escribe tu respuesta aquí. Sé específico y detallado..."
                         rows="14"
                     ></textarea>
-                    <div id="editor-preview" class="editor-preview" style="display:none;">
-                        <p class="preview-placeholder">La vista previa aparecerá aquí...</p>
-                    </div>
                 </div>
 
                 <div class="editor-footer">
@@ -113,42 +76,18 @@
                     <span class="error-msg" id="error-respuesta"></span>
                 </div>
 
-                <!-- Adjuntos -->
-                <div class="form-seccion-adjuntos">
-                    <h3>Adjuntos (opcional)</h3>
-                    <div class="upload-area upload-area-mini">
-                        <p><label for="adjunto-respuesta" class="link-upload">Adjuntar imagen</label></p>
-                        <input type="file" id="adjunto-respuesta" accept="image/*" multiple style="display:none;">
-                        <p class="upload-restricciones">PNG, JPG. Máximo 5 MB. Hasta 3 archivos.</p>
-                    </div>
-                    <div id="adjuntos-preview" class="archivos-preview"></div>
-                </div>
-
-                <!-- Notificaciones -->
-                <div class="form-group form-notificaciones">
-                    <label class="checkbox-label">
-                        <input type="checkbox" id="notif-respuestas" checked>
-                        <span>Notificarme cuando alguien responda a este hilo</span>
-                    </label>
-                    <label class="checkbox-label">
-                        <input type="checkbox" id="notif-votos">
-                        <span>Notificarme cuando mi respuesta reciba votos</span>
-                    </label>
-                </div>
-
                 <!-- Botones -->
                 <div class="form-botones">
-                    <a href="foro-hilo.html">
+                    <a href="foro.html" id="link-cancelar">
                         <button type="button" class="btn-cancelar">Cancelar</button>
                     </a>
-                    <button type="submit" class="btn-publicar">Publicar respuesta</button>
+                    <button type="button" class="btn-publicar">Publicar respuesta</button>
                 </div>
 
             </div>
 
             <!-- SIDEBAR -->
             <aside class="responder-sidebar">
-
                 <div class="sidebar-card sidebar-consejos">
                     <h3>Tips para una buena respuesta</h3>
                     <ul>
@@ -156,36 +95,10 @@
                         <li>Proporciona contexto y explicaciones</li>
                         <li>Incluye ejemplos prácticos</li>
                         <li>Cita fuentes si usas información externa</li>
-                        <li>Usa formato para mejorar la legibilidad</li>
                         <li>No copies respuestas de otros</li>
                         <li>Evita respuestas de una sola línea</li>
-                        <li>No incluyas publicidad o spam</li>
                     </ul>
                 </div>
-
-                <div class="sidebar-card">
-                    <h3>Tu reputación</h3>
-                    <div class="reputacion-info">
-                        <div class="rep-avatar">TU</div>
-                        <div>
-                            <p><strong>Usuario</strong></p>
-                            <p class="rep-puntos">0 puntos</p>
-                            <p class="rep-nivel">Nivel: Principiante</p>
-                        </div>
-                    </div>
-                    <p class="rep-hint">Las respuestas votadas positivamente aumentan tu reputación.</p>
-                </div>
-
-                <div class="sidebar-card">
-                    <h3>Etiquetas del hilo</h3>
-                    <div class="etiquetas-lista">
-                        <span class="etiqueta">arduino</span>
-                        <span class="etiqueta">robótica</span>
-                        <span class="etiqueta">educación</span>
-                        <span class="etiqueta">principiante</span>
-                    </div>
-                </div>
-
             </aside>
 
         </div>
@@ -238,6 +151,12 @@
             <p>&copy; 2024 TT&DT. Todos los derechos reservados.</p>
         </div>
     </footer>
+
+    <!-- ============================================================
+         SCRIPT
+         ============================================================ -->
+    <script src="./js/auth-header.js"></script>
+    <script src="./js/foro-responder.js"></script>
 
 </body>
 </html>

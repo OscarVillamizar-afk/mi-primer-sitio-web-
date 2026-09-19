@@ -23,12 +23,13 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use('/uploads', express.static(uploadsDir));
+app.use(express.static(path.join(__dirname)));
 
 // ── 3. CONEXIÓN A MYSQL ───────────────────────────────────────────
 const db = mysql.createPool({
     host: process.env.DB_HOST || 'localhost',
     user: process.env.DB_USER || 'root',
-    password: process.env.DB_PASSWORD || '1234',
+    password: process.env.DB_PASSWORD || 'Oscar2007seguro',
     database: process.env.DB_NAME || 'db_final_ttdt',
     waitForConnections: true,
     connectionLimit: 10,
@@ -301,6 +302,214 @@ app.post('/api/productos', async (req, res) => {
         res.status(500).json({ error: "Error al crear el producto" });
     }
 });
+
+app.get('/api/foro/publicaciones', async (req, res) => {
+    try {
+        const { categoria, q } = req.query;
+        let condiciones = ['f.estado_reportado = 0'];
+        let valores = [];
+
+        if (categoria) {
+            condiciones.push('c.nombre = ?');
+            valores.push(categoria);
+        }
+        if (q) {
+            condiciones.push('(f.Titulo LIKE ? OR f.descripcion LIKE ?)');
+            valores.push(`%${q}%`, `%${q}%`);
+        }
+
+        const whereSQL = condiciones.length ? `WHERE ${condiciones.join(' AND ')}` : '';
+
+        const [temas] = await db.query(`
+            SELECT
+                f.id_foro AS id,
+                f.Titulo AS titulo,
+                f.descripcion AS contenido,
+                COALESCE(c.nombre, 'General') AS categoria,
+                f.fecha_creacion,
+                COALESCE(f.vistas, 0) AS vistas,
+                CONCAT(u.nombre, ' ', u.apellido) AS autor_nombre,
+                COUNT(pf.id_publicacion_foro) AS num_respuestas
+            FROM foro f
+            LEFT JOIN categoria c ON f.id_categoria = c.id_categoria
+            LEFT JOIN usuario u ON f.id_usuario = u.id_usuario
+            LEFT JOIN publicacion_foro pf ON pf.id_foro = f.id_foro
+            ${whereSQL}
+            GROUP BY f.id_foro, f.Titulo, f.descripcion, c.nombre, f.fecha_creacion, f.vistas, u.nombre, u.apellido
+            ORDER BY f.fecha_creacion DESC
+        `, valores);
+
+        res.json(temas);
+    } catch (error) {
+        console.error("Error obteniendo publicaciones del foro:", error);
+        res.status(500).json({ error: "Error al obtener las publicaciones del foro" });
+    }
+});
+
+app.post('/api/foro/publicaciones', upload.array('adjuntos', 3), async (req, res) => {
+    try {
+        const { usuario_id, titulo, categoria, contenido } = req.body;
+
+        if (!usuario_id || !titulo || !contenido) {
+            return res.status(400).json({ error: "Faltan datos obligatorios (usuario_id, titulo, contenido)" });
+        }
+
+        let id_categoria = null;
+        if (categoria) {
+            const [catRows] = await db.query('SELECT id_categoria FROM categoria WHERE nombre = ?', [categoria]);
+            if (catRows.length > 0) id_categoria = catRows[0].id_categoria;
+        }
+
+        const [resultado] = await db.query(
+            `INSERT INTO foro (Titulo, id_categoria, descripcion, id_usuario) VALUES (?, ?, ?, ?)`,
+            [titulo, id_categoria, contenido, usuario_id]
+        );
+
+        res.status(201).json({ mensaje: "Pregunta publicada con éxito", id: resultado.insertId });
+    } catch (error) {
+        if (error.code === 'ER_DUP_ENTRY') {
+            return res.status(409).json({ error: "Ya existe una pregunta con ese título exacto. Cámbialo un poco." });
+        }
+        console.error("Error creando publicación de foro:", error);
+        res.status(500).json({ error: "Error al crear la publicación" });
+    }
+});
+
+// ── FORO: ver un hilo completo (pregunta + respuestas) ─────────────
+app.get('/api/foro/publicaciones/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const [temaRows] = await db.query(`
+            SELECT
+                f.id_foro AS id,
+                f.Titulo AS titulo,
+                f.descripcion AS contenido,
+                COALESCE(c.nombre, 'general') AS categoria,
+                f.fecha_creacion,
+                COALESCE(f.vistas, 0) AS vistas,
+                CONCAT(u.nombre, ' ', u.apellido) AS autor_nombre
+            FROM foro f
+            LEFT JOIN categoria c ON f.id_categoria = c.id_categoria
+            LEFT JOIN usuario u ON f.id_usuario = u.id_usuario
+            WHERE f.id_foro = ?
+        `, [id]);
+
+        if (temaRows.length === 0) {
+            return res.status(404).json({ error: "Pregunta no encontrada" });
+        }
+
+        const [respuestas] = await db.query(`
+            SELECT
+                pf.id_publicacion_foro AS id,
+                pf.contenido,
+                pf.fecha_creacion,
+                pf.likes,
+                CONCAT(u.nombre, ' ', u.apellido) AS autor_nombre
+            FROM publicacion_foro pf
+            LEFT JOIN usuario u ON pf.id_usuario = u.id_usuario
+            WHERE pf.id_foro = ? AND pf.estado_reportado = 0
+            ORDER BY pf.fecha_creacion ASC
+        `, [id]);
+
+        // Contador simple de vistas
+        await db.query('UPDATE foro SET vistas = vistas + 1 WHERE id_foro = ?', [id]);
+
+        res.json({ tema: temaRows[0], respuestas });
+    } catch (error) {
+        console.error("Error obteniendo el hilo:", error);
+        res.status(500).json({ error: "Error al obtener el hilo" });
+    }
+});
+
+// ── FORO: publicar una respuesta a un hilo ──────────────────────────
+app.post('/api/foro/publicaciones/:id/respuestas', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { usuario_id, contenido } = req.body;
+
+        if (!usuario_id || !contenido || contenido.trim().length < 10) {
+            return res.status(400).json({ error: "Faltan datos o la respuesta es muy corta" });
+        }
+
+        const [resultado] = await db.query(
+            `INSERT INTO publicacion_foro (id_foro, id_usuario, contenido) VALUES (?, ?, ?)`,
+            [id, usuario_id, contenido.trim()]
+        );
+
+        res.status(201).json({ mensaje: "Respuesta publicada con éxito", id: resultado.insertId });
+    } catch (error) {
+        console.error("Error creando respuesta:", error);
+        res.status(500).json({ error: "Error al crear la respuesta" });
+    }
+});
+
+// ── FORO: reportar un hilo ──────────────────────────────────────────
+app.post('/api/foro/publicaciones/:id/reportar', async (req, res) => {
+    try {
+        const { id } = req.params;
+        await db.query('UPDATE foro SET estado_reportado = 1 WHERE id_foro = ?', [id]);
+        res.json({ mensaje: "Hilo reportado. Gracias por avisarnos." });
+    } catch (error) {
+        console.error("Error reportando hilo:", error);
+        res.status(500).json({ error: "Error al reportar el hilo" });
+    }
+});
+
+// ── FORO: guardar un hilo ───────────────────────────────────────────
+app.post('/api/foro/publicaciones/:id/guardar', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { usuario_id } = req.body;
+        if (!usuario_id) return res.status(400).json({ error: "Falta usuario_id" });
+
+        await db.query(
+            'INSERT IGNORE INTO foro_guardado (id_usuario, id_foro) VALUES (?, ?)',
+            [usuario_id, id]
+        );
+        res.json({ mensaje: "Hilo guardado", guardado: true });
+    } catch (error) {
+        console.error("Error guardando hilo:", error);
+        res.status(500).json({ error: "Error al guardar el hilo" });
+    }
+});
+
+// ── FORO: quitar un hilo de guardados ────────────────────────────────
+app.delete('/api/foro/publicaciones/:id/guardar', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { usuario_id } = req.body;
+        if (!usuario_id) return res.status(400).json({ error: "Falta usuario_id" });
+
+        await db.query(
+            'DELETE FROM foro_guardado WHERE id_usuario = ? AND id_foro = ?',
+            [usuario_id, id]
+        );
+        res.json({ mensaje: "Hilo quitado de guardados", guardado: false });
+    } catch (error) {
+        console.error("Error quitando hilo guardado:", error);
+        res.status(500).json({ error: "Error al quitar el hilo guardado" });
+    }
+});
+
+// ── FORO: saber si el usuario ya guardó este hilo ────────────────────
+app.get('/api/foro/publicaciones/:id/guardado', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { usuario_id } = req.query;
+        if (!usuario_id) return res.json({ guardado: false });
+
+        const [rows] = await db.query(
+            'SELECT 1 FROM foro_guardado WHERE id_usuario = ? AND id_foro = ?',
+            [usuario_id, id]
+        );
+        res.json({ guardado: rows.length > 0 });
+    } catch (error) {
+        console.error("Error consultando guardado:", error);
+        res.status(500).json({ error: "Error al consultar guardado" });
+    }
+});
+
 
 // ── INICIALIZACIÓN DEL SERVIDOR ───────────────────────────────────
 app.listen(PORT, () => {

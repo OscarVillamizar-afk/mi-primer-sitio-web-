@@ -1,17 +1,29 @@
 const URL_API = "http://localhost:3000/api";
 
 // ── 1. VERIFICAR SESIÓN ───────────────────────────────────────
+// Usa la misma clave que auth-header.js: 'usuario_ttdt'
 function verificarSesion() {
-    const sesion = JSON.parse(localStorage.getItem('sesionTT&DT'));
-    const usuarioLogueado = localStorage.getItem('usuario_logueado');
+    const sesionRaw = localStorage.getItem('usuario_ttdt');
 
-    if (!sesion && !usuarioLogueado) {
+    if (!sesionRaw) {
         alert('Debes iniciar sesión para publicar en el foro.');
         window.location.href = 'login.html';
         return null;
     }
 
-    return sesion || { id: localStorage.getItem('usuario_id') };
+    try {
+        const sesion = JSON.parse(sesionRaw);
+        if (!sesion || !sesion.id) {
+            alert('Debes iniciar sesión para publicar en el foro.');
+            window.location.href = 'login.html';
+            return null;
+        }
+        return sesion;
+    } catch (e) {
+        alert('Debes iniciar sesión para publicar en el foro.');
+        window.location.href = 'login.html';
+        return null;
+    }
 }
 
 // ── 2. CONTADORES DE CARACTERES ───────────────────────────────
@@ -135,7 +147,7 @@ function inicializarPublicacion() {
         try {
             // Construir formulario con datos y archivos adjuntos (Multipart Form Data)
             const formData = new FormData();
-            formData.append('usuario_id', sesion.id || localStorage.getItem('usuario_id'));
+            formData.append('usuario_id', sesion.id);
             formData.append('titulo', titulo);
             formData.append('categoria', categoria);
             formData.append('contenido', descripcion);
@@ -152,7 +164,10 @@ function inicializarPublicacion() {
                 body: formData // Nota: No incluir Content-Type header cuando se usa FormData
             });
 
-            if (!respuesta.ok) throw new Error('Error al guardar la publicación en el servidor.');
+            if (!respuesta.ok) {
+                const errorData = await respuesta.json().catch(() => ({}));
+                throw new Error(errorData.error || 'Error al guardar la publicación en el servidor.');
+            }
 
             const resultado = await respuesta.json();
             alert('¡Publicación creada exitosamente!');
@@ -160,7 +175,7 @@ function inicializarPublicacion() {
 
         } catch (error) {
             console.error('Error al enviar la publicación:', error);
-            alert('Hubo un problema al intentar publicar. Inténtalo de nuevo.');
+            alert(error.message || 'Hubo un problema al intentar publicar. Inténtalo de nuevo.');
             btnPublicar.disabled = false;
             btnPublicar.textContent = 'Publicar';
         }

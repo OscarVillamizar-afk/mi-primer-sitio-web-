@@ -1,14 +1,14 @@
 const URL_API = "http://localhost:3000/api";
 
-// ── 1. CARGAR TEMAS DESDE EL BACKEND ─────────────────────────
+// 1. CARGAR TEMAS DESDE EL BACKEND
 async function cargarTemasForo(categoriaFiltro = '', textoBusqueda = '') {
     const contenedor = document.getElementById('contenedor-temas-foro');
     const sinResultados = document.getElementById('sin-resultados-foro');
-    
+
     if (!contenedor) return;
 
     try {
-        // Construir parámetros URL para búsqueda y filtrado en servidor
+        // Construir parametros URL para busqueda y filtrado en servidor
         const params = new URLSearchParams();
         if (categoriaFiltro) params.append('categoria', categoriaFiltro);
         if (textoBusqueda) params.append('q', textoBusqueda);
@@ -42,7 +42,7 @@ async function cargarTemasForo(categoriaFiltro = '', textoBusqueda = '') {
                         <span class="tema-fecha">${fechaFormateada}</span>
                     </div>
                     <h3 class="tema-titulo">
-                        <a href="tema.html?id=${tema.id}">${tema.titulo}</a>
+                        <a href="foro-hilo.html?id=${tema.id}">${tema.titulo}</a>
                     </h3>
                     <p class="tema-extracto">${tema.contenido ? tema.contenido.substring(0, 140) + '...' : ''}</p>
                     <div class="tema-footer">
@@ -51,8 +51,8 @@ async function cargarTemasForo(categoriaFiltro = '', textoBusqueda = '') {
                             <span class="autor-nombre">${tema.autor_nombre || 'Usuario'}</span>
                         </div>
                         <div class="tema-stats">
-                            <span>💬 ${tema.num_respuestas || 0} respuestas</span>
-                            <span>👁️ ${tema.vistas || 0} vistas</span>
+                            <span>${tema.num_respuestas || 0} respuestas</span>
+                            <span>${tema.vistas || 0} vistas</span>
                         </div>
                     </div>
                 </article>
@@ -64,7 +64,7 @@ async function cargarTemasForo(categoriaFiltro = '', textoBusqueda = '') {
     }
 }
 
-// ── 2. FILTRAR TEMAS EN TIEMPO REAL ──────────────────────────
+// ---- 2. FILTRAR TEMAS EN TIEMPO REAL ----
 function aplicarFiltros() {
     const inputBusqueda = document.getElementById('busqueda-foro');
     const selectCategoria = document.getElementById('filtro-categoria');
@@ -75,7 +75,7 @@ function aplicarFiltros() {
     cargarTemasForo(categoria, texto);
 }
 
-// ── 3. PILLS DE CATEGORÍA ─────────────────────────────────────
+// ---- 3. PILLS DE CATEGORIA ----
 function inicializarPillsCategoria() {
     document.querySelectorAll('.categoria-pill').forEach(pill => {
         pill.addEventListener('click', function () {
@@ -86,7 +86,7 @@ function inicializarPillsCategoria() {
             // Activar la pill seleccionada
             this.classList.add('active');
 
-            // Identificar categoría de las clases extra
+            // Identificar categoria de las clases extra
             const clases = Array.from(this.classList).filter(
                 c => c !== 'categoria-pill' && c !== 'active'
             );
@@ -104,7 +104,7 @@ function inicializarPillsCategoria() {
     });
 }
 
-// ── 4. BÚSQUEDA Y SELECT ──────────────────────────────────────
+// ---- 4. BUSQUEDA Y SELECT ----
 function inicializarControlesFiltro() {
     const inputBusqueda = document.getElementById('busqueda-foro');
     if (inputBusqueda) {
@@ -143,12 +143,11 @@ function inicializarControlesFiltro() {
     }
 }
 
-
-// ── INICIALIZACIÓN GENERAL ───────────────────────────────────
+// ---- INICIALIZACION GENERAL ----
 document.addEventListener('DOMContentLoaded', () => {
     inicializarPillsCategoria();
     inicializarControlesFiltro();
-    
+
     // Cargar todas las publicaciones al iniciar
     cargarTemasForo();
 });

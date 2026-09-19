@@ -43,7 +43,7 @@
             <span>›</span>
             <a href="foro.html">Foro</a>
             <span>›</span>
-            <span>¿Cómo empezar con Arduino para robótica educativa?</span>
+            <span id="breadcrumb-titulo">Cargando...</span>
         </nav>
 
         <div class="hilo-layout">
@@ -51,174 +51,30 @@
             <!-- COLUMNA PRINCIPAL -->
             <div class="hilo-principal">
 
-                <!-- PREGUNTA ORIGINAL -->
+                <!-- PREGUNTA ORIGINAL: se llena dinámicamente con js/foro-hilo.js -->
                 <article class="hilo-pregunta">
-
-                    <div class="hilo-cabecera">
-                        <div class="hilo-categoria-wrap">
-                            <span class="tema-categoria robotica">Robótica</span>
-                            <span class="tema-badge badge-nuevo">Nuevo</span>
-                        </div>
-                        <h1>¿Cómo empezar con Arduino para proyectos de robótica educativa?</h1>
-                        <div class="hilo-meta">
-                            <div class="autor-info">
-                                <div class="autor-avatar grande">CM</div>
-                                <div>
-                                    <strong>Carlos Méndez</strong>
-                                    <span class="autor-rol">Miembro</span>
-                                </div>
-                            </div>
-                            <div class="hilo-fecha">
-                                <span>Publicado hace 2 horas</span>
-                                <span>•</span>
-                                <span>145 vistas</span>
-                            </div>
-                        </div>
+                    <div id="hilo-pregunta-contenedor">
+                        <p style="padding:2rem;text-align:center;color:#666;">Cargando pregunta...</p>
                     </div>
-
-                    <div class="hilo-contenido">
-                        <p>Hola a todos, soy nuevo en el foro y en el mundo de la robótica educativa. Me gustaría empezar a enseñar a mis estudiantes de secundaria conceptos básicos de programación y electrónica usando Arduino.</p>
-                        <p>Mis preguntas principales son:</p>
-                        <ul>
-                            <li>¿Cuál es el kit de Arduino más recomendado para principiantes absolutos?</li>
-                            <li>¿Hay recursos o tutoriales en español que sean buenos para estudiantes de 12-15 años?</li>
-                            <li>¿Qué proyectos simples recomendarían para empezar?</li>
-                        </ul>
-                        <p>Tengo un presupuesto limitado por estudiante (aprox. $30-50 USD), así que necesito algo accesible. Gracias de antemano.</p>
-                    </div>
-
                     <div class="hilo-acciones">
-                        <button class="btn-voto btn-upvote"><span>12</span></button>
-                        <button class="btn-voto btn-downvote"><span>0</span></button>
-                        <button class="btn-accion">Responder</button>
                         <button class="btn-accion">Compartir</button>
-                        <button class="btn-accion btn-reportar">Reportar</button>
                     </div>
-
                 </article>
 
                 <!-- SEPARADOR RESPUESTAS -->
                 <div class="respuestas-header">
-                    <h2>8 Respuestas</h2>
-                    <select id="orden-respuestas">
-                        <option value="votos">Más votadas</option>
-                        <option value="recientes">Más recientes</option>
-                        <option value="antiguas">Más antiguas</option>
-                    </select>
+                    <h2 id="respuestas-contador">Respuestas</h2>
                 </div>
 
-                <!-- RESPUESTA 1 - Mejor respuesta -->
-                <article class="hilo-respuesta mejor-respuesta">
-
-                    <div class="respuesta-sidebar">
-                        <div class="autor-avatar">JT</div>
-                        <div class="votos-control">
-                            <button class="btn-voto-mini">▲</button>
-                            <span class="votos-count">23</span>
-                            <button class="btn-voto-mini">▼</button>
-                        </div>
-                        <span class="mejor-respuesta-badge">Mejor respuesta</span>
-                    </div>
-
-                    <div class="respuesta-body">
-                        <div class="respuesta-autor-meta">
-                            <strong>Jorge Torres</strong>
-                            <span class="autor-rol">Colaborador</span>
-                            <span>•</span>
-                            <span>Hace 1 hora</span>
-                        </div>
-                        <div class="respuesta-contenido">
-                            <p>¡Bienvenido al foro! Para tu caso específico (educación secundaria con presupuesto limitado), te recomiendo lo siguiente:</p>
-                            <p><strong>Kit recomendado:</strong> El Arduino UNO R3 con kit básico de sensores. En muchas tiendas locales puedes encontrarlo entre $20-35 USD. Es el estándar educativo por excelencia.</p>
-                            <p><strong>Recursos en español:</strong></p>
-                            <ul>
-                                <li>Arduino Project Hub (tiene versión en español)</li>
-                                <li>Canal de YouTube "BricoGeek" — excelente para principiantes</li>
-                                <li>Libro gratuito "Arduino para todos" disponible en PDF</li>
-                            </ul>
-                            <p><strong>Proyectos para empezar:</strong> semáforo con LEDs, sensor de temperatura, mini alarma con buzzer. Todos con menos de $5 en componentes adicionales.</p>
-                        </div>
-                        <div class="respuesta-acciones">
-                            <button class="btn-accion">Responder</button>
-                            <button class="btn-accion">Compartir</button>
-                            <button class="btn-accion btn-reportar">Reportar</button>
-                        </div>
-                    </div>
-
-                </article>
-
-                <!-- RESPUESTA 2 -->
-                <article class="hilo-respuesta">
-
-                    <div class="respuesta-sidebar">
-                        <div class="autor-avatar">SR</div>
-                        <div class="votos-control">
-                            <button class="btn-voto-mini">▲</button>
-                            <span class="votos-count">8</span>
-                            <button class="btn-voto-mini">▼</button>
-                        </div>
-                    </div>
-
-                    <div class="respuesta-body">
-                        <div class="respuesta-autor-meta">
-                            <strong>Sofía Ramírez</strong>
-                            <span class="autor-rol">Miembro</span>
-                            <span>•</span>
-                            <span>Hace 45 minutos</span>
-                        </div>
-                        <div class="respuesta-contenido">
-                            <p>Complementando lo que dijo Jorge, también puedes considerar el kit de Elegoo UNO R3 que es compatible con Arduino y suele ser más económico. Viene con más sensores incluidos en el mismo precio.</p>
-                            <p>Para los proyectos iniciales, te recomiendo empezar con el clásico "Blink" (hacer parpadear un LED) y de ahí ir subiendo la dificultad gradualmente. La curva de aprendizaje es muy amigable.</p>
-                        </div>
-                        <div class="respuesta-acciones">
-                            <button class="btn-accion">Responder</button>
-                            <button class="btn-accion">Compartir</button>
-                            <button class="btn-accion btn-reportar">Reportar</button>
-                        </div>
-                    </div>
-
-                </article>
-
-                <!-- RESPUESTA 3 -->
-                <article class="hilo-respuesta">
-
-                    <div class="respuesta-sidebar">
-                        <div class="autor-avatar">PL</div>
-                        <div class="votos-control">
-                            <button class="btn-voto-mini">▲</button>
-                            <span class="votos-count">5</span>
-                            <button class="btn-voto-mini">▼</button>
-                        </div>
-                    </div>
-
-                    <div class="respuesta-body">
-                        <div class="respuesta-autor-meta">
-                            <strong>Pedro López</strong>
-                            <span class="autor-rol">Miembro</span>
-                            <span>•</span>
-                            <span>Hace 30 minutos</span>
-                        </div>
-                        <div class="respuesta-contenido">
-                            <p>Una alternativa muy interesante para educación es micro:bit. Es más visual para los chicos y tiene una interfaz de bloques que facilita el aprendizaje antes de pasar a código real. El precio también encaja en tu presupuesto.</p>
-                        </div>
-                        <div class="respuesta-acciones">
-                            <button class="btn-accion">Responder</button>
-                            <button class="btn-accion">Compartir</button>
-                            <button class="btn-accion btn-reportar">Reportar</button>
-                        </div>
-                    </div>
-
-                </article>
+                <!-- RESPUESTAS: se llenan dinámicamente con js/foro-hilo.js -->
+                <div id="respuestas-contenedor"></div>
 
                 <!-- FORMULARIO RESPUESTA RÁPIDA -->
                 <div class="respuesta-rapida">
                     <h3>Tu respuesta</h3>
-                    <p class="respuesta-aviso">
-                        ¿Quieres responder? <a href="login.html">Inicia sesión</a> o <a href="foro-responder.html">escribe una respuesta completa</a>.
-                    </p>
                     <textarea placeholder="Escribe tu respuesta aquí..." rows="5"></textarea>
                     <div class="respuesta-rapida-acciones">
-                        <a href="foro-responder.html">
+                        <a href="foro-responder.html" id="link-respuesta-completa">
                             <button class="btn-respuesta-completa">Respuesta completa</button>
                         </a>
                         <button class="btn-enviar-rapido">Enviar respuesta</button>
@@ -233,59 +89,24 @@
                 <div class="sidebar-card">
                     <h3>Sobre este hilo</h3>
                     <ul class="sidebar-info">
-                        <li><span>Publicado:</span> Hace 2 horas</li>
-                        <li><span>Respuestas:</span> 8</li>
-                        <li><span>Vistas:</span> 145</li>
-                        <li><span>Votos:</span> 12</li>
-                        <li><span>Categoría:</span> Robótica</li>
-                    </ul>
-                </div>
-
-                <div class="sidebar-card">
-                    <h3>Temas relacionados</h3>
-                    <ul class="sidebar-links">
-                        <li><a href="foro-hilo.html">Raspberry Pi para proyectos educativos</a></li>
-                        <li><a href="foro-hilo.html">Diferencias entre Arduino UNO y MEGA</a></li>
-                        <li><a href="foro-hilo.html">Mejores librerías de Arduino para sensores</a></li>
-                        <li><a href="foro-hilo.html">micro:bit vs Arduino para principiantes</a></li>
+                        <li><span>Publicado:</span> <span id="info-publicado">-</span></li>
+                        <li><span>Respuestas:</span> <span id="info-respuestas">-</span></li>
+                        <li><span>Vistas:</span> <span id="info-vistas">-</span></li>
+                        <li><span>Categoría:</span> <span id="info-categoria">-</span></li>
                     </ul>
                 </div>
 
                 <div class="sidebar-card">
                     <h3>Acciones</h3>
                     <div class="sidebar-acciones">
-                        <button class="btn-sidebar">Seguir hilo</button>
-                        <button class="btn-sidebar">Guardar</button>
-                        <button class="btn-sidebar btn-reportar">Reportar hilo</button>
+                        <button class="btn-sidebar" id="btn-seguir" disabled title="Próximamente">Seguir hilo</button>
+                        <button class="btn-sidebar" id="btn-guardar">Guardar</button>
+                        <button class="btn-sidebar btn-reportar" id="btn-reportar">Reportar hilo</button>
                     </div>
                 </div>
 
             </aside>
 
-        </div>
-
-        <!-- MODAL REPORTE -->
-        <div id="modal-reporte" class="modal" style="display:none;">
-            <div class="modal-contenido">
-                <div class="modal-header">
-                    <h3>Reportar contenido</h3>
-                    <button class="modal-cerrar" onclick="document.getElementById('modal-reporte').style.display='none'">✕</button>
-                </div>
-                <div class="modal-body">
-                    <p>¿Por qué estás reportando este contenido?</p>
-                    <div class="reporte-opciones">
-                        <label><input type="radio" name="motivo" value="spam"> Spam o publicidad no deseada</label>
-                        <label><input type="radio" name="motivo" value="ofensivo"> Contenido ofensivo o inapropiado</label>
-                        <label><input type="radio" name="motivo" value="incorrecto"> Información incorrecta o engañosa</label>
-                        <label><input type="radio" name="motivo" value="otro"> Otro motivo</label>
-                    </div>
-                    <textarea placeholder="Descripción adicional (opcional)..." rows="3"></textarea>
-                </div>
-                <div class="modal-footer">
-                    <button class="btn-cancelar" onclick="document.getElementById('modal-reporte').style.display='none'">Cancelar</button>
-                    <button class="btn-enviar-reporte">Enviar reporte</button>
-                </div>
-            </div>
         </div>
 
     </main>
@@ -336,6 +157,12 @@
             <p>&copy; 2024 TT&DT. Todos los derechos reservados.</p>
         </div>
     </footer>
+
+    <!-- ============================================================
+         SCRIPT
+         ============================================================ -->
+    <script src="./js/auth-header.js"></script>
+    <script src="./js/foro-hilo.js"></script>
 
 </body>
 </html>

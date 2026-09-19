@@ -1,8 +1,8 @@
 const URL_API = "http://localhost:3000/api";
 
-// ── FUNCIÓN PARA CAMBIAR DE TAB ────────────────────────────────
-// Ahora fuerza el display por JS además de las clases CSS,
-// así el formulario se muestra aunque falte alguna regla en style.css.
+// ---- FUNCION PARA CAMBIAR DE TAB ----
+// Ahora fuerza el display por JS ademas de las clases CSS,
+// asi el formulario se muestra aunque falte alguna regla en style.css.
 function switchTab(tab, e) {
     if (e && typeof e.preventDefault === 'function') {
         e.preventDefault();
@@ -35,7 +35,7 @@ function switchTab(tab, e) {
     targetContent.style.display = 'block';
 }
 
-// ── INICIALIZAR LOS CLICS DE LOS TABS Y LOS ENLACES "cambiar de tab" ──
+// ---- INICIALIZAR LOS CLICS DE LOS TABS Y LOS ENLACES "cambiar de tab" ----
 function inicializarTabs() {
     document.querySelectorAll('.tab[data-tab]').forEach(btn => {
         btn.addEventListener('click', (e) => switchTab(btn.dataset.tab, e));
@@ -45,12 +45,12 @@ function inicializarTabs() {
         link.addEventListener('click', (e) => switchTab(link.dataset.tab, e));
     });
 
-    // Forzamos el estado inicial (login visible) por si el CSS no tenía
+    // Forzamos el estado inicial (login visible) por si el CSS no tenia
     // definido display:block para .tab-content.active
     switchTab('login');
 }
 
-// ── MANEJADOR DEL FORMULARIO DE LOGIN ────────────────────────
+// ---- MANEJADOR DEL FORMULARIO DE LOGIN ----
 function inicializarLogin() {
     const formLogin = document.getElementById('form-login');
     if (!formLogin) return;
@@ -103,7 +103,7 @@ function inicializarLogin() {
     });
 }
 
-// ── MANEJADOR DEL FORMULARIO DE REGISTRO USUARIO ──────────────
+// ---- MANEJADOR DEL FORMULARIO DE REGISTRO USUARIO ----
 function inicializarRegistroUsuario() {
     const formUsuario = document.getElementById('form-usuario');
     if (!formUsuario) return;
@@ -112,7 +112,7 @@ function inicializarRegistroUsuario() {
         e.preventDefault();
 
         const btnSubmit = formUsuario.querySelector('.btn-submit');
-        if (btnSubmit.disabled) return; // ya hay un envío en curso, ignorar clics extra
+        if (btnSubmit.disabled) return; // ya hay un envio en curso, ignorar clics extra
 
         const nombre = document.getElementById('usuarioNombre').value.trim();
         const email = document.getElementById('usuarioEmail').value.trim();
@@ -124,11 +124,11 @@ function inicializarRegistroUsuario() {
         const terminos = document.getElementById('usuarioTerminos').checked;
 
         if (password !== passwordConfirm) {
-            alert('Las contraseñas no coinciden');
+            alert('Las contrasenas no coinciden');
             return;
         }
         if (!terminos) {
-            alert('Debes aceptar los términos y condiciones');
+            alert('Debes aceptar los terminos y condiciones');
             return;
         }
 
@@ -176,7 +176,7 @@ function inicializarRegistroUsuario() {
     });
 }
 
-// ── MANEJADOR DEL FORMULARIO DE REGISTRO VENDEDOR ───────────────
+// ---- MANEJADOR DEL FORMULARIO DE REGISTRO VENDEDOR ----
 function inicializarRegistroVendedor() {
     const formVendedor = document.getElementById('form-vendedor');
     if (!formVendedor) return;
@@ -185,7 +185,7 @@ function inicializarRegistroVendedor() {
         e.preventDefault();
 
         const btnSubmit = formVendedor.querySelector('.btn-submit');
-        if (btnSubmit.disabled) return; // ya hay un envío en curso, ignorar clics extra
+        if (btnSubmit.disabled) return; // ya hay un envio en curso, ignorar clics extra
 
         const nombre = document.getElementById('vendedorNombre').value.trim();
         const email = document.getElementById('vendedorEmail').value.trim();
@@ -201,11 +201,11 @@ function inicializarRegistroVendedor() {
         const terminos = document.getElementById('vendedorTerminos').checked;
 
         if (password !== passwordConfirm) {
-            alert('Las contraseñas no coinciden');
+            alert('Las contrasenas no coinciden');
             return;
         }
         if (!terminos) {
-            alert('Debes aceptar los términos para vendedores');
+            alert('Debes aceptar los terminos para vendedores');
             return;
         }
 
@@ -257,7 +257,7 @@ function inicializarRegistroVendedor() {
     });
 }
 
-// ── INICIALIZACIÓN ───────────────────────────────────────────
+// ---- INICIALIZACION ----
 document.addEventListener('DOMContentLoaded', () => {
     inicializarTabs();
     inicializarLogin();

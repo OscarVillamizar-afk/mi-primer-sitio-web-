@@ -36,7 +36,7 @@ function renderizarProductos(productos) {
         card.dataset.nombre = prod.nombre;
         card.dataset.categoria = prod.categoria || '';
         card.dataset.precio = prod.precio;
-        card.dataset.idProducto = prod.id_producto;
+        card.dataset.idProducto = prod.id;
 
         card.innerHTML = `
             <div class="producto-imagen"></div>
@@ -45,8 +45,7 @@ function renderizarProductos(productos) {
                 <h3 class="producto-nombre">${prod.nombre}</h3>
                 <p class="producto-descripcion">${prod.descripcion || ''}</p>
                 <p class="producto-precio">$${parseFloat(prod.precio).toFixed(2)}</p>
-                <button class="btn-agregar-carrito" onclick="agregarAlCarrito(${prod.id_producto})">
-                    Agregar al carrito
+                <button class="btn-agregar-carrito" onclick="agregarAlCarrito(${prod.id})">
                 </button>
             </div>
         `;
@@ -61,10 +60,20 @@ function renderizarProductos(productos) {
 
 // ── 3. AGREGAR PRODUCTO AL CARRITO (MySQL) ───────────────────
 async function agregarAlCarrito(idProducto) {
-    const usuarioId = localStorage.getItem('usuario_id');
+    const sesionGuardada = localStorage.getItem('usuario_ttdt');
 
-    if (!usuarioId) {
+    if (!sesionGuardada) {
         alert("Debes iniciar sesión para agregar productos al carrito.");
+        window.location.href = 'login.html';
+        return;
+    }
+
+    let usuario;
+    try {
+        usuario = JSON.parse(sesionGuardada);
+    } catch (e) {
+        localStorage.removeItem('usuario_ttdt');
+        alert("Tu sesión no es válida, inicia sesión de nuevo.");
         window.location.href = 'login.html';
         return;
     }
@@ -74,7 +83,7 @@ async function agregarAlCarrito(idProducto) {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                usuario_id: usuarioId,
+                usuario_id: usuario.id,
                 producto_id: idProducto,
                 cantidad: 1
             })
