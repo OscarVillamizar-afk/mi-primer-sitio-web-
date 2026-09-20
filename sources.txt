@@ -1,0 +1,8 @@
+src/main/java/com/proyecto/controlador/ForoServlet.java
+src/main/java/com/proyecto/controlador/FotoServlet.java
+src/main/java/com/proyecto/conexion/Conexion.java
+src/main/java/com/proyecto/dao/ForoDAO.java
+src/main/java/com/proyecto/dao/FotoDAO.java
+src/main/java/com/proyecto/modelo/Foro.java
+src/main/java/com/proyecto/modelo/Foto.java
+src/main/java/com/proyecto/test/ForoMain.java

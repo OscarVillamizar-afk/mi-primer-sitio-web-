@@ -1,4 +1,4 @@
-package com.royecto.controlador;
+package com.proyecto.controlador;
 
 import com.proyecto.dao.ForoDAO;
 import com.proyecto.dao.FotoDAO;
