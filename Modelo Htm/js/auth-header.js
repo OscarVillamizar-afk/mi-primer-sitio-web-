@@ -4,7 +4,7 @@ function renderizarAvatarHeader(elemento, usuario) {
         const imagen = document.createElement('img');
         imagen.src = usuario.fotoPerfil.startsWith('http')
             ? usuario.fotoPerfil
-            : `http://localhost:3000${usuario.fotoPerfil}`;
+            : `https://backend-ttdt.onrender.com${usuario.fotoPerfil}`;
         imagen.alt = `Foto de perfil de ${usuario.nombre || 'usuario'}`;
         elemento.appendChild(imagen);
         return;

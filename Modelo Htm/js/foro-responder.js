@@ -1,4 +1,4 @@
-const URL_API = "http://localhost:3000/api";
+const API_URL = 'https://backend-ttdt.onrender.com';
 
 function obtenerIdDesdeURL() {
     const params = new URLSearchParams(window.location.search);
@@ -45,7 +45,7 @@ async function cargarResumenPregunta() {
     }
 
     try {
-        const respuesta = await fetch(`${URL_API}/foro/publicaciones/${id}`);
+        const respuesta = await fetch(`${API_URL}/api/foro/publicaciones/${id}`);
         if (!respuesta.ok) throw new Error('No se pudo cargar la pregunta');
         const datos = await respuesta.json();
         const tema = datos.tema;
@@ -122,7 +122,7 @@ function inicializarPublicacion() {
         btnPublicar.textContent = 'Publicando...';
 
         try {
-            const respuesta = await fetch(`${URL_API}/foro/publicaciones/${id}/respuestas`, {
+            const respuesta = await fetch(`${API_URL}/api/foro/publicaciones/${id}/respuestas`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ usuario_id: sesion.id, contenido })

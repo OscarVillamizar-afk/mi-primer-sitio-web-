@@ -1,4 +1,4 @@
-const URL_API = "http://localhost:3000/api";
+const API_URL = 'https://backend-ttdt.onrender.com';
 
 function obtenerIdDesdeURL() {
     const params = new URLSearchParams(window.location.search);
@@ -27,7 +27,7 @@ async function cargarHilo() {
     }
 
     try {
-        const respuesta = await fetch(`${URL_API}/foro/publicaciones/${id}`);
+        const respuesta = await fetch(`${API_URL}/api/foro/publicaciones/${id}`);
         if (!respuesta.ok) throw new Error('No se pudo cargar la pregunta');
 
         const datos = await respuesta.json();
@@ -164,7 +164,7 @@ function inicializarRespuestaRapida() {
         btnEnviar.textContent = 'Enviando...';
 
         try {
-            const respuesta = await fetch(`${URL_API}/foro/publicaciones/${id}/respuestas`, {
+            const respuesta = await fetch(`${API_URL}/api/foro/publicaciones/${id}/respuestas`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ usuario_id: sesion.id, contenido })
@@ -209,7 +209,7 @@ async function inicializarAccionesHilo() {
     // Reflejar si el usuario ya tenía este hilo guardado
     if (btnGuardar && sesion && sesion.id) {
         try {
-            const resp = await fetch(`${URL_API}/foro/publicaciones/${id}/guardado?usuario_id=${sesion.id}`);
+                const resp = await fetch(`${API_URL}/api/foro/publicaciones/${id}/guardado?usuario_id=${sesion.id}`);
             const datos = await resp.json();
             if (datos.guardado) {
                 btnGuardar.textContent = 'Guardado ✓';
@@ -232,7 +232,7 @@ async function inicializarAccionesHilo() {
             btnGuardar.disabled = true;
 
             try {
-                const resp = await fetch(`${URL_API}/foro/publicaciones/${id}/guardar`, {
+                const resp = await fetch(`${API_URL}/api/foro/publicaciones/${id}/guardar`, {
                     method: yaGuardado ? 'DELETE' : 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ usuario_id: sesionActual.id })
@@ -264,7 +264,7 @@ async function inicializarAccionesHilo() {
 
             btnReportar.disabled = true;
             try {
-                const resp = await fetch(`${URL_API}/foro/publicaciones/${id}/reportar`, {
+                const resp = await fetch(`${API_URL}/api/foro/publicaciones/${id}/reportar`, {
                     method: 'POST'
                 });
                 if (!resp.ok) throw new Error('No se pudo reportar');
